@@ -31,6 +31,10 @@
            class="px-2.5 py-1 rounded transition-colors {% if request.endpoint and request.endpoint.startswith('graph.') %}text-text font-medium{% else %}text-text-muted hover:text-text hover:bg-bg-surface{% endif %}">
           Граф
         </a>
+        <a href="{{ url_for('categories.index', world_id=wid) }}"
+           class="px-2.5 py-1 rounded transition-colors {% if request.endpoint and request.endpoint.startswith('categories.') %}text-text font-medium{% else %}text-text-muted hover:text-text hover:bg-bg-surface{% endif %}">
+          Категории
+        </a>
       {% endif %}
     </nav>
 
@@ -38,19 +42,23 @@
       <button @click="open = !open" @click.outside="open = false"
               class="flex items-center gap-2 rounded-full focus:outline-none focus:ring-2 focus:ring-brand">
         {% if current_user.avatar_url %}
-          <img src="{{ current_user.avatar_url }}" alt="" class="h-9 w-9 rounded-full object-cover">
+          <img src="{{ current_user.avatar_url }}" alt="" class="h-9 w-9 rounded-full object-cover ring-2 ring-border">
         {% else %}
           <span class="h-9 w-9 rounded-full bg-brand-gradient text-white text-xs font-semibold inline-flex items-center justify-center select-none">
             {{ (current_user.display_name or current_user.email)[:2]|upper }}
           </span>
         {% endif %}
       </button>
-      <div x-show="open" x-transition.opacity
+      <div x-show="open" x-transition.opacity x-cloak
            class="absolute right-6 mt-2 w-56 rounded border border-border-strong bg-bg-surface p-1 shadow-xl">
         <div class="px-3 py-2 border-b border-border">
           <div class="text-sm font-medium text-text truncate">{{ current_user.display_name or 'Без имени' }}</div>
           <div class="text-xs text-text-dim truncate">{{ current_user.email }}</div>
         </div>
+        <a href="{{ url_for('profile.view') }}"
+           class="block px-3 py-2 text-sm text-text-muted hover:bg-bg-surface2 hover:text-text rounded-sm transition-colors">
+          Профиль
+        </a>
         <form method="post" action="{{ url_for('auth.logout') }}">
           <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
           <button type="submit" class="w-full text-left px-3 py-2 text-sm text-text-muted hover:bg-bg-surface2 hover:text-text rounded-sm transition-colors">

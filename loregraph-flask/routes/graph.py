@@ -45,30 +45,47 @@ def data(world_id: str):
 
     cat_color = {c.id: c.color for c in world.categories}
     cat_name = {c.id: c.name for c in world.categories}
+    cat_weight = {c.id: c.weight for c in world.categories}
 
-    nodes = [
-        {
+    nodes = []
+    for a in articles:
+        weight = cat_weight.get(a.category_id, 3)
+        # Размер узла на canvas: 14 + weight*5 (то есть 19..39 px)
+        size = 14 + weight * 5
+        # Первая буква для отображения внутри
+        first = (a.title.strip()[:1] or "·").upper()
+        nodes.append({
             "data": {
                 "id": a.id,
                 "label": a.title,
+                "initial": first,
                 "color": cat_color.get(a.category_id, "#64748B"),
                 "category": cat_name.get(a.category_id, "без категории"),
                 "category_id": a.category_id or "none",
+                "weight": weight,
+                "size": size,
                 "pinned": a.is_pinned,
                 "summary": a.summary or "",
+                "image_url": a.image_url or "",
             }
-        }
-        for a in articles
-    ]
-    edges = [
-        {
+        })
+    edges = []
+    for r in relations:
+        edges.append({
             "data": {
                 "id": r.id,
                 "source": r.source_article_id,
                 "target": r.target_article_id,
                 "label": r.label,
+                # Цвета концов — для градиента ребра на канвасе
+                "source_color": cat_color.get(
+                    next((a.category_id for a in articles if a.id == r.source_article_id), None),
+                    "#64748B",
+                ),
+                "target_color": cat_color.get(
+                    next((a.category_id for a in articles if a.id == r.target_article_id), None),
+                    "#64748B",
+                ),
             }
-        }
-        for r in relations
-    ]
+        })
     return jsonify(nodes=nodes, edges=edges)

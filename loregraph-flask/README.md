@@ -7,9 +7,9 @@
 - **Backend**: Flask 3 + SQLAlchemy 2 + Flask-Login + Flask-WTF
 - **Database**: PostgreSQL 17 (в Docker)
 - **Auth**: email/password (bcrypt) + Google OAuth (Authlib)
-- **Frontend**: Jinja2 + Tailwind CSS (через CDN) + Alpine.js (микро-реактивность) + HTMX (плавные переходы без SPA)
-- **Editor**: EasyMDE — Markdown с тулбаром и сплит-вью
-- **Graph**: Cytoscape.js — force-layout без React
+- **Frontend**: Jinja2 + Tailwind CSS (через CDN) + Alpine.js (микро-реактивность)
+- **Editor**: Toast UI Editor — два режима (WYSIWYG + Markdown), тёмная тема
+- **Graph**: Cytoscape.js — force-layout с градиентными рёбрами и анимацией
 
 ## Быстрый старт
 

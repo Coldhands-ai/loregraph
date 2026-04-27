@@ -1,0 +1,162 @@
+{% extends "base.html" %}
+{% block title %}Категории — {{ world.title }} — LoreGraph{% endblock %}
+
+{% block content %}
+<div class="space-y-8" x-data="categoriesPage()">
+  <header class="flex items-end justify-between gap-4">
+    <div>
+      <p class="text-xs uppercase tracking-[0.3em] text-text-dim mb-2">{{ world.title }}</p>
+      <h1 class="font-serif text-3xl">Категории мира</h1>
+      <p class="mt-2 text-text-muted max-w-xl">
+        Цвет влияет на отображение узла в графе и на бейдж статьи. Вес (1-5) — на размер узла:
+        крупные категории (фракции, локации) можно делать тяжелее, мелкие (события, предметы) — легче.
+        Поля шаблона — подсказки авторам при заполнении статьи.
+      </p>
+    </div>
+    <button @click="openCreate()"
+            class="inline-flex items-center gap-2 h-10 px-4 rounded bg-brand-gradient text-white text-sm font-semibold tracking-wider hover:-translate-y-px transition-transform shadow-[0_4px_16px_-4px_rgba(59,130,246,0.5)]">
+      + Новая категория
+    </button>
+  </header>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+    {% for c in world.categories %}
+      <div class="group relative rounded-lg border bg-bg-surface/60 p-5 transition-all hover:bg-bg-surface/80"
+           style="border-color: {{ c.color }}55;">
+        <div class="flex items-start gap-3">
+          <span class="h-10 w-10 rounded shrink-0 flex items-center justify-center text-white font-bold"
+                style="background: linear-gradient(135deg, {{ c.color }}, {{ c.color }}cc);">
+            {{ c.name[:1]|upper }}
+          </span>
+          <div class="flex-1 min-w-0">
+            <h3 class="font-serif text-xl font-medium leading-tight">{{ c.name }}</h3>
+            <div class="mt-1 flex items-center gap-3 text-xs text-text-dim">
+              <span class="font-mono">{{ c.color }}</span>
+              <span>· вес {{ c.weight }}</span>
+              <span>· полей {{ c.template_fields|length }}</span>
+            </div>
+          </div>
+        </div>
+
+        {% if c.template_fields %}
+          <div class="mt-3 flex flex-wrap gap-1">
+            {% for f in c.template_fields %}
+              <span class="text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-sm bg-bg-surface2 text-text-muted">{{ f.label }}</span>
+            {% endfor %}
+          </div>
+        {% endif %}
+
+        <div class="mt-4 flex items-center gap-2">
+          <button type="button" @click='openEdit({{ {
+            "id": c.id, "name": c.name, "color": c.color, "icon": c.icon or "",
+            "weight": c.weight, "sort_order": c.sort_order,
+            "template_fields": c.template_fields or [],
+          } | tojson }})'
+                  class="text-xs text-text-muted hover:text-text px-2 py-1 rounded hover:bg-bg-surface2 transition-colors">
+            Редактировать
+          </button>
+          <form method="post" action="{{ url_for('categories.delete', world_id=world.id, category_id=c.id) }}"
+                onsubmit="return confirm('Удалить категорию «{{ c.name|e }}»? Статьи не пропадут — просто потеряют категорию.');"
+                class="ml-auto">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button type="submit" class="text-xs text-text-dim hover:text-red-400 px-2 py-1 rounded hover:bg-bg-surface2 transition-colors">
+              Удалить
+            </button>
+          </form>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+
+  <!-- Модалка создания/редактирования -->
+  <div x-show="modalOpen" x-transition.opacity x-cloak
+       class="fixed inset-0 z-50 flex items-start justify-center p-4 pt-12 bg-black/70 backdrop-blur-sm overflow-y-auto"
+       @click.self="closeModal()"
+       @keydown.escape.window="closeModal()">
+    <div class="relative w-full max-w-2xl rounded-lg border border-border-strong bg-bg-surface p-6 shadow-2xl my-8">
+      <button @click="closeModal()" class="absolute top-4 right-4 text-text-dim hover:text-text" aria-label="Закрыть">✕</button>
+      <h2 class="font-serif text-2xl font-medium mb-4" x-text="editingId ? 'Редактирование категории' : 'Новая категория'"></h2>
+
+      <form :action="editingId
+              ? '{{ url_for("categories.index", world_id=world.id) }}/' + editingId + '/update'
+              : '{{ url_for("categories.create", world_id=world.id) }}'"
+            method="post" class="space-y-4">
+        {{ form.hidden_tag() }}
+
+        <div class="grid grid-cols-[1fr_auto_auto] gap-3 items-end">
+          <div>
+            {{ form.name.label(class="block text-xs font-medium uppercase tracking-wider text-text-muted mb-1.5") }}
+            <input type="text" name="name" x-model="data.name" required maxlength="100"
+                   class="h-10 w-full rounded border border-border-strong bg-bg-surface2 px-3.5 text-sm focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand">
+          </div>
+          <div>
+            <label class="block text-xs font-medium uppercase tracking-wider text-text-muted mb-1.5">Цвет</label>
+            <div class="relative">
+              <input type="color" x-model="data.color"
+                     class="h-10 w-14 rounded border border-border-strong bg-bg-surface2 cursor-pointer">
+              <input type="hidden" name="color" :value="data.color">
+            </div>
+          </div>
+          <div>
+            <label class="block text-xs font-medium uppercase tracking-wider text-text-muted mb-1.5">Вес <span x-text="data.weight"></span></label>
+            <input type="range" name="weight" min="1" max="5" x-model="data.weight"
+                   class="h-10 w-32 accent-brand">
+          </div>
+        </div>
+
+        <input type="hidden" name="icon" :value="data.icon">
+        <input type="hidden" name="sort_order" :value="data.sort_order">
+
+        <!-- Template fields editor -->
+        <div>
+          <div class="flex items-center justify-between mb-2">
+            <label class="block text-xs font-medium uppercase tracking-wider text-text-muted">Поля шаблона статьи</label>
+            <button type="button" @click="addField()"
+                    class="text-xs text-brand hover:underline">+ добавить поле</button>
+          </div>
+          <p class="text-xs text-text-dim mb-3">
+            Эти поля появятся над текстом, когда автор создаст статью этой категории. Они опциональные.
+          </p>
+
+          <div class="space-y-2">
+            <template x-for="(f, i) in data.template_fields" :key="i">
+              <div class="flex items-center gap-2">
+                <input type="text" x-model="f.label" placeholder="Имя поля (напр. «Раса»)" maxlength="100"
+                       class="flex-1 h-9 rounded border border-border-strong bg-bg-surface2 px-3 text-sm focus:outline-none focus:border-brand">
+                <select x-model="f.type"
+                        class="h-9 rounded border border-border-strong bg-bg-surface2 px-2 text-sm focus:outline-none focus:border-brand">
+                  <option value="text">короткое</option>
+                  <option value="textarea">длинное</option>
+                  <option value="date">дата</option>
+                </select>
+                <button type="button" @click="data.template_fields.splice(i, 1)"
+                        class="h-9 w-9 inline-flex items-center justify-center rounded text-text-dim hover:bg-bg-surface2 hover:text-red-400 transition-colors" aria-label="Удалить поле">✕</button>
+              </div>
+            </template>
+            <p x-show="data.template_fields.length === 0" class="text-xs text-text-dim italic">
+              Полей нет. Можно создать категорию и без них — добавятся потом.
+            </p>
+          </div>
+
+          <input type="hidden" name="template_fields" :value="JSON.stringify(data.template_fields)">
+        </div>
+
+        <div class="flex justify-end gap-2 pt-2">
+          <button type="button" @click="closeModal()"
+                  class="h-10 px-4 rounded text-sm text-text-muted hover:bg-bg-surface2 hover:text-text transition-colors">
+            Отмена
+          </button>
+          <button type="submit"
+                  class="h-10 px-5 rounded bg-brand-gradient text-white text-sm font-semibold tracking-wider hover:-translate-y-px transition-transform">
+            <span x-text="editingId ? 'Сохранить' : 'Создать'"></span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/categories.js') }}" defer></script>
+{% endblock %}

@@ -1,4 +1,5 @@
-// Редактор статьи: EasyMDE + автосейв (debounce 2с) + смена названия и категории.
+// Редактор статьи: Toast UI Editor (WYSIWYG + Markdown), автосейв 2с,
+// смена названия / категории, заполнение полей шаблона, закрепление.
 
 (function () {
   const root = document.querySelector('[data-article-id]');
@@ -14,13 +15,12 @@
   function setIndicator(state) {
     if (!indicator) return;
     const map = {
-      idle: { text: 'Сохранено', cls: 'text-text-dim' },
       saving: { text: 'Сохраняем…', cls: 'text-text-dim' },
-      saved: { text: 'Сохранено', cls: 'text-text-dim' },
-      dirty: { text: 'Изменения не сохранены', cls: 'text-text-dim' },
-      error: { text: 'Ошибка сохранения', cls: 'text-red-400' },
+      saved:  { text: 'Сохранено',  cls: 'text-text-dim' },
+      dirty:  { text: 'Изменения не сохранены', cls: 'text-amber-400' },
+      error:  { text: 'Ошибка сохранения', cls: 'text-red-400' },
     };
-    const s = map[state] || map.idle;
+    const s = map[state] || map.saved;
     indicator.textContent = s.text;
     indicator.className = 'text-xs ' + s.cls;
   }
@@ -38,10 +38,7 @@
     try {
       const res = await fetch(`/worlds/${worldId}/articles/${articleId}/autosave`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-CSRFToken': csrf,
-        },
+        headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrf },
         body: JSON.stringify(patch),
       });
       if (!res.ok) throw new Error(await res.text());
@@ -51,32 +48,37 @@
       setIndicator('error');
     }
   }
-
   const persistDebounced = debounce(persist, 2000);
 
-  // EasyMDE
-  const easyMDE = new EasyMDE({
-    element: editorEl,
-    autofocus: false,
-    spellChecker: false,
+  // ─── Toast UI Editor ─────────────────────────────────────
+  const initial = JSON.parse(editorEl.dataset.initial || '""');
+  const editor = new toastui.Editor({
+    el: editorEl,
+    height: '600px',
+    initialEditType: 'wysiwyg',          // открываем сразу в WYSIWYG-режиме
+    previewStyle: 'vertical',
+    initialValue: initial || '',
+    theme: 'dark',
     placeholder: 'Начни писать… Что случилось в этом мире?',
-    status: ['lines', 'words'],
-    toolbar: [
-      'bold', 'italic', 'strikethrough', 'heading-1', 'heading-2', 'heading-3', '|',
-      'unordered-list', 'ordered-list', 'quote', 'code', '|',
-      'link', 'image', 'horizontal-rule', '|',
-      'preview', 'side-by-side', 'fullscreen', '|',
-      'guide',
+    usageStatistics: false,
+    autofocus: false,
+    toolbarItems: [
+      ['heading', 'bold', 'italic', 'strike'],
+      ['hr', 'quote'],
+      ['ul', 'ol', 'task'],
+      ['table', 'image', 'link'],
+      ['code', 'codeblock'],
+      ['scrollSync'],
     ],
-    minHeight: '480px',
-    shortcuts: { drawTable: 'Cmd-Alt-T' },
+    events: {
+      change: () => {
+        setIndicator('dirty');
+        persistDebounced({ content_md: editor.getMarkdown() });
+      },
+    },
   });
 
-  easyMDE.codemirror.on('change', () => {
-    setIndicator('dirty');
-    persistDebounced({ content_md: easyMDE.value() });
-  });
-
+  // ─── Название ────────────────────────────────────────────
   if (titleInput) {
     titleInput.addEventListener('input', (e) => {
       setIndicator('dirty');
@@ -84,7 +86,7 @@
     });
   }
 
-  // Смена категории
+  // ─── Категория ───────────────────────────────────────────
   document.querySelectorAll('.cat-option').forEach((btn) => {
     btn.addEventListener('click', async () => {
       const id = btn.dataset.catId || null;
@@ -101,10 +103,27 @@
         if (label) label.textContent = name;
       }
       await persist({ category_id: id });
+      // Перезагружаем страницу, чтобы появились/исчезли поля шаблона новой категории
+      setTimeout(() => window.location.reload(), 250);
     });
   });
 
-  // Закрепление
+  // ─── Поля шаблона (template_fields) ──────────────────────
+  function collectFieldValues() {
+    const out = {};
+    document.querySelectorAll('.field-input[data-field-key]').forEach((el) => {
+      out[el.dataset.fieldKey] = el.value;
+    });
+    return out;
+  }
+  document.querySelectorAll('.field-input[data-field-key]').forEach((el) => {
+    el.addEventListener('input', () => {
+      setIndicator('dirty');
+      persistDebounced({ field_values: collectFieldValues() });
+    });
+  });
+
+  // ─── Закрепление ─────────────────────────────────────────
   const pinBtn = document.getElementById('pin-btn');
   if (pinBtn) {
     pinBtn.addEventListener('click', async () => {
@@ -116,11 +135,9 @@
         const data = await res.json();
         const pinned = data.is_pinned;
         pinBtn.dataset.pinned = String(pinned);
-        if (pinned) {
-          pinBtn.className = 'h-9 w-9 inline-flex items-center justify-center rounded transition-colors bg-brand-gradient text-white';
-        } else {
-          pinBtn.className = 'h-9 w-9 inline-flex items-center justify-center rounded transition-colors text-text-muted hover:bg-bg-surface2 hover:text-text';
-        }
+        pinBtn.className = pinned
+          ? 'h-9 w-9 inline-flex items-center justify-center rounded transition-colors bg-brand-gradient text-white'
+          : 'h-9 w-9 inline-flex items-center justify-center rounded transition-colors text-text-muted hover:bg-bg-surface2 hover:text-text';
       } catch (err) {
         console.error('pin failed', err);
       }

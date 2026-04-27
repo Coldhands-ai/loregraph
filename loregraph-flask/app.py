@@ -1,4 +1,6 @@
 """Точка входа: фабрика приложения + регистрация blueprint'ов."""
+from pathlib import Path
+
 from flask import Flask, redirect, render_template, url_for
 from flask_login import current_user
 
@@ -16,6 +18,9 @@ def create_app(config_class: type = Config) -> Flask:
     login_manager.init_app(app)
     csrf.init_app(app)
     oauth.init_app(app)
+
+    # Папка для загрузок (картинки статей, аватары)
+    (Path(app.root_path) / "static" / "uploads").mkdir(parents=True, exist_ok=True)
 
     # Google OAuth — регистрируем только если есть ключи
     if app.config["GOOGLE_OAUTH_ENABLED"]:
@@ -36,11 +41,15 @@ def create_app(config_class: type = Config) -> Flask:
     from routes.worlds import bp as worlds_bp
     from routes.articles import bp as articles_bp
     from routes.graph import bp as graph_bp
+    from routes.categories import bp as categories_bp
+    from routes.profile import bp as profile_bp
 
     app.register_blueprint(auth_bp, url_prefix="/auth")
     app.register_blueprint(worlds_bp, url_prefix="/worlds")
-    app.register_blueprint(articles_bp)  # пути уже включают /worlds/<id>/articles
-    app.register_blueprint(graph_bp)     # пути уже включают /worlds/<id>/graph
+    app.register_blueprint(articles_bp)
+    app.register_blueprint(graph_bp)
+    app.register_blueprint(categories_bp)
+    app.register_blueprint(profile_bp)
 
     # Корень → мирам или логину
     @app.route("/")

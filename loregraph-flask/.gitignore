@@ -17,6 +17,9 @@ env/
 # Flask
 instance/
 
+# Пользовательские загрузки
+static/uploads/
+
 # Editors / OS
 .vscode/*
 !.vscode/extensions.json

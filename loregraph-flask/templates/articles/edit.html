@@ -2,8 +2,9 @@
 {% block title %}{{ article.title }} — LoreGraph{% endblock %}
 
 {% block head_extra %}
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/easymde@2.18.0/dist/easymde.min.css">
-  <script src="https://cdn.jsdelivr.net/npm/easymde@2.18.0/dist/easymde.min.js" defer></script>
+  <link rel="stylesheet" href="https://uicdn.toast.com/editor/3.2.2/toastui-editor.min.css">
+  <link rel="stylesheet" href="https://uicdn.toast.com/editor/3.2.2/theme/toastui-editor-dark.min.css">
+  <script src="https://uicdn.toast.com/editor/3.2.2/toastui-editor-all.min.js" defer></script>
 {% endblock %}
 
 {% block content %}
@@ -12,8 +13,10 @@
      data-article-id="{{ article.id }}"
      data-csrf="{{ csrf_token() }}">
 
-  <!-- Левая колонка: редактор -->
+  <!-- Левая колонка -->
   <div class="space-y-4 min-w-0">
+
+    <!-- Верхняя плашка управления -->
     <div class="flex items-center justify-between gap-4">
       <a href="{{ url_for('articles.index', world_id=world.id) }}"
          class="inline-flex items-center gap-1 text-sm text-text-muted hover:text-text">
@@ -22,13 +25,10 @@
       <div class="flex items-center gap-2">
         <span id="save-indicator" class="text-xs text-text-dim">Сохранено</span>
 
-        <form method="post" action="{{ url_for('articles.toggle_pin', world_id=world.id, article_id=article.id) }}" id="pin-form">
-          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-          <button type="button" id="pin-btn" data-pinned="{{ 'true' if article.is_pinned else 'false' }}"
-                  class="h-9 w-9 inline-flex items-center justify-center rounded transition-colors
-                         {% if article.is_pinned %}bg-brand-gradient text-white{% else %}text-text-muted hover:bg-bg-surface2 hover:text-text{% endif %}"
-                  aria-label="Закрепить">📌</button>
-        </form>
+        <button type="button" id="pin-btn" data-pinned="{{ 'true' if article.is_pinned else 'false' }}"
+                class="h-9 w-9 inline-flex items-center justify-center rounded transition-colors
+                       {% if article.is_pinned %}bg-brand-gradient text-white{% else %}text-text-muted hover:bg-bg-surface2 hover:text-text{% endif %}"
+                aria-label="Закрепить">📌</button>
 
         <form method="post" action="{{ url_for('articles.delete', world_id=world.id, article_id=article.id) }}"
               onsubmit="return confirm('Удалить статью «{{ article.title|e }}»?');">
@@ -39,6 +39,35 @@
       </div>
     </div>
 
+    <!-- Обложка -->
+    <div class="relative group rounded-lg overflow-hidden border border-border bg-bg-surface/40 aspect-[3/1] flex items-center justify-center"
+         {% if article.image_url %}style="background: url('{{ article.image_url }}') center/cover; border-color: transparent;"{% endif %}>
+      {% if not article.image_url %}
+        <div class="text-center text-text-dim">
+          <div class="text-3xl mb-1">🖼</div>
+          <div class="text-xs uppercase tracking-wider">Обложка не задана</div>
+        </div>
+      {% endif %}
+      <div class="absolute inset-0 bg-gradient-to-t from-bg/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end justify-end p-3 gap-2">
+        <form method="post" action="{{ url_for('articles.upload_cover', world_id=world.id, article_id=article.id) }}" enctype="multipart/form-data" class="inline">
+          {{ cover_form.hidden_tag() }}
+          <label class="cursor-pointer inline-flex items-center gap-1 px-3 py-1.5 rounded bg-bg-surface/90 border border-border-strong text-xs text-text hover:bg-bg-surface2 backdrop-blur-sm">
+            <input type="file" name="cover" accept="image/*" class="sr-only" onchange="this.form.submit()">
+            {% if article.image_url %}Заменить{% else %}Загрузить обложку{% endif %}
+          </label>
+        </form>
+        {% if article.image_url %}
+          <form method="post" action="{{ url_for('articles.delete_cover', world_id=world.id, article_id=article.id) }}" class="inline">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button type="submit" class="px-3 py-1.5 rounded bg-bg-surface/90 border border-border-strong text-xs text-text-muted hover:text-red-400 backdrop-blur-sm">
+              Удалить
+            </button>
+          </form>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Название -->
     <input id="title-input" type="text" value="{{ article.title }}" maxlength="200"
            class="w-full font-serif text-3xl font-medium px-4 py-3 bg-transparent border border-transparent rounded focus:outline-none focus:border-border-strong">
 
@@ -53,8 +82,8 @@
         <span id="cat-label">{{ article.category.name if article.category else 'без категории' }}</span>
         <span class="text-text-dim">▾</span>
       </button>
-      <div x-show="open" x-transition.opacity
-           class="absolute top-full left-0 mt-2 z-30 rounded border border-border-strong bg-bg-surface p-2 shadow-xl min-w-[200px] flex flex-col gap-1">
+      <div x-show="open" x-transition.opacity x-cloak
+           class="absolute top-full left-0 mt-2 z-30 rounded border border-border-strong bg-bg-surface p-2 shadow-xl min-w-[220px] flex flex-col gap-1">
         <button type="button" data-cat-id="" data-cat-name="без категории" data-cat-color="#94A3B8"
                 @click="open = false"
                 class="cat-option flex items-center gap-2 px-2.5 py-1.5 rounded-sm text-sm text-text-muted hover:bg-bg-surface2 hover:text-text transition-colors">
@@ -62,19 +91,48 @@
         </button>
         {% for c in categories %}
           <button type="button" data-cat-id="{{ c.id }}" data-cat-name="{{ c.name }}" data-cat-color="{{ c.color }}"
+                  data-template-fields='{{ (c.template_fields or []) | tojson }}'
                   @click="open = false"
                   class="cat-option flex items-center gap-2 px-2.5 py-1.5 rounded-sm text-sm text-text-muted hover:bg-bg-surface2 hover:text-text transition-colors">
             <span class="h-2 w-2 rounded-full" style="background-color: {{ c.color }}"></span>{{ c.name }}
           </button>
         {% endfor %}
+        <a href="{{ url_for('categories.index', world_id=world.id) }}"
+           class="mt-1 px-2.5 py-1.5 text-xs text-brand hover:underline border-t border-border pt-2">
+          Управлять категориями →
+        </a>
       </div>
     </div>
 
-    <!-- EasyMDE контейнер -->
-    <textarea id="md-editor">{{ article.content_md }}</textarea>
+    <!-- Поля шаблона (template_fields) -->
+    {% if article.category and article.category.template_fields %}
+      <div class="rounded-lg border border-border bg-bg-surface/40 p-4" id="fields-block">
+        <div class="text-xs uppercase tracking-wider text-text-dim mb-3">
+          Свойства · {{ article.category.name }}
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+          {% for f in article.category.template_fields %}
+            <div>
+              <label class="block text-xs text-text-muted mb-1">{{ f.label }}</label>
+              {% set val = (article.field_values or {}).get(f.key, '') %}
+              {% if f.type == 'textarea' %}
+                <textarea data-field-key="{{ f.key }}" rows="2"
+                          class="field-input w-full rounded border border-border bg-bg-surface px-3 py-2 text-sm focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand resize-y leading-6">{{ val }}</textarea>
+              {% else %}
+                <input type="{% if f.type == 'date' %}date{% else %}text{% endif %}" data-field-key="{{ f.key }}" value="{{ val }}"
+                       class="field-input h-9 w-full rounded border border-border bg-bg-surface px-3 text-sm focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand">
+              {% endif %}
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    {% endif %}
+
+    <!-- Toast UI Editor -->
+    <div id="md-editor" data-initial="{{ article.content_md|tojson|safe }}"></div>
   </div>
 
-  <!-- Правая колонка: связи -->
+  <!-- Правая колонка -->
   <aside class="space-y-4">
     {% include "articles/_relations_panel.html" %}
   </aside>

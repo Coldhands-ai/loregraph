@@ -15,7 +15,7 @@ from sqlalchemy import (
     DateTime,
     UniqueConstraint,
 )
-from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy.dialects.postgresql import JSONB, UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from extensions import db
@@ -29,13 +29,61 @@ def _now() -> datetime:
     return datetime.now(timezone.utc)
 
 
-# Предустановленные категории, создаются при создании мира
+# Предустановленные категории — создаются при создании мира.
+# weight задаёт важность (1-5) — влияет на размер узла в графе.
+# template_fields — структурированные подсказки для авторов: при создании
+# статьи такой категории показываются эти поля над текстом.
 DEFAULT_CATEGORIES = [
-    {"name": "Персонаж", "color": "#3B82F6", "icon": "user", "sort_order": 1},
-    {"name": "Локация", "color": "#10B981", "icon": "map-pin", "sort_order": 2},
-    {"name": "Событие", "color": "#F59E0B", "icon": "calendar", "sort_order": 3},
-    {"name": "Предмет", "color": "#EF4444", "icon": "sword", "sort_order": 4},
-    {"name": "Фракция", "color": "#8B5CF6", "icon": "shield", "sort_order": 5},
+    {
+        "name": "Персонаж", "color": "#3B82F6", "icon": "user",
+        "sort_order": 1, "weight": 4,
+        "template_fields": [
+            {"key": "race",       "label": "Раса",            "type": "text"},
+            {"key": "occupation", "label": "Род деятельности", "type": "text"},
+            {"key": "birth_date", "label": "Дата рождения",   "type": "text"},
+            {"key": "status",     "label": "Статус",          "type": "text"},
+        ],
+    },
+    {
+        "name": "Локация", "color": "#10B981", "icon": "map-pin",
+        "sort_order": 2, "weight": 4,
+        "template_fields": [
+            {"key": "kind",    "label": "Тип",     "type": "text"},
+            {"key": "climate", "label": "Климат",  "type": "text"},
+            {"key": "ruler",   "label": "Правитель", "type": "text"},
+            {"key": "population", "label": "Население", "type": "text"},
+        ],
+    },
+    {
+        "name": "Событие", "color": "#F59E0B", "icon": "calendar",
+        "sort_order": 3, "weight": 2,
+        "template_fields": [
+            {"key": "date",        "label": "Когда",    "type": "text"},
+            {"key": "place",       "label": "Где",      "type": "text"},
+            {"key": "participants", "label": "Участники", "type": "text"},
+            {"key": "outcome",     "label": "Итог",     "type": "text"},
+        ],
+    },
+    {
+        "name": "Предмет", "color": "#EF4444", "icon": "sword",
+        "sort_order": 4, "weight": 2,
+        "template_fields": [
+            {"key": "kind",     "label": "Тип",       "type": "text"},
+            {"key": "material", "label": "Материал",  "type": "text"},
+            {"key": "owner",    "label": "Владелец",  "type": "text"},
+            {"key": "origin",   "label": "Происхождение", "type": "text"},
+        ],
+    },
+    {
+        "name": "Фракция", "color": "#8B5CF6", "icon": "shield",
+        "sort_order": 5, "weight": 5,
+        "template_fields": [
+            {"key": "leader",      "label": "Лидер",      "type": "text"},
+            {"key": "headquarters", "label": "Штаб",       "type": "text"},
+            {"key": "motto",       "label": "Девиз",      "type": "text"},
+            {"key": "goals",       "label": "Цели",       "type": "textarea"},
+        ],
+    },
 ]
 
 
@@ -46,7 +94,7 @@ class User(db.Model, UserMixin):
     email: Mapped[str] = mapped_column(String(255), unique=True, nullable=False, index=True)
     display_name: Mapped[str | None] = mapped_column(String(100))
     avatar_url: Mapped[str | None] = mapped_column(Text)
-    password_hash: Mapped[str | None] = mapped_column(String(255))  # NULL для OAuth-юзеров
+    password_hash: Mapped[str | None] = mapped_column(String(255))
     role: Mapped[str] = mapped_column(String(16), default="user", nullable=False)
     is_blocked: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
     google_sub: Mapped[str | None] = mapped_column(String(255), unique=True, index=True)
@@ -103,7 +151,6 @@ class World(db.Model):
     )
 
     def seed_default_categories(self) -> None:
-        """Создаёт 5 предустановленных категорий. Вызывать сразу после INSERT мира."""
         for c in DEFAULT_CATEGORIES:
             self.categories.append(Category(**c))
 
@@ -119,6 +166,8 @@ class Category(db.Model):
     color: Mapped[str] = mapped_column(String(9), default="#3B82F6", nullable=False)
     icon: Mapped[str | None] = mapped_column(String(50))
     sort_order: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    weight: Mapped[int] = mapped_column(Integer, default=3, nullable=False)
+    template_fields: Mapped[list] = mapped_column(JSONB, default=list, nullable=False)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_now, nullable=False)
 
     world: Mapped[World] = relationship(back_populates="categories")
@@ -126,6 +175,7 @@ class Category(db.Model):
 
     __table_args__ = (
         UniqueConstraint("world_id", "name", name="uq_categories_world_name"),
+        CheckConstraint("weight BETWEEN 1 AND 5", name="ck_categories_weight"),
     )
 
 
@@ -141,6 +191,7 @@ class Article(db.Model):
     )
     title: Mapped[str] = mapped_column(String(200), nullable=False)
     content_md: Mapped[str] = mapped_column(Text, default="", nullable=False)
+    field_values: Mapped[dict] = mapped_column(JSONB, default=dict, nullable=False)
     summary: Mapped[str | None] = mapped_column(Text)
     image_url: Mapped[str | None] = mapped_column(Text)
     is_pinned: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)

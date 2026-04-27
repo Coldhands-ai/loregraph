@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+{% block title %}Профиль — LoreGraph{% endblock %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto space-y-8">
+  <header>
+    <p class="text-xs uppercase tracking-[0.3em] text-text-dim mb-2">Аккаунт</p>
+    <h1 class="font-serif text-3xl">Профиль</h1>
+  </header>
+
+  <div class="grid grid-cols-1 md:grid-cols-[200px_1fr] gap-6 rounded-lg border border-border bg-bg-surface/60 p-6">
+    <!-- Аватар -->
+    <div class="flex flex-col items-center gap-3">
+      <div class="relative">
+        {% if current_user.avatar_url %}
+          <img src="{{ current_user.avatar_url }}" alt="" class="h-32 w-32 rounded-full object-cover ring-4 ring-border-strong">
+        {% else %}
+          <div class="h-32 w-32 rounded-full bg-brand-gradient text-white text-3xl font-bold flex items-center justify-center select-none ring-4 ring-border-strong">
+            {{ (current_user.display_name or current_user.email)[:2]|upper }}
+          </div>
+        {% endif %}
+      </div>
+
+      <form method="post" action="{{ url_for('profile.upload_avatar') }}" enctype="multipart/form-data" class="w-full">
+        {{ avatar_form.hidden_tag() }}
+        <label class="block w-full text-center cursor-pointer">
+          <input type="file" name="avatar" accept="image/*" class="sr-only"
+                 onchange="this.form.submit()">
+          <span class="inline-block w-full text-xs text-text-muted hover:text-text border border-border-strong rounded py-2 transition-colors hover:bg-bg-surface2">
+            Сменить аватар
+          </span>
+        </label>
+      </form>
+
+      {% if current_user.avatar_url and current_user.avatar_url.startswith('/static/uploads/') %}
+        <form method="post" action="{{ url_for('profile.delete_avatar') }}" class="w-full">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <button type="submit" class="w-full text-xs text-text-dim hover:text-red-400 transition-colors">
+            Удалить аватар
+          </button>
+        </form>
+      {% endif %}
+    </div>
+
+    <!-- Поля -->
+    <div class="space-y-6 min-w-0">
+      <form method="post" action="{{ url_for('profile.update') }}" class="space-y-4">
+        {{ profile_form.hidden_tag() }}
+        <div>
+          <label class="block text-xs font-medium uppercase tracking-wider text-text-muted mb-1.5">Email</label>
+          <input type="email" value="{{ current_user.email }}" disabled
+                 class="h-10 w-full rounded border border-border bg-bg-surface px-3.5 text-sm text-text-muted">
+          <p class="mt-1 text-xs text-text-dim">Email менять нельзя — он привязан к аккаунту.</p>
+        </div>
+        <div>
+          {{ profile_form.display_name.label(class="block text-xs font-medium uppercase tracking-wider text-text-muted mb-1.5") }}
+          {{ profile_form.display_name(class="h-10 w-full rounded border border-border-strong bg-bg-surface px-3.5 text-sm focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand", maxlength=100) }}
+        </div>
+        <button type="submit" class="h-10 px-5 rounded bg-brand-gradient text-white text-sm font-semibold hover:-translate-y-px transition-transform">
+          Сохранить
+        </button>
+      </form>
+
+      <hr class="border-border">
+
+      <form method="post" action="{{ url_for('profile.change_password') }}" class="space-y-4">
+        {{ password_form.hidden_tag() }}
+        <h3 class="font-serif text-xl">Смена пароля</h3>
+        {% if current_user.password_hash %}
+          <div>
+            {{ password_form.current_password.label(class="block text-xs font-medium uppercase tracking-wider text-text-muted mb-1.5") }}
+            {{ password_form.current_password(class="h-10 w-full rounded border border-border-strong bg-bg-surface px-3.5 text-sm focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand", autocomplete="current-password") }}
+          </div>
+        {% else %}
+          <p class="text-xs text-text-dim">У тебя ещё нет пароля (вход через Google). Установи новый, чтобы можно было входить и через email.</p>
+        {% endif %}
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <div>
+            {{ password_form.new_password.label(class="block text-xs font-medium uppercase tracking-wider text-text-muted mb-1.5") }}
+            {{ password_form.new_password(class="h-10 w-full rounded border border-border-strong bg-bg-surface px-3.5 text-sm focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand", autocomplete="new-password", placeholder="мин. 6 символов") }}
+          </div>
+          <div>
+            {{ password_form.confirm.label(class="block text-xs font-medium uppercase tracking-wider text-text-muted mb-1.5") }}
+            {{ password_form.confirm(class="h-10 w-full rounded border border-border-strong bg-bg-surface px-3.5 text-sm focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand", autocomplete="new-password") }}
+          </div>
+        </div>
+        <button type="submit" class="h-10 px-5 rounded border border-border-strong text-sm hover:bg-bg-surface2 hover:text-text transition-colors">
+          Изменить пароль
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

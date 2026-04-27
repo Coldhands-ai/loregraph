@@ -1,13 +1,17 @@
-"""Статьи: список, редактор (с автосейвом), управление связями."""
+"""Статьи: список, редактор (с автосейвом), управление связями, обложка."""
 import bleach
 import markdown as md
-from flask import Blueprint, abort, flash, jsonify, redirect, render_template, request, url_for
+from flask import (
+    Blueprint, abort, current_app, flash, jsonify, redirect, render_template,
+    request, url_for,
+)
 from flask_login import current_user, login_required
 from sqlalchemy import or_
 
 from extensions import db
-from forms import ArticleCreateForm, RelationForm
+from forms import ArticleCreateForm, CoverUploadForm, RelationForm
 from models import Article, Category, Relation, World
+from storage import UploadError, delete_image, save_image
 
 bp = Blueprint("articles", __name__, url_prefix="/worlds/<world_id>/articles")
 
@@ -55,6 +59,9 @@ def index(world_id: str):
         s = search.lower()
         articles = [a for a in articles if s in a.title.lower()]
 
+    # Кол-во связей по статьям (для богатых карточек)
+    rel_counts = _relation_counts(world.id)
+
     form = ArticleCreateForm()
     form.set_category_choices(categories)
 
@@ -63,10 +70,25 @@ def index(world_id: str):
         world=world,
         articles=articles,
         categories=categories,
+        rel_counts=rel_counts,
         form=form,
         filter_cat=filter_cat,
         search=search,
     )
+
+
+def _relation_counts(world_id: str) -> dict[str, int]:
+    rows = db.session.execute(
+        db.text(
+            "SELECT article_id, COUNT(*) FROM ("
+            " SELECT source_article_id AS article_id FROM relations WHERE world_id = :wid"
+            " UNION ALL"
+            " SELECT target_article_id AS article_id FROM relations WHERE world_id = :wid"
+            ") t GROUP BY article_id"
+        ),
+        {"wid": world_id},
+    ).all()
+    return {r[0]: r[1] for r in rows}
 
 
 @bp.route("/create", methods=["POST"])
@@ -97,14 +119,14 @@ def edit(world_id: str, article_id: str):
     article = _get_owned_article(world_id, article_id)
     world = article.world
     relations = _list_relations_for_article(article)
-    relation_form = RelationForm()
     return render_template(
         "articles/edit.html",
         world=world,
         article=article,
         categories=world.categories,
         relations=relations,
-        relation_form=relation_form,
+        relation_form=RelationForm(),
+        cover_form=CoverUploadForm(),
     )
 
 
@@ -120,6 +142,9 @@ def autosave(world_id: str, article_id: str):
         article.title = title
     if "content_md" in data:
         article.content_md = data["content_md"] or ""
+        # Автосаммари — первые 200 символов plain-текста
+        plain = bleach.clean(md.markdown(article.content_md or ""), tags=[], strip=True).strip()
+        article.summary = (plain[:200] + "…") if len(plain) > 200 else (plain or None)
     if "summary" in data:
         article.summary = (data["summary"] or "").strip() or None
     if "category_id" in data:
@@ -129,29 +154,56 @@ def autosave(world_id: str, article_id: str):
             if cat is None or cat.world_id != article.world_id:
                 return jsonify(ok=False, error="Чужая категория."), 400
         article.category_id = cat_id
+    if "field_values" in data and isinstance(data["field_values"], dict):
+        # Принимаем только поля, объявленные у текущей категории
+        if article.category_id:
+            cat = db.session.get(Category, article.category_id)
+            allowed_keys = {f["key"] for f in (cat.template_fields or [])}
+            cleaned = {k: str(v)[:1000] for k, v in data["field_values"].items() if k in allowed_keys}
+            article.field_values = cleaned
+        else:
+            article.field_values = {}
     db.session.commit()
     return jsonify(ok=True, updated_at=article.updated_at.isoformat())
 
 
-@bp.route("/<article_id>/preview", methods=["POST"])
+@bp.route("/<article_id>/cover", methods=["POST"])
 @login_required
-def preview(world_id: str, article_id: str):
-    """Рендер Markdown в безопасный HTML для предпросмотра."""
-    _get_owned_article(world_id, article_id)
-    raw = (request.get_json(silent=True) or {}).get("content_md", "")
-    html = md.markdown(raw, extensions=["fenced_code", "tables", "nl2br", "sane_lists"])
-    safe = bleach.clean(
-        html,
-        tags=[
-            "p", "br", "hr", "strong", "em", "del", "code", "pre", "blockquote",
-            "h1", "h2", "h3", "h4", "ul", "ol", "li", "a", "img", "table", "thead",
-            "tbody", "tr", "th", "td",
-        ],
-        attributes={"a": ["href", "title"], "img": ["src", "alt", "title"]},
-        protocols=["http", "https", "mailto"],
-        strip=True,
-    )
-    return jsonify(html=safe)
+def upload_cover(world_id: str, article_id: str):
+    article = _get_owned_article(world_id, article_id)
+    form = CoverUploadForm()
+    if not form.validate_on_submit():
+        flash("Не удалось загрузить — проверь формат и размер.", "error")
+        return redirect(url_for("articles.edit", world_id=world_id, article_id=article_id))
+
+    try:
+        url = save_image(
+            form.cover.data,
+            subdir=f"articles/{article.id}",
+            base_dir=current_app.root_path,
+        )
+    except UploadError as e:
+        flash(str(e), "error")
+        return redirect(url_for("articles.edit", world_id=world_id, article_id=article_id))
+
+    if article.image_url:
+        delete_image(article.image_url, current_app.root_path)
+    article.image_url = url
+    db.session.commit()
+    flash("Обложка обновлена.", "success")
+    return redirect(url_for("articles.edit", world_id=world_id, article_id=article_id))
+
+
+@bp.route("/<article_id>/cover/delete", methods=["POST"])
+@login_required
+def delete_cover(world_id: str, article_id: str):
+    article = _get_owned_article(world_id, article_id)
+    if article.image_url:
+        delete_image(article.image_url, current_app.root_path)
+        article.image_url = None
+        db.session.commit()
+        flash("Обложка удалена.", "info")
+    return redirect(url_for("articles.edit", world_id=world_id, article_id=article_id))
 
 
 @bp.route("/<article_id>/pin", methods=["POST"])
@@ -168,6 +220,8 @@ def toggle_pin(world_id: str, article_id: str):
 def delete(world_id: str, article_id: str):
     article = _get_owned_article(world_id, article_id)
     title = article.title
+    if article.image_url:
+        delete_image(article.image_url, current_app.root_path)
     db.session.delete(article)
     db.session.commit()
     flash(f"Статья «{title}» удалена.", "info")

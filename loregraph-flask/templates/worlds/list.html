@@ -2,8 +2,12 @@
 {% block title %}Мои миры — LoreGraph{% endblock %}
 
 {% block content %}
-<div class="space-y-8" x-data="{ createOpen: false }">
-  <header class="flex items-end justify-between gap-4">
+<div class="space-y-8 relative" x-data="{ createOpen: false }">
+  <!-- Декоративные blob'ы для оживления фона -->
+  <div aria-hidden class="pointer-events-none absolute -top-32 -right-32 h-[400px] w-[400px] rounded-full bg-brand/10 blur-3xl"></div>
+  <div aria-hidden class="pointer-events-none absolute top-1/2 -left-40 h-[400px] w-[400px] rounded-full bg-brand-violet/10 blur-3xl"></div>
+
+  <header class="relative flex items-end justify-between gap-4">
     <div>
       <p class="text-xs uppercase tracking-[0.3em] text-text-dim mb-2">Мои миры</p>
       <h1 class="font-serif text-4xl">Вселенные ждут</h1>
@@ -20,7 +24,7 @@
   </header>
 
   {% if worlds %}
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+    <div class="relative grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
       {% for w in worlds %}
         <div class="group relative rounded-lg border border-border bg-bg-surface/60 hover:border-brand/50 hover:bg-bg-surface/80 hover:-translate-y-0.5 transition-all duration-200 hover:shadow-[0_12px_32px_-12px_rgba(59,130,246,0.3)] overflow-hidden">
           <div class="absolute top-0 left-0 right-0 h-1 bg-brand-gradient opacity-0 group-hover:opacity-100 transition-opacity"></div>
@@ -50,12 +54,12 @@
       {% endfor %}
     </div>
   {% else %}
-    <div class="flex flex-col items-center justify-center gap-4 rounded-lg border border-dashed border-border-strong p-12 text-center">
+    <div class="relative flex flex-col items-center justify-center gap-4 rounded-lg border border-dashed border-border-strong p-12 text-center">
       <div class="rounded-full bg-bg-surface p-4 text-text-dim border border-border">🌐</div>
       <div class="space-y-1">
         <h3 class="font-serif text-xl font-medium">Здесь пока пусто</h3>
         <p class="text-sm text-text-muted max-w-md">
-          Создай первый мир — мы сразу подкинем 5 готовых категорий, чтобы ты не начинал с чистого листа.
+          Создай первый мир — мы сразу подкинем 5 готовых категорий с подсказками для статей.
         </p>
       </div>
       <button @click="createOpen = true"
@@ -70,12 +74,11 @@
        class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm"
        @click.self="createOpen = false"
        @keydown.escape.window="createOpen = false">
-    <div class="relative w-full max-w-lg rounded-lg border border-border-strong bg-bg-surface p-6 shadow-2xl"
-         x-transition.scale.duration.200ms>
+    <div class="relative w-full max-w-lg rounded-lg border border-border-strong bg-bg-surface p-6 shadow-2xl">
       <button @click="createOpen = false" class="absolute top-4 right-4 text-text-dim hover:text-text" aria-label="Закрыть">✕</button>
       <h2 class="font-serif text-2xl font-medium mb-1">Новый мир</h2>
       <p class="text-sm text-text-muted mb-4">
-        Каждый мир получит 5 предустановленных категорий: персонаж, локация, событие, предмет, фракция.
+        Получит 5 предустановленных категорий с подсказками: персонаж, локация, событие, предмет, фракция.
       </p>
       <form method="post" action="{{ url_for('worlds.create') }}" class="space-y-4">
         {{ form.hidden_tag() }}

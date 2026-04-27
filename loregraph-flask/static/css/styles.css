@@ -2,7 +2,7 @@
 
 [x-cloak] { display: none !important; }
 
-/* Scrollbar — тёмный, минимальный */
+/* Скроллбары — тёмные, минимальные */
 ::-webkit-scrollbar { width: 10px; height: 10px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: #1f2937; border-radius: 8px; }
@@ -10,90 +10,220 @@
 
 ::selection { background: #3b82f6; color: #fff; }
 
-/* ─── EasyMDE: тёмная тема ─── */
-.EasyMDEContainer .editor-toolbar {
-  background: #111827;
-  border: 1px solid rgba(255,255,255,0.12);
-  border-bottom: none;
-  border-top-left-radius: 12px;
-  border-top-right-radius: 12px;
-  opacity: 1;
+/* ─── Toast UI Editor: тёмная тема ─── */
+.toastui-editor-defaultUI {
+  border-color: rgba(255, 255, 255, 0.12) !important;
+  border-radius: 12px !important;
+  overflow: hidden;
+  background: rgba(17, 24, 39, 0.4) !important;
 }
-.EasyMDEContainer .editor-toolbar button {
-  color: #94A3B8;
-  border: none;
+.toastui-editor-toolbar {
+  background: #111827 !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
 }
-.EasyMDEContainer .editor-toolbar button:hover,
-.EasyMDEContainer .editor-toolbar button.active {
-  background: #1F2937;
-  color: #F1F5F9;
-  border: none;
+.toastui-editor-defaultUI-toolbar {
+  background: #111827 !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+  padding: 4px 8px !important;
 }
-.EasyMDEContainer .editor-toolbar i.separator {
-  border-color: rgba(255,255,255,0.08);
+.toastui-editor-toolbar-icons {
+  background-color: transparent !important;
+  border: none !important;
+  color: #94A3B8 !important;
+  border-radius: 6px !important;
 }
-.EasyMDEContainer .CodeMirror {
-  background: rgba(17, 24, 39, 0.4);
-  color: #F1F5F9;
-  border: 1px solid rgba(255,255,255,0.12);
-  border-bottom-left-radius: 12px;
-  border-bottom-right-radius: 12px;
-  min-height: 480px;
-  font-family: 'Space Grotesk', system-ui, sans-serif;
+.toastui-editor-toolbar-icons:hover:not(:disabled) {
+  background: #1F2937 !important;
+  color: #F1F5F9 !important;
+}
+.toastui-editor-toolbar-icons.active,
+.toastui-editor-toolbar-icons[aria-pressed="true"] {
+  background: linear-gradient(135deg, #3B82F6, #6366F1) !important;
+  color: #fff !important;
+}
+.toastui-editor-toolbar-divider {
+  background-color: rgba(255, 255, 255, 0.08) !important;
+}
+.toastui-editor-mode-switch {
+  background: #111827 !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+.toastui-editor-mode-switch .tab-item {
+  color: #64748B !important;
+  background: transparent !important;
+}
+.toastui-editor-mode-switch .tab-item.active {
+  color: #F1F5F9 !important;
+  background: rgba(59, 130, 246, 0.15) !important;
+  border-color: #3B82F6 !important;
+}
+
+/* WYSIWYG-режим */
+.toastui-editor-ww-container {
+  background: rgba(17, 24, 39, 0.4) !important;
+}
+.toastui-editor-contents {
+  font-family: 'Space Grotesk', system-ui, sans-serif !important;
+  color: #F1F5F9 !important;
   font-size: 15px;
   line-height: 1.7;
-  padding: 8px 4px;
 }
-.EasyMDEContainer .CodeMirror-cursor { border-left-color: #3B82F6; }
-.EasyMDEContainer .CodeMirror-selected { background: rgba(59, 130, 246, 0.25) !important; }
-.EasyMDEContainer .CodeMirror-fullscreen,
-.EasyMDEContainer .editor-toolbar.fullscreen {
-  background: #0B0F1A;
+.toastui-editor-contents h1, .toastui-editor-contents h2, .toastui-editor-contents h3,
+.toastui-editor-contents h4, .toastui-editor-contents h5, .toastui-editor-contents h6 {
+  font-family: 'Newsreader', Georgia, serif !important;
+  color: #F1F5F9 !important;
+  border: none !important;
 }
-.EasyMDEContainer .editor-preview,
-.EasyMDEContainer .editor-preview-side {
-  background: #111827;
-  color: #F1F5F9;
-  border-color: rgba(255,255,255,0.12);
-  padding: 16px 20px;
-  font-family: 'Space Grotesk', sans-serif;
-}
-.EasyMDEContainer .editor-preview h1,
-.EasyMDEContainer .editor-preview-side h1,
-.EasyMDEContainer .editor-preview h2,
-.EasyMDEContainer .editor-preview-side h2,
-.EasyMDEContainer .editor-preview h3,
-.EasyMDEContainer .editor-preview-side h3 {
-  font-family: 'Newsreader', Georgia, serif;
-  color: #F1F5F9;
-}
-.EasyMDEContainer .editor-preview a,
-.EasyMDEContainer .editor-preview-side a {
-  color: #3B82F6;
-}
-.EasyMDEContainer .editor-preview code,
-.EasyMDEContainer .editor-preview-side code {
-  background: #1F2937;
-  color: #F1F5F9;
+.toastui-editor-contents h1 { font-size: 1.875rem; margin: 1.5rem 0 0.75rem; }
+.toastui-editor-contents h2 { font-size: 1.5rem; margin: 1.25rem 0 0.5rem; }
+.toastui-editor-contents h3 { font-size: 1.25rem; margin: 1rem 0 0.5rem; }
+.toastui-editor-contents p { margin: 0.75rem 0; }
+.toastui-editor-contents a { color: #3B82F6 !important; }
+.toastui-editor-contents code {
+  background: #1F2937 !important;
+  color: #C7D2FE !important;
   padding: 2px 6px;
   border-radius: 4px;
+  font-family: 'JetBrains Mono', ui-monospace, monospace !important;
 }
-.EasyMDEContainer .editor-statusbar {
-  color: #64748B;
-  padding-right: 6px;
+.toastui-editor-contents pre {
+  background: #1F2937 !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  border-radius: 8px !important;
 }
-.cm-s-easymde .cm-header { color: #F1F5F9; }
-.cm-s-easymde .cm-link { color: #3B82F6; }
-.cm-s-easymde .cm-quote { color: #94A3B8; font-style: italic; }
-.cm-s-easymde .cm-strong { color: #F1F5F9; }
-.cm-s-easymde .cm-em { color: #C7D2FE; }
+.toastui-editor-contents blockquote {
+  border-left: 3px solid #3B82F6 !important;
+  background: transparent !important;
+  color: #94A3B8 !important;
+  padding: 0.25rem 1rem;
+  margin: 1rem 0;
+}
+.toastui-editor-contents hr {
+  border-color: rgba(255, 255, 255, 0.08) !important;
+}
+.toastui-editor-contents table {
+  border-color: rgba(255, 255, 255, 0.12) !important;
+}
+.toastui-editor-contents th {
+  background: #1F2937 !important;
+  color: #F1F5F9 !important;
+  border-color: rgba(255, 255, 255, 0.12) !important;
+}
+.toastui-editor-contents td {
+  border-color: rgba(255, 255, 255, 0.08) !important;
+  color: #F1F5F9 !important;
+}
+/* Markdown-режим (CodeMirror внутри Toast UI) */
+.toastui-editor-md-container .toastui-editor {
+  background: rgba(17, 24, 39, 0.4) !important;
+}
+.ProseMirror {
+  caret-color: #3B82F6;
+}
+.toastui-editor-md-container .CodeMirror,
+.toastui-editor-md-container .CodeMirror-scroll {
+  background: rgba(17, 24, 39, 0.4) !important;
+  color: #F1F5F9 !important;
+  font-family: 'JetBrains Mono', ui-monospace, monospace !important;
+}
+.toastui-editor-md-preview {
+  background: #111827 !important;
+  border-left: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+.toastui-editor-md-splitter {
+  background: rgba(255, 255, 255, 0.08) !important;
+}
+.toastui-editor-popup,
+.toastui-editor-context-menu,
+.toastui-editor-dropdown-toolbar {
+  background: #111827 !important;
+  border-color: rgba(255, 255, 255, 0.12) !important;
+  color: #F1F5F9 !important;
+}
+.toastui-editor-popup input,
+.toastui-editor-popup select,
+.toastui-editor-popup textarea {
+  background: #1F2937 !important;
+  border-color: rgba(255, 255, 255, 0.12) !important;
+  color: #F1F5F9 !important;
+}
+.toastui-editor-popup-add-link button.toastui-editor-ok-button,
+.toastui-editor-popup-add-image button.toastui-editor-ok-button {
+  background: linear-gradient(135deg, #3B82F6, #6366F1) !important;
+  border: none !important;
+  color: #fff !important;
+}
 
-/* ─── Cytoscape ─── */
-#cy { display: block; }
+/* ─── Граф: «арена» ───────────────────────────────────── */
+.graph-arena {
+  background:
+    radial-gradient(ellipse at center, rgba(99, 102, 241, 0.10) 0%, transparent 60%),
+    radial-gradient(circle at top right, rgba(59, 130, 246, 0.06) 0%, transparent 50%),
+    radial-gradient(circle at bottom left, rgba(139, 92, 246, 0.05) 0%, transparent 50%),
+    linear-gradient(rgba(31, 41, 55, 0.4), rgba(11, 15, 26, 0.6));
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow:
+    inset 0 0 60px rgba(59, 130, 246, 0.08),
+    0 24px 60px -24px rgba(0, 0, 0, 0.6);
+}
+.graph-arena::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
+  background-size: 32px 32px;
+  pointer-events: none;
+}
+.graph-arena::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border-radius: inherit;
+  box-shadow: inset 0 0 80px rgba(11, 15, 26, 0.7);
+}
 
 /* ─── Relations search dropdown ─── */
+#rel-matches { background: #111827; }
 #rel-matches li button {
   width: 100%; text-align: left; padding: 8px 12px; font-size: 14px; color: #F1F5F9;
   transition: background 0.15s;
 }
 #rel-matches li button:hover { background: #1F2937; }
+
+/* ─── color input — убрать рамку браузера ─── */
+input[type="color"] {
+  -webkit-appearance: none;
+  appearance: none;
+  padding: 0;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  cursor: pointer;
+}
+input[type="color"]::-webkit-color-swatch-wrapper { padding: 4px; }
+input[type="color"]::-webkit-color-swatch { border: none; border-radius: 4px; }
+
+/* ─── range — стилизация ─── */
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+  height: 24px;
+}
+input[type="range"]::-webkit-slider-runnable-track {
+  background: rgba(255, 255, 255, 0.12);
+  height: 4px;
+  border-radius: 4px;
+}
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 16px; height: 16px;
+  background: linear-gradient(135deg, #3B82F6, #6366F1);
+  border-radius: 50%;
+  margin-top: -6px;
+  cursor: pointer;
+  border: 2px solid #0B0F1A;
+  box-shadow: 0 0 8px rgba(59, 130, 246, 0.5);
+}
