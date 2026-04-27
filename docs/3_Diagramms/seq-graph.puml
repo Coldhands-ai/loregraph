@@ -1,0 +1,70 @@
+@startuml seq-graph
+title Визуализация графа связей
+
+skinparam backgroundColor #FFFFFF
+skinparam sequenceArrowThickness 2
+skinparam roundcorner 8
+skinparam maxmessagesize 200
+skinparam sequenceParticipant underline
+
+skinparam participant {
+    BackgroundColor #EFF6FF
+    BorderColor #3B82F6
+    FontColor #000000
+    FontSize 13
+    FontStyle bold
+}
+skinparam arrow {
+    Color #555555
+    FontColor #000000
+    FontSize 12
+}
+skinparam sequence {
+    LifeLineBorderColor #BBBBBB
+    DividerBackgroundColor #F3F4F6
+    DividerBorderColor #CCCCCC
+    DividerFontColor #555555
+    DividerFontSize 11
+}
+
+participant "Пользователь" as U
+participant "Frontend\n(React)" as FE
+participant "react-force-graph" as GRAPH
+participant "PostgreSQL\n(Supabase)" as DB
+
+== Загрузка графа ==
+
+U -> FE : Открывает вкладку «Graph»
+FE -> DB : SELECT id, title, category_id, image_url\nFROM articles WHERE project_id = ?
+DB --> FE : { articles[] } (узлы)
+FE -> DB : SELECT source_article_id, target_article_id,\nlabel FROM relations WHERE project_id = ?
+DB --> FE : { relations[] } (рёбра)
+FE -> DB : SELECT id, name, color\nFROM categories WHERE project_id = ?
+DB --> FE : { categories[] } (цвета узлов)
+FE -> GRAPH : Передать nodes[] и links[]\nс цветами по категориям
+GRAPH --> U : 🔗 Интерактивный граф отрисован
+
+== Взаимодействие с графом ==
+
+U -> GRAPH : Наводит курсор на узел «Geralt»
+GRAPH --> U : Подсветка всех связей Geralt
+
+U -> GRAPH : Клик по узлу «Geralt»
+GRAPH -> FE : onNodeClick(node)
+FE -> DB : SELECT title, content, image_url\nFROM articles WHERE id = ?
+DB --> FE : { article preview }
+FE --> U : Боковая панель:\nназвание, категория, превью,\nкнопка «Open Article →»
+
+== Фильтрация ==
+
+U -> FE : Снимает чекбокс «Locations»
+FE -> GRAPH : Обновить graphData:\nфильтр nodes WHERE category ≠ 'location',\nфильтр links
+GRAPH --> U : Граф перестроен без локаций
+
+== Поиск по графу ==
+
+U -> FE : Вводит «Ciri» в поле поиска
+FE -> GRAPH : centerAt(node_ciri.x, node_ciri.y)\nzoom(2)
+GRAPH --> U : Камера фокусируется на узле «Ciri»
+
+@enduml

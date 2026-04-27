@@ -1,0 +1,75 @@
+@startuml seq-article
+title Создание и редактирование статьи
+
+skinparam backgroundColor #FFFFFF
+skinparam sequenceArrowThickness 2
+skinparam roundcorner 8
+skinparam maxmessagesize 200
+skinparam sequenceParticipant underline
+
+skinparam participant {
+    BackgroundColor #EFF6FF
+    BorderColor #3B82F6
+    FontColor #000000
+    FontSize 13
+    FontStyle bold
+}
+skinparam arrow {
+    Color #555555
+    FontColor #000000
+    FontSize 12
+}
+skinparam sequence {
+    LifeLineBorderColor #BBBBBB
+    DividerBackgroundColor #F3F4F6
+    DividerBorderColor #CCCCCC
+    DividerFontColor #555555
+    DividerFontSize 11
+}
+
+participant "Пользователь" as U
+participant "Frontend\n(React + TipTap)" as FE
+participant "PostgreSQL\n(Supabase)" as DB
+participant "Supabase\nStorage" as ST
+
+== Создание статьи ==
+
+U -> FE : Нажимает «+ New Article»
+FE -> DB : SELECT * FROM categories\nWHERE project_id = ?
+DB --> FE : { categories[] }
+FE --> U : Форма: название, категория, редактор
+
+U -> FE : Вводит название «Geralt of Rivia»,\nвыбирает категорию «Персонаж»
+FE -> DB : INSERT INTO articles\n{ project_id, category_id, title, content: {} }
+DB --> FE : { article_id }
+FE --> U : Статья создана, открыт редактор
+
+== Редактирование с автосохранением ==
+
+U -> FE : Набирает текст в TipTap-редакторе
+FE -> FE : Debounce 2 секунды
+FE -> DB : UPDATE articles SET content = {json}\nWHERE id = article_id
+DB --> FE : OK
+FE --> U : ✅ «Saved 2s ago»
+
+== Загрузка обложки ==
+
+U -> FE : Выбирает изображение для обложки
+FE -> ST : upload('articles/article_id/cover.jpg', file)
+ST --> FE : { publicUrl }
+FE -> DB : UPDATE articles SET image_url = publicUrl
+DB --> FE : OK
+FE --> U : Обложка отображается
+
+== Добавление тегов ==
+
+U -> FE : Добавляет тег «witcher»
+FE -> DB : SELECT FROM tags WHERE name = 'witcher'
+DB --> FE : Тег не найден
+FE -> DB : INSERT INTO tags { project_id, name: 'witcher' }
+DB --> FE : { tag_id }
+FE -> DB : INSERT INTO article_tags { article_id, tag_id }
+DB --> FE : OK
+FE --> U : Тег добавлен
+
+@enduml

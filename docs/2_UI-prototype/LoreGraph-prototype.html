@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LoreGraph — UI Prototype</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Newsreader:ital,wght@0,300;0,400;0,600;1,300;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0B0F1A;
+  --surface: #111827;
+  --surface2: #1F2937;
+  --surface3: #374151;
+  --border: rgba(255,255,255,.08);
+  --border2: rgba(255,255,255,.12);
+  --text: #F1F5F9;
+  --text2: #94A3B8;
+  --text3: #64748B;
+  --blue: #3B82F6;
+  --blue-g: linear-gradient(135deg, #3B82F6, #6366F1);
+  --violet: #7C3AED;
+  --green: #10B981;
+  --amber: #F59E0B;
+  --red: #EF4444;
+  --rose: #F43F5E;
+  --radius: 12px;
+  --radius-sm: 8px;
+  --radius-lg: 16px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Space Grotesk',sans-serif;background:var(--bg);color:var(--text);overflow-x:hidden}
+::selection{background:var(--blue);color:#fff}
+
+/* NAV TABS */
+.proto-nav{position:sticky;top:0;z-index:100;background:rgba(11,15,26,.9);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:0 40px}
+.proto-nav-inner{max-width:1400px;margin:0 auto;display:flex;align-items:center;gap:8px;height:56px}
+.proto-tab{padding:8px 18px;border-radius:8px;font-size:13px;font-weight:500;color:var(--text3);cursor:pointer;transition:all .2s;border:none;background:none;letter-spacing:.3px}
+.proto-tab:hover{color:var(--text2);background:var(--surface)}
+.proto-tab.active{color:var(--blue);background:rgba(59,130,246,.12)}
+.proto-label{margin-left:auto;font-size:11px;color:var(--text3);letter-spacing:2px;text-transform:uppercase}
+
+/* SECTIONS */
+.screen{display:none;min-height:100vh}
+.screen.active{display:block}
+
+/* ========== AUTH SCREEN ========== */
+.auth{display:flex;min-height:100vh}
+.auth.active{display:flex}
+.auth-left{flex:1;background:linear-gradient(135deg,#0B0F1A 0%,#1E1B4B 50%,#0B0F1A 100%);display:flex;flex-direction:column;justify-content:center;align-items:center;padding:60px;position:relative;overflow:hidden}
+.auth-left::before{content:'';position:absolute;width:500px;height:500px;border-radius:50%;background:radial-gradient(circle,rgba(59,130,246,.15),transparent 70%);top:10%;right:-100px}
+.auth-left::after{content:'';position:absolute;width:400px;height:400px;border-radius:50%;background:radial-gradient(circle,rgba(124,58,237,.12),transparent 70%);bottom:10%;left:-80px}
+.auth-logo{font-size:42px;font-weight:700;letter-spacing:-1px;margin-bottom:12px;position:relative}
+.auth-logo span{background:var(--blue-g);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.auth-tagline{font-size:14px;color:var(--text3);letter-spacing:4px;text-transform:uppercase;position:relative}
+/* Decorative graph */
+.auth-graph{position:absolute;width:100%;height:100%;opacity:.15}
+.auth-graph circle{animation:pulse 4s ease-in-out infinite}
+.auth-graph circle:nth-child(2){animation-delay:1s}
+.auth-graph circle:nth-child(3){animation-delay:2s}
+@keyframes pulse{0%,100%{opacity:.3;r:8}50%{opacity:.8;r:12}}
+
+.auth-right{flex:1;display:flex;align-items:center;justify-content:center;padding:60px}
+.auth-form{width:100%;max-width:420px}
+.auth-title{font-family:'Newsreader',serif;font-size:32px;font-weight:400;margin-bottom:8px}
+.auth-sub{font-size:14px;color:var(--text3);margin-bottom:36px}
+.auth-google{width:100%;padding:14px;border-radius:var(--radius);border:1px solid var(--border2);background:var(--surface);color:var(--text);font-family:inherit;font-size:14px;font-weight:500;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:10px;letter-spacing:.3px}
+.auth-google:hover{border-color:var(--blue);background:rgba(59,130,246,.06)}
+.auth-divider{display:flex;align-items:center;gap:16px;margin:24px 0}
+.auth-divider span{font-size:12px;color:var(--text3)}
+.auth-divider::before,.auth-divider::after{content:'';flex:1;height:1px;background:var(--border)}
+.form-group{margin-bottom:18px}
+.form-label{display:block;font-size:12px;font-weight:500;color:var(--text2);margin-bottom:6px;letter-spacing:.5px}
+.form-input{width:100%;padding:12px 14px;border-radius:var(--radius-sm);border:1px solid var(--border2);background:var(--surface);color:var(--text);font-family:inherit;font-size:14px;outline:none;transition:border-color .2s}
+.form-input:focus{border-color:var(--blue)}
+.form-input::placeholder{color:var(--text3)}
+.form-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px}
+.form-link{font-size:13px;color:var(--blue);cursor:pointer;text-decoration:none}
+.form-link:hover{text-decoration:underline}
+.btn-primary{width:100%;padding:14px;border-radius:var(--radius);border:none;background:var(--blue-g);color:#fff;font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;transition:all .2s;letter-spacing:.5px}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 8px 24px rgba(59,130,246,.35)}
+.auth-switch{text-align:center;margin-top:24px;font-size:13px;color:var(--text3)}
+
+/* ========== MY WORLDS ========== */
+.worlds-header{padding:32px 40px;max-width:1400px;margin:0 auto}
+.topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:32px}
+.topbar-left{display:flex;align-items:center;gap:12px}
+.topbar-logo{font-size:18px;font-weight:700;letter-spacing:-.5px}
+.topbar-logo span{background:var(--blue-g);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.topbar-right{display:flex;align-items:center;gap:12px}
+.avatar{width:36px;height:36px;border-radius:50%;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:14px;border:2px solid var(--border2)}
+.worlds-title-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
+.worlds-title-row h1{font-family:'Newsreader',serif;font-size:36px;font-weight:400}
+.btn-create{padding:10px 24px;border-radius:var(--radius-sm);border:none;background:var(--blue-g);color:#fff;font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px;transition:all .2s}
+.btn-create:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(59,130,246,.3)}
+.search-bar{width:320px;padding:10px 14px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--surface);color:var(--text);font-family:inherit;font-size:13px;outline:none;margin-bottom:28px}
+.search-bar::placeholder{color:var(--text3)}
+.worlds-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;max-width:1400px;margin:0 auto;padding:0 40px 60px}
+.world-card{border-radius:var(--radius-lg);overflow:hidden;background:var(--surface);border:1px solid var(--border);transition:all .3s;cursor:pointer}
+.world-card:hover{transform:translateY(-4px);border-color:var(--border2);box-shadow:0 20px 50px rgba(0,0,0,.3)}
+.world-cover{height:140px;background:linear-gradient(135deg,var(--surface2),var(--surface3));display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--text3);position:relative;overflow:hidden}
+.world-cover::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(59,130,246,.1),rgba(124,58,237,.1))}
+.world-cover.c2::before{background:linear-gradient(135deg,rgba(16,185,129,.1),rgba(245,158,11,.1))}
+.world-cover.c3::before{background:linear-gradient(135deg,rgba(244,63,94,.1),rgba(249,115,22,.1))}
+.world-body{padding:20px}
+.world-name{font-size:16px;font-weight:600;margin-bottom:4px}
+.world-desc{font-size:13px;color:var(--text3);margin-bottom:14px}
+.world-tags{display:flex;gap:8px;margin-bottom:12px}
+.world-tag{padding:3px 10px;border-radius:20px;font-size:11px;font-weight:500}
+.world-tag.blue{background:rgba(59,130,246,.15);color:var(--blue)}
+.world-tag.violet{background:rgba(124,58,237,.15);color:var(--violet)}
+.world-meta{font-size:11px;color:var(--text3)}
+.world-card.empty{border-style:dashed;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:280px}
+.world-card.empty .plus{font-size:32px;color:var(--text3);margin-bottom:8px}
+.world-card.empty span{font-size:13px;color:var(--text3)}
+
+/* ========== DASHBOARD ========== */
+.app-layout{display:flex;min-height:100vh}
+.sidebar{width:240px;background:var(--surface);border-right:1px solid var(--border);padding:20px 12px;display:flex;flex-direction:column;position:sticky;top:56px;height:calc(100vh - 56px)}
+.sidebar-logo{font-size:16px;font-weight:700;padding:0 12px;margin-bottom:4px}
+.sidebar-logo span{background:var(--blue-g);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.sidebar-back{font-size:11px;color:var(--text3);padding:0 12px;margin-bottom:20px;cursor:pointer}
+.sidebar-back:hover{color:var(--blue)}
+.nav-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:var(--radius-sm);font-size:13px;color:var(--text2);cursor:pointer;transition:all .15s;margin-bottom:2px}
+.nav-item:hover{background:var(--surface2);color:var(--text)}
+.nav-item.active{background:rgba(59,130,246,.12);color:var(--blue);font-weight:600}
+.nav-icon{font-size:16px;width:20px;text-align:center}
+.sidebar-divider{height:1px;background:var(--border);margin:16px 0}
+.sidebar-label{font-size:10px;font-weight:600;color:var(--text3);letter-spacing:2px;padding:0 12px;margin-bottom:10px;text-transform:uppercase}
+.cat-item{display:flex;align-items:center;gap:8px;padding:6px 12px;font-size:12px;color:var(--text2);cursor:pointer;border-radius:6px}
+.cat-item:hover{background:var(--surface2)}
+.cat-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.cat-count{margin-left:auto;font-size:10px;color:var(--text3);font-family:'JetBrains Mono',monospace}
+
+.main-content{flex:1;padding:32px 40px}
+.dash-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:28px}
+.dash-title{font-family:'Newsreader',serif;font-size:28px;font-weight:400}
+.dash-subtitle{font-size:13px;color:var(--text3);margin-top:4px}
+
+.stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:32px}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px}
+.stat-num{font-size:32px;font-weight:700;letter-spacing:-1px}
+.stat-num.blue{color:var(--blue)}.stat-num.violet{color:var(--violet)}.stat-num.green{color:var(--green)}
+.stat-label{font-size:12px;color:var(--text3);margin-top:4px}
+.stat-bar{height:4px;border-radius:2px;background:var(--surface2);margin-top:12px;overflow:hidden}
+.stat-bar-fill{height:100%;border-radius:2px}
+.stat-bar-fill.blue{background:var(--blue);width:70%}
+.stat-bar-fill.violet{background:var(--violet);width:85%}
+.stat-bar-fill.green{background:var(--green);width:40%}
+
+.section-label{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.section-label h3{font-size:15px;font-weight:600}
+.section-label a{font-size:12px;color:var(--blue);cursor:pointer;text-decoration:none}
+.recent-list{display:flex;flex-direction:column;gap:6px;margin-bottom:32px}
+.recent-item{display:flex;align-items:center;gap:12px;padding:12px 14px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);transition:all .15s;cursor:pointer}
+.recent-item:hover{border-color:var(--border2);background:var(--surface2)}
+.recent-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.recent-name{font-size:13px;font-weight:500;flex:1}
+.recent-cat{font-size:11px;color:var(--text3)}
+.recent-time{font-size:11px;color:var(--text3);font-family:'JetBrains Mono',monospace}
+
+/* ========== GRAPH SCREEN ========== */
+.graph-container{flex:1;background:var(--bg);position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.graph-placeholder{text-align:center}
+.graph-visual{position:relative;width:700px;height:500px}
+.g-node{position:absolute;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;color:#fff;cursor:pointer;transition:all .3s;box-shadow:0 4px 20px rgba(0,0,0,.3)}
+.g-node:hover{transform:scale(1.2);z-index:10}
+.g-node.n1{width:56px;height:56px;background:var(--blue);left:180px;top:140px}
+.g-node.n2{width:44px;height:44px;background:var(--blue);left:380px;top:80px}
+.g-node.n3{width:40px;height:40px;background:var(--blue);left:300px;top:280px}
+.g-node.n4{width:48px;height:48px;background:var(--green);left:500px;top:200px}
+.g-node.n5{width:36px;height:36px;background:var(--green);left:100px;top:320px}
+.g-node.n6{width:32px;height:32px;background:var(--amber);left:420px;top:370px}
+.g-node.n7{width:28px;height:28px;background:var(--red);left:600px;top:120px}
+.g-node.n8{width:34px;height:34px;background:#8B5CF6;left:240px;top:420px}
+
+.graph-svg{position:absolute;inset:0;pointer-events:none}
+.graph-edge{stroke:rgba(100,116,139,.3);stroke-width:1.5;fill:none}
+
+.graph-toolbar{position:absolute;top:16px;left:16px;display:flex;gap:8px}
+.graph-toolbar .tool-btn{padding:8px 14px;border-radius:var(--radius-sm);background:var(--surface);border:1px solid var(--border);color:var(--text2);font-size:12px;font-family:inherit;cursor:pointer;transition:all .15s}
+.graph-toolbar .tool-btn:hover{border-color:var(--blue);color:var(--blue)}
+
+.graph-panel{position:absolute;top:16px;right:16px;width:240px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;opacity:.95}
+.gp-label{font-size:10px;color:var(--text3);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:12px}
+.gp-img{width:100%;height:80px;background:var(--surface2);border-radius:var(--radius-sm);margin-bottom:12px;display:flex;align-items:center;justify-content:center;font-size:24px}
+.gp-name{font-size:16px;font-weight:600;margin-bottom:4px}
+.gp-tag{display:inline-block;padding:2px 8px;border-radius:12px;font-size:10px;font-weight:500;background:rgba(59,130,246,.15);color:var(--blue);margin-bottom:12px}
+.gp-text{font-size:12px;color:var(--text3);line-height:1.6;margin-bottom:14px}
+.gp-relations{font-size:11px;color:var(--text3);margin-bottom:14px}
+.gp-rel{padding:3px 0;display:flex;align-items:center;gap:6px}
+.gp-rel::before{content:'→';color:var(--text3)}
+.gp-btn{width:100%;padding:10px;border-radius:var(--radius-sm);border:none;background:var(--blue-g);color:#fff;font-family:inherit;font-size:12px;font-weight:600;cursor:pointer}
+
+/* ========== ANIMATIONS ========== */
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.animate-in{animation:fadeUp .5s ease forwards}
+.delay-1{animation-delay:.1s;opacity:0}.delay-2{animation-delay:.2s;opacity:0}.delay-3{animation-delay:.3s;opacity:0}
+
+/* SCREEN LABEL */
+.screen-label{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);padding:8px 20px;border-radius:20px;background:var(--surface);border:1px solid var(--border);font-size:11px;color:var(--text3);letter-spacing:1px;z-index:100;backdrop-filter:blur(10px)}
+</style>
+</head>
+<body>
+
+<!-- PROTOTYPE NAV -->
+<nav class="proto-nav">
+  <div class="proto-nav-inner">
+    <button class="proto-tab active" onclick="show('auth')">Auth</button>
+    <button class="proto-tab" onclick="show('worlds')">My Worlds</button>
+    <button class="proto-tab" onclick="show('dashboard')">Dashboard</button>
+    <button class="proto-tab" onclick="show('graph')">Graph</button>
+    <span class="proto-label">LoreGraph · UI Prototype</span>
+  </div>
+</nav>
+
+<!-- ========== AUTH ========== -->
+<div id="auth" class="screen auth active">
+  <div class="auth-left">
+    <svg class="auth-graph" viewBox="0 0 600 800">
+      <line x1="200" y1="300" x2="350" y2="400" stroke="rgba(59,130,246,.2)" stroke-width="1"/>
+      <line x1="350" y1="400" x2="450" y2="340" stroke="rgba(124,58,237,.2)" stroke-width="1"/>
+      <line x1="200" y1="300" x2="150" y2="500" stroke="rgba(16,185,129,.2)" stroke-width="1"/>
+      <line x1="350" y1="400" x2="300" y2="550" stroke="rgba(245,158,11,.2)" stroke-width="1"/>
+      <circle cx="200" cy="300" r="8" fill="#3B82F6"/>
+      <circle cx="350" cy="400" r="10" fill="#7C3AED"/>
+      <circle cx="450" cy="340" r="6" fill="#10B981"/>
+      <circle cx="150" cy="500" r="7" fill="#F59E0B"/>
+      <circle cx="300" cy="550" r="9" fill="#EF4444"/>
+    </svg>
+    <div class="auth-logo"><span>LoreGraph</span></div>
+    <div class="auth-tagline">Build Your World · Map Your Lore</div>
+  </div>
+  <div class="auth-right">
+    <div class="auth-form animate-in">
+      <div class="auth-title">Welcome back</div>
+      <div class="auth-sub">Sign in to continue to your worlds</div>
+      <button class="auth-google">
+        <svg width="18" height="18" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+        Continue with Google
+      </button>
+      <div class="auth-divider"><span>or</span></div>
+      <div class="form-group">
+        <label class="form-label">Email</label>
+        <input class="form-input" type="email" placeholder="user@example.com">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Password</label>
+        <input class="form-input" type="password" placeholder="••••••••">
+      </div>
+      <div class="form-row">
+        <span></span>
+        <a class="form-link">Forgot password?</a>
+      </div>
+      <button class="btn-primary">Sign In</button>
+      <div class="auth-switch">Don't have an account? <a class="form-link">Create account</a></div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== MY WORLDS ========== -->
+<div id="worlds" class="screen">
+  <div class="worlds-header">
+    <div class="topbar">
+      <div class="topbar-left">
+        <div class="topbar-logo"><span>LoreGraph</span></div>
+      </div>
+      <div class="topbar-right">
+        <div class="avatar">👤</div>
+      </div>
+    </div>
+    <div class="worlds-title-row">
+      <h1>My Worlds</h1>
+      <button class="btn-create">+ Create World</button>
+    </div>
+    <input class="search-bar" placeholder="🔍 Search worlds...">
+  </div>
+  <div class="worlds-grid">
+    <div class="world-card animate-in delay-1">
+      <div class="world-cover">Cover Image</div>
+      <div class="world-body">
+        <div class="world-name">The Witcher Lore</div>
+        <div class="world-desc">Complete universe wiki for the saga</div>
+        <div class="world-tags">
+          <span class="world-tag blue">42 articles</span>
+          <span class="world-tag violet">68 links</span>
+        </div>
+        <div class="world-meta">Updated 2 hours ago</div>
+      </div>
+    </div>
+    <div class="world-card animate-in delay-2">
+      <div class="world-cover c2">Cover Image</div>
+      <div class="world-body">
+        <div class="world-name">D&amp;D Campaign</div>
+        <div class="world-desc">Homebrew world notes</div>
+        <div class="world-tags">
+          <span class="world-tag blue">18 articles</span>
+          <span class="world-tag violet">24 links</span>
+        </div>
+        <div class="world-meta">Updated yesterday</div>
+      </div>
+    </div>
+    <div class="world-card empty animate-in delay-3">
+      <div class="plus">+</div>
+      <span>Create new world</span>
+    </div>
+  </div>
+</div>
+
+<!-- ========== DASHBOARD ========== -->
+<div id="dashboard" class="screen">
+  <div class="app-layout">
+    <aside class="sidebar">
+      <div class="sidebar-logo"><span>LoreGraph</span></div>
+      <div class="sidebar-back">← Back to worlds</div>
+      <div class="nav-item active"><span class="nav-icon">📊</span> Dashboard</div>
+      <div class="nav-item"><span class="nav-icon">🔗</span> Graph</div>
+      <div class="nav-item"><span class="nav-icon">📄</span> Articles</div>
+      <div class="nav-item"><span class="nav-icon">⚙️</span> Settings</div>
+      <div class="sidebar-divider"></div>
+      <div class="sidebar-label">Categories</div>
+      <div class="cat-item"><div class="cat-dot" style="background:#3B82F6"></div> Characters <span class="cat-count">12</span></div>
+      <div class="cat-item"><div class="cat-dot" style="background:#10B981"></div> Locations <span class="cat-count">8</span></div>
+      <div class="cat-item"><div class="cat-dot" style="background:#F59E0B"></div> Events <span class="cat-count">5</span></div>
+      <div class="cat-item"><div class="cat-dot" style="background:#EF4444"></div> Items <span class="cat-count">7</span></div>
+      <div class="cat-item"><div class="cat-dot" style="background:#8B5CF6"></div> Factions <span class="cat-count">3</span></div>
+    </aside>
+    <main class="main-content">
+      <div class="dash-header">
+        <div>
+          <div class="dash-title">The Witcher Lore</div>
+          <div class="dash-subtitle">Complete universe wiki for the Witcher saga</div>
+        </div>
+        <button class="btn-create" style="font-size:12px;padding:8px 16px">✏️ Edit world</button>
+      </div>
+      <div class="stats-row">
+        <div class="stat-card animate-in delay-1">
+          <div class="stat-num blue">42</div>
+          <div class="stat-label">Articles</div>
+          <div class="stat-bar"><div class="stat-bar-fill blue"></div></div>
+        </div>
+        <div class="stat-card animate-in delay-2">
+          <div class="stat-num violet">68</div>
+          <div class="stat-label">Relations</div>
+          <div class="stat-bar"><div class="stat-bar-fill violet"></div></div>
+        </div>
+        <div class="stat-card animate-in delay-3">
+          <div class="stat-num green">5</div>
+          <div class="stat-label">Categories</div>
+          <div class="stat-bar"><div class="stat-bar-fill green"></div></div>
+        </div>
+      </div>
+      <div class="section-label"><h3>Recent Articles</h3><a>View all →</a></div>
+      <div class="recent-list">
+        <div class="recent-item"><div class="recent-dot" style="background:#3B82F6"></div><div class="recent-name">Geralt of Rivia</div><div class="recent-cat">Character</div><div class="recent-time">2 min ago</div></div>
+        <div class="recent-item"><div class="recent-dot" style="background:#10B981"></div><div class="recent-name">Kaer Morhen</div><div class="recent-cat">Location</div><div class="recent-time">1h ago</div></div>
+        <div class="recent-item"><div class="recent-dot" style="background:#F59E0B"></div><div class="recent-name">Battle of Sodden Hill</div><div class="recent-cat">Event</div><div class="recent-time">3h ago</div></div>
+        <div class="recent-item"><div class="recent-dot" style="background:#3B82F6"></div><div class="recent-name">Yennefer of Vengerberg</div><div class="recent-cat">Character</div><div class="recent-time">5h ago</div></div>
+        <div class="recent-item"><div class="recent-dot" style="background:#EF4444"></div><div class="recent-name">Silver Sword</div><div class="recent-cat">Item</div><div class="recent-time">1d ago</div></div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<!-- ========== GRAPH ========== -->
+<div id="graph" class="screen">
+  <div class="app-layout">
+    <aside class="sidebar" style="background:#111827">
+      <div class="sidebar-logo"><span>LoreGraph</span></div>
+      <div class="sidebar-back">← Back to worlds</div>
+      <div class="nav-item"><span class="nav-icon">📊</span> Dashboard</div>
+      <div class="nav-item active"><span class="nav-icon">🔗</span> Graph</div>
+      <div class="nav-item"><span class="nav-icon">📄</span> Articles</div>
+      <div class="nav-item"><span class="nav-icon">⚙️</span> Settings</div>
+      <div class="sidebar-divider"></div>
+      <div class="sidebar-label">Filters</div>
+      <div class="cat-item"><div class="cat-dot" style="background:#3B82F6"></div> Characters</div>
+      <div class="cat-item"><div class="cat-dot" style="background:#10B981"></div> Locations</div>
+      <div class="cat-item"><div class="cat-dot" style="background:#F59E0B"></div> Events</div>
+      <div class="cat-item"><div class="cat-dot" style="background:#EF4444"></div> Items</div>
+      <div class="cat-item"><div class="cat-dot" style="background:#8B5CF6"></div> Factions</div>
+      <div class="sidebar-divider"></div>
+      <input class="search-bar" style="width:100%;margin:0" placeholder="🔍 Find node...">
+    </aside>
+    <div class="graph-container">
+      <svg class="graph-svg" viewBox="0 0 700 500">
+        <line class="graph-edge" x1="208" y1="168" x2="320" y2="300"/>
+        <line class="graph-edge" x1="208" y1="155" x2="402" y2="102"/>
+        <line class="graph-edge" x1="208" y1="170" x2="524" y2="224"/>
+        <line class="graph-edge" x1="118" y1="338" x2="205" y2="175"/>
+        <line class="graph-edge" x1="320" y1="300" x2="436" y2="386"/>
+        <line class="graph-edge" x1="524" y1="224" x2="614" y2="134"/>
+        <line class="graph-edge" x1="257" y1="437" x2="524" y2="238"/>
+      </svg>
+      <div class="graph-visual">
+        <div class="g-node n1">Geralt</div>
+        <div class="g-node n2">Yen</div>
+        <div class="g-node n3">Ciri</div>
+        <div class="g-node n4">Kaer M.</div>
+        <div class="g-node n5">Novigrad</div>
+        <div class="g-node n6">Battle</div>
+        <div class="g-node n7">Sword</div>
+        <div class="g-node n8">Wolves</div>
+      </div>
+      <div class="graph-toolbar">
+        <button class="tool-btn">Zoom +</button>
+        <button class="tool-btn">Zoom −</button>
+        <button class="tool-btn">Reset</button>
+      </div>
+      <div class="graph-panel">
+        <div class="gp-label">Article Preview</div>
+        <div class="gp-img">⚔️</div>
+        <div class="gp-name">Geralt of Rivia</div>
+        <span class="gp-tag">Character</span>
+        <div class="gp-text">The White Wolf, a witcher of the School of the Wolf. Known for his silver hair and two swords...</div>
+        <div class="gp-relations">
+          <div class="gp-rel">Ciri <span style="color:var(--text3)">(father of)</span></div>
+          <div class="gp-rel">Yennefer <span style="color:var(--text3)">(lover)</span></div>
+          <div class="gp-rel">Kaer Morhen <span style="color:var(--text3)">(lives in)</span></div>
+        </div>
+        <button class="gp-btn">Open Article →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="screen-label">LoreGraph · Interactive Wiki Builder · UI Prototype</div>
+
+<script>
+function show(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.proto-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  event.target.classList.add('active');
+}
+</script>
+</body>
+</html>

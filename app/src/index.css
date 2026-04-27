@@ -1,0 +1,110 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    color-scheme: dark;
+  }
+
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+
+  body {
+    @apply bg-bg text-text font-sans antialiased;
+    font-feature-settings: 'cv11', 'ss01';
+  }
+
+  ::selection {
+    background: #3b82f6;
+    color: #fff;
+  }
+
+  /* Scrollbar — minimal dark */
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #1f2937;
+    border-radius: 8px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #374151;
+  }
+}
+
+@layer components {
+  .gradient-text {
+    @apply bg-brand-gradient bg-clip-text text-transparent;
+  }
+
+  .glass-panel {
+    @apply bg-bg-surface/70 backdrop-blur-xl border border-border;
+  }
+
+  .focus-ring {
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 focus-visible:ring-offset-bg;
+  }
+}
+
+/* TipTap editor */
+.tiptap {
+  @apply min-h-[400px] outline-none;
+}
+.tiptap p.is-editor-empty:first-child::before {
+  content: attr(data-placeholder);
+  @apply text-text-dim float-left h-0 pointer-events-none;
+}
+.tiptap h1 {
+  @apply text-3xl font-serif font-medium mt-6 mb-3;
+}
+.tiptap h2 {
+  @apply text-2xl font-serif font-medium mt-5 mb-2;
+}
+.tiptap h3 {
+  @apply text-xl font-serif font-medium mt-4 mb-2;
+}
+.tiptap p {
+  @apply leading-7 my-3;
+}
+.tiptap ul,
+.tiptap ol {
+  @apply pl-6 my-3;
+}
+.tiptap ul {
+  list-style: disc;
+}
+.tiptap ol {
+  list-style: decimal;
+}
+.tiptap a {
+  @apply text-brand underline underline-offset-2 hover:text-brand-violet;
+}
+.tiptap blockquote {
+  @apply border-l-2 border-brand pl-4 italic text-text-muted my-4;
+}
+.tiptap code {
+  @apply font-mono text-sm bg-bg-surface2 px-1.5 py-0.5 rounded;
+}
+.tiptap pre {
+  @apply font-mono text-sm bg-bg-surface2 border border-border rounded p-4 my-4 overflow-x-auto;
+}
+.tiptap pre code {
+  @apply bg-transparent p-0;
+}
+.tiptap hr {
+  @apply border-border my-6;
+}

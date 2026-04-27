@@ -1,0 +1,68 @@
+@startuml seq-auth
+title Авторизация и защита маршрутов
+
+skinparam backgroundColor #FFFFFF
+skinparam sequenceArrowThickness 2
+skinparam roundcorner 8
+skinparam maxmessagesize 200
+skinparam sequenceParticipant underline
+
+skinparam participant {
+    BackgroundColor #EFF6FF
+    BorderColor #3B82F6
+    FontColor #000000
+    FontSize 13
+    FontStyle bold
+}
+skinparam arrow {
+    Color #555555
+    FontColor #000000
+    FontSize 12
+}
+skinparam sequence {
+    LifeLineBorderColor #BBBBBB
+    DividerBackgroundColor #F3F4F6
+    DividerBorderColor #CCCCCC
+    DividerFontColor #555555
+    DividerFontSize 11
+}
+
+participant "Пользователь" as U
+participant "Frontend\n(React)" as FE
+participant "Supabase Auth" as AUTH
+participant "PostgreSQL\n(Supabase)" as DB
+
+== Вход ==
+
+U -> FE : Вводит email и пароль
+FE -> AUTH : supabase.auth.signInWithPassword({ email, password })
+AUTH -> DB : SELECT FROM auth.users WHERE email = ?
+DB --> AUTH : { user_id, password_hash }
+AUTH -> AUTH : Проверить пароль (bcrypt)
+AUTH -> AUTH : Создать access_token + refresh_token (JWT)
+AUTH --> FE : 200 OK { session: { access_token, refresh_token } }
+FE -> FE : Сохранить сессию в памяти
+FE --> U : ✅ Вход выполнен,\nперенаправление на «Мои миры»
+
+== Запрос к защищённым данным ==
+
+U -> FE : Открывает «Мои миры»
+FE -> DB : SELECT * FROM projects\nWHERE user_id = auth.uid()\n(Authorization: Bearer <token>)
+DB -> DB : Проверить JWT через RLS-политику
+DB --> FE : { projects[] }
+FE --> U : Показывает список миров
+
+== Обновление токена ==
+
+FE -> AUTH : supabase.auth.refreshSession()
+AUTH -> AUTH : Проверить refresh_token
+AUTH --> FE : { новый access_token }
+FE --> U : Сессия продолжена
+
+== Защита маршрутов (незалогиненный) ==
+
+U -> FE : Открывает /dashboard (без сессии)
+FE -> FE : ProtectedRoute: нет сессии
+FE --> U : Редирект на /login
+
+@enduml

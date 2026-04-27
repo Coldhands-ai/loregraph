@@ -1,0 +1,520 @@
+<svg xmlns="http://www.w3.org/2000/svg"
+  viewBox="0 0 6160 2360"
+  width="6160" height="2360"
+  font-family="Inter, -apple-system, Helvetica, sans-serif">
+
+<!-- Background -->
+<rect width="6160" height="2360" fill="#0A0E18"/>
+
+<!-- Title bar -->
+<rect x="60" y="20" width="6040" height="52" fill="#111827" rx="10" stroke="#1F2937" stroke-width="1"/>
+<text x="90" y="40" font-size="18" fill="#F1F5F9" font-weight="700">LoreGraph</text>
+<text x="90" y="58" font-size="11" fill="#64748B">Dark Wireframe · 6 Screens · 1920×1080 · Import to Figma</text>
+<text x="3000" y="40" font-size="10" fill="#3B82F6" font-weight="600">● Nodes = colored circles</text>
+<text x="3000" y="56" font-size="9" fill="#64748B">Category-coded</text>
+<text x="3300" y="40" font-size="10" fill="#94A3B8" font-weight="600">☐ Wireframe boxes</text>
+<text x="3300" y="56" font-size="9" fill="#64748B">Placeholders</text>
+<text x="3600" y="40" font-size="10" fill="#F1F5F9" font-weight="600">■ Dark fill</text>
+<text x="3600" y="56" font-size="9" fill="#64748B">CTA / Active</text>
+
+<!-- ============================================ -->
+<!-- SCREEN 01 — AUTH (1920x1080) -->
+<!-- ============================================ -->
+<text x="60" y="96" font-size="13" fill="#3B82F6" font-weight="700" letter-spacing="1">01 — AUTH (LOGIN / REGISTER)</text>
+
+<g transform="translate(60,110)">
+  <rect width="1920" height="1080" fill="#0B0F1A" rx="8" stroke="#1F2937" stroke-width="1"/>
+
+  <!-- Left panel -->
+  <rect width="860" height="1080" fill="#111827" rx="8"/>
+  <rect x="860" width="10" height="1080" fill="#111827"/>
+  <!-- Gradient glow -->
+  <circle cx="430" cy="400" r="250" fill="url(#authGlow1)" opacity="0.15"/>
+  <circle cx="600" cy="700" r="200" fill="url(#authGlow2)" opacity="0.1"/>
+
+  <!-- Logo -->
+  <text x="430" y="460" font-size="48" fill="#3B82F6" font-weight="700" text-anchor="middle">LoreGraph</text>
+  <text x="430" y="500" font-size="14" fill="#64748B" text-anchor="middle" letter-spacing="4">BUILD YOUR WORLD · MAP YOUR LORE</text>
+
+  <!-- Decorative graph nodes -->
+  <circle cx="300" cy="620" r="14" fill="none" stroke="#3B82F6" stroke-width="1.5" opacity="0.3"/>
+  <circle cx="420" cy="580" r="10" fill="none" stroke="#7C3AED" stroke-width="1.5" opacity="0.3"/>
+  <circle cx="540" cy="640" r="12" fill="none" stroke="#10B981" stroke-width="1.5" opacity="0.3"/>
+  <circle cx="360" cy="700" r="8" fill="none" stroke="#F59E0B" stroke-width="1.5" opacity="0.3"/>
+  <line x1="314" y1="614" x2="412" y2="586" stroke="#334155" stroke-width="1" opacity="0.2"/>
+  <line x1="430" y1="586" x2="530" y2="632" stroke="#334155" stroke-width="1" opacity="0.2"/>
+  <line x1="310" y1="632" x2="354" y2="694" stroke="#334155" stroke-width="1" opacity="0.2"/>
+
+  <!-- Right form panel -->
+  <text x="1140" y="370" font-size="32" fill="#F1F5F9" font-weight="600">Welcome back</text>
+  <text x="1140" y="400" font-size="14" fill="#64748B">Sign in to continue to your worlds</text>
+
+  <!-- Google button -->
+  <rect x="1140" y="440" width="520" height="50" fill="#111827" rx="10" stroke="#334155" stroke-width="1"/>
+  <text x="1400" y="470" font-size="14" fill="#F1F5F9" font-weight="500" text-anchor="middle">Continue with Google</text>
+
+  <!-- Divider -->
+  <line x1="1140" y1="520" x2="1660" y2="520" stroke="#1F2937" stroke-width="1"/>
+  <text x="1400" y="524" font-size="11" fill="#64748B" text-anchor="middle">or</text>
+
+  <!-- Email -->
+  <text x="1140" y="560" font-size="12" fill="#94A3B8" font-weight="500">Email</text>
+  <rect x="1140" y="570" width="520" height="46" fill="#0B0F1A" rx="8" stroke="#334155" stroke-width="1"/>
+  <text x="1164" y="598" font-size="13" fill="#475569">user@example.com</text>
+
+  <!-- Password -->
+  <text x="1140" y="640" font-size="12" fill="#94A3B8" font-weight="500">Password</text>
+  <rect x="1140" y="650" width="520" height="46" fill="#0B0F1A" rx="8" stroke="#334155" stroke-width="1"/>
+  <text x="1164" y="678" font-size="13" fill="#475569">••••••••</text>
+  <text x="1660" y="640" font-size="12" fill="#3B82F6" font-weight="500" text-anchor="end">Forgot?</text>
+
+  <!-- Sign in -->
+  <rect x="1140" y="724" width="520" height="50" fill="#3B82F6" rx="10"/>
+  <text x="1400" y="754" font-size="14" fill="#FFFFFF" font-weight="600" text-anchor="middle">Sign In</text>
+
+  <!-- Switch -->
+  <text x="1400" y="806" font-size="13" fill="#64748B" text-anchor="middle">Don't have an account?</text>
+  <text x="1400" y="828" font-size="13" fill="#3B82F6" font-weight="500" text-anchor="middle">Create account</text>
+</g>
+
+<!-- ============================================ -->
+<!-- SCREEN 02 — MY WORLDS -->
+<!-- ============================================ -->
+<text x="2080" y="96" font-size="13" fill="#3B82F6" font-weight="700" letter-spacing="1">02 — MY WORLDS</text>
+
+<g transform="translate(2080,110)">
+  <rect width="1920" height="1080" fill="#0B0F1A" rx="8" stroke="#1F2937" stroke-width="1"/>
+
+  <!-- Top bar -->
+  <rect width="1920" height="64" fill="#111827" stroke="#1F2937" stroke-width="1"/>
+  <text x="40" y="40" font-size="18" fill="#3B82F6" font-weight="700">LoreGraph</text>
+  <circle cx="1840" cy="32" r="18" fill="#1F2937"/>
+  <text x="1840" y="37" font-size="13" fill="#94A3B8" text-anchor="middle">👤</text>
+
+  <!-- Title -->
+  <text x="60" y="120" font-size="32" fill="#F1F5F9" font-weight="600">My Worlds</text>
+  <rect x="1660" y="94" width="200" height="42" fill="#3B82F6" rx="8"/>
+  <text x="1760" y="120" font-size="13" fill="#FFFFFF" font-weight="600" text-anchor="middle">+ Create World</text>
+
+  <!-- Search -->
+  <rect x="60" y="150" width="360" height="38" fill="#111827" rx="8" stroke="#1F2937" stroke-width="1"/>
+  <text x="84" y="174" font-size="12" fill="#475569">🔍 Search worlds...</text>
+
+  <!-- Cards row -->
+  <!-- Card 1 -->
+  <rect x="60" y="210" width="560" height="280" fill="#111827" rx="14" stroke="#1F2937" stroke-width="1"/>
+  <rect x="60" y="210" width="560" height="120" fill="#1F2937" rx="14"/>
+  <rect x="620" y="210" width="1" height="120" fill="#1F2937"/>
+  <line x1="60" y1="210" x2="620" y2="330" stroke="#334155" stroke-width="1"/>
+  <line x1="620" y1="210" x2="60" y2="330" stroke="#334155" stroke-width="1"/>
+  <text x="340" y="275" font-size="11" fill="#475569" text-anchor="middle">Cover Image</text>
+  <text x="84" y="365" font-size="18" fill="#F1F5F9" font-weight="600">The Witcher Lore</text>
+  <text x="84" y="390" font-size="13" fill="#64748B">Complete universe wiki</text>
+  <rect x="84" y="408" width="72" height="22" fill="rgba(59,130,246,.15)" rx="6"/>
+  <text x="120" y="423" font-size="10" fill="#3B82F6" font-weight="500" text-anchor="middle">42 articles</text>
+  <rect x="164" y="408" width="60" height="22" fill="rgba(124,58,237,.15)" rx="6"/>
+  <text x="194" y="423" font-size="10" fill="#7C3AED" font-weight="500" text-anchor="middle">68 links</text>
+  <text x="84" y="468" font-size="11" fill="#475569">Updated 2 hours ago</text>
+
+  <!-- Card 2 -->
+  <rect x="660" y="210" width="560" height="280" fill="#111827" rx="14" stroke="#1F2937" stroke-width="1"/>
+  <rect x="660" y="210" width="560" height="120" fill="#1F2937" rx="14"/>
+  <rect x="1220" y="210" width="1" height="120" fill="#1F2937"/>
+  <line x1="660" y1="210" x2="1220" y2="330" stroke="#334155" stroke-width="1"/>
+  <line x1="1220" y1="210" x2="660" y2="330" stroke="#334155" stroke-width="1"/>
+  <text x="940" y="275" font-size="11" fill="#475569" text-anchor="middle">Cover Image</text>
+  <text x="684" y="365" font-size="18" fill="#F1F5F9" font-weight="600">D&amp;D Campaign</text>
+  <text x="684" y="390" font-size="13" fill="#64748B">Homebrew world notes</text>
+  <rect x="684" y="408" width="72" height="22" fill="rgba(59,130,246,.15)" rx="6"/>
+  <text x="720" y="423" font-size="10" fill="#3B82F6" font-weight="500" text-anchor="middle">18 articles</text>
+  <rect x="764" y="408" width="60" height="22" fill="rgba(124,58,237,.15)" rx="6"/>
+  <text x="794" y="423" font-size="10" fill="#7C3AED" font-weight="500" text-anchor="middle">24 links</text>
+  <text x="684" y="468" font-size="11" fill="#475569">Updated yesterday</text>
+
+  <!-- Card 3 — placeholder -->
+  <rect x="1260" y="210" width="560" height="280" fill="#111827" rx="14" stroke="#1F2937" stroke-width="1" stroke-dasharray="8,6"/>
+  <text x="1540" y="350" font-size="36" fill="#334155" text-anchor="middle">+</text>
+  <text x="1540" y="380" font-size="13" fill="#475569" text-anchor="middle">Create new world</text>
+</g>
+
+<!-- ============================================ -->
+<!-- SCREEN 03 — WORLD DASHBOARD -->
+<!-- ============================================ -->
+<text x="4100" y="96" font-size="13" fill="#3B82F6" font-weight="700" letter-spacing="1">03 — WORLD DASHBOARD</text>
+
+<g transform="translate(4100,110)">
+  <rect width="1920" height="1080" fill="#0B0F1A" rx="8" stroke="#1F2937" stroke-width="1"/>
+
+  <!-- Sidebar -->
+  <rect width="260" height="1080" fill="#111827" stroke="#1F2937" stroke-width="1"/>
+  <text x="30" y="38" font-size="16" fill="#3B82F6" font-weight="700">LoreGraph</text>
+  <text x="30" y="58" font-size="11" fill="#64748B">← Back to worlds</text>
+  <rect x="12" y="80" width="236" height="36" fill="rgba(59,130,246,.12)" rx="8"/>
+  <text x="48" y="103" font-size="12" fill="#3B82F6" font-weight="600">📊 Dashboard</text>
+  <text x="48" y="134" font-size="12" fill="#94A3B8">🔗 Graph</text>
+  <text x="48" y="162" font-size="12" fill="#94A3B8">📄 Articles</text>
+  <text x="48" y="190" font-size="12" fill="#94A3B8">⚙️ Settings</text>
+  <line x1="12" y1="216" x2="248" y2="216" stroke="#1F2937" stroke-width="1"/>
+  <text x="30" y="240" font-size="10" fill="#64748B" font-weight="600" letter-spacing="2">CATEGORIES</text>
+  <circle cx="38" cy="264" r="5" fill="#3B82F6"/><text x="54" y="268" font-size="11" fill="#94A3B8">Characters</text><text x="220" y="268" font-size="10" fill="#475569" text-anchor="end">12</text>
+  <circle cx="38" cy="290" r="5" fill="#10B981"/><text x="54" y="294" font-size="11" fill="#94A3B8">Locations</text><text x="220" y="294" font-size="10" fill="#475569" text-anchor="end">8</text>
+  <circle cx="38" cy="316" r="5" fill="#F59E0B"/><text x="54" y="320" font-size="11" fill="#94A3B8">Events</text><text x="220" y="320" font-size="10" fill="#475569" text-anchor="end">5</text>
+  <circle cx="38" cy="342" r="5" fill="#EF4444"/><text x="54" y="346" font-size="11" fill="#94A3B8">Items</text><text x="220" y="346" font-size="10" fill="#475569" text-anchor="end">7</text>
+  <circle cx="38" cy="368" r="5" fill="#8B5CF6"/><text x="54" y="372" font-size="11" fill="#94A3B8">Factions</text><text x="220" y="372" font-size="10" fill="#475569" text-anchor="end">3</text>
+
+  <!-- Main -->
+  <text x="300" y="46" font-size="26" fill="#F1F5F9" font-weight="600">The Witcher Lore</text>
+  <text x="300" y="70" font-size="13" fill="#64748B">Complete universe wiki for the Witcher saga</text>
+
+  <!-- Stats -->
+  <rect x="300" y="100" width="380" height="100" fill="#111827" rx="12" stroke="#1F2937" stroke-width="1"/>
+  <text x="330" y="140" font-size="36" fill="#3B82F6" font-weight="700">42</text>
+  <text x="330" y="164" font-size="12" fill="#64748B">Articles</text>
+  <rect x="330" y="176" width="120" height="5" fill="rgba(59,130,246,.3)" rx="2"/>
+  <rect x="330" y="176" width="84" height="5" fill="#3B82F6" rx="2"/>
+
+  <rect x="700" y="100" width="380" height="100" fill="#111827" rx="12" stroke="#1F2937" stroke-width="1"/>
+  <text x="730" y="140" font-size="36" fill="#7C3AED" font-weight="700">68</text>
+  <text x="730" y="164" font-size="12" fill="#64748B">Relations</text>
+  <rect x="730" y="176" width="120" height="5" fill="rgba(124,58,237,.3)" rx="2"/>
+  <rect x="730" y="176" width="102" height="5" fill="#7C3AED" rx="2"/>
+
+  <rect x="1100" y="100" width="380" height="100" fill="#111827" rx="12" stroke="#1F2937" stroke-width="1"/>
+  <text x="1130" y="140" font-size="36" fill="#10B981" font-weight="700">5</text>
+  <text x="1130" y="164" font-size="12" fill="#64748B">Categories</text>
+  <rect x="1130" y="176" width="120" height="5" fill="rgba(16,185,129,.3)" rx="2"/>
+  <rect x="1130" y="176" width="48" height="5" fill="#10B981" rx="2"/>
+
+  <!-- Recent articles -->
+  <text x="300" y="240" font-size="14" fill="#F1F5F9" font-weight="600">Recent Articles</text>
+  <text x="1460" y="240" font-size="12" fill="#3B82F6">View all →</text>
+
+  <rect x="300" y="258" width="1180" height="46" fill="#111827" rx="8" stroke="#1F2937" stroke-width="1"/>
+  <circle cx="326" cy="281" r="6" fill="#3B82F6"/><text x="346" y="285" font-size="12" fill="#F1F5F9" font-weight="500">Geralt of Rivia</text>
+  <text x="1100" y="285" font-size="11" fill="#64748B" text-anchor="end">Character</text><text x="1460" y="285" font-size="11" fill="#475569" text-anchor="end">2 min ago</text>
+
+  <rect x="300" y="312" width="1180" height="46" fill="#111827" rx="8" stroke="#1F2937" stroke-width="1"/>
+  <circle cx="326" cy="335" r="6" fill="#10B981"/><text x="346" y="339" font-size="12" fill="#F1F5F9" font-weight="500">Kaer Morhen</text>
+  <text x="1100" y="339" font-size="11" fill="#64748B" text-anchor="end">Location</text><text x="1460" y="339" font-size="11" fill="#475569" text-anchor="end">1 hour ago</text>
+
+  <rect x="300" y="366" width="1180" height="46" fill="#111827" rx="8" stroke="#1F2937" stroke-width="1"/>
+  <circle cx="326" cy="389" r="6" fill="#F59E0B"/><text x="346" y="393" font-size="12" fill="#F1F5F9" font-weight="500">Battle of Sodden Hill</text>
+  <text x="1100" y="393" font-size="11" fill="#64748B" text-anchor="end">Event</text><text x="1460" y="393" font-size="11" fill="#475569" text-anchor="end">3 hours ago</text>
+</g>
+
+<!-- ============================================ -->
+<!-- SCREEN 04 — GRAPH VIEW -->
+<!-- ============================================ -->
+<text x="60" y="1216" font-size="13" fill="#3B82F6" font-weight="700" letter-spacing="1">04 — GRAPH VIEW (KEY FEATURE)</text>
+
+<g transform="translate(60,1230)">
+  <rect width="1920" height="1080" fill="#050810" rx="8" stroke="#1F2937" stroke-width="1"/>
+
+  <!-- Sidebar -->
+  <rect width="260" height="1080" fill="#0F1629" stroke="#1F2937" stroke-width="1"/>
+  <text x="30" y="38" font-size="16" fill="#3B82F6" font-weight="700">LoreGraph</text>
+  <text x="48" y="78" font-size="12" fill="#64748B">📊 Dashboard</text>
+  <rect x="12" y="92" width="236" height="36" fill="rgba(59,130,246,.12)" rx="8"/>
+  <text x="48" y="115" font-size="12" fill="#3B82F6" font-weight="600">🔗 Graph</text>
+  <text x="48" y="146" font-size="12" fill="#64748B">📄 Articles</text>
+  <text x="48" y="174" font-size="12" fill="#64748B">⚙️ Settings</text>
+  <line x1="12" y1="200" x2="248" y2="200" stroke="#1F2937" stroke-width="1"/>
+  <text x="30" y="224" font-size="10" fill="#64748B" font-weight="600" letter-spacing="2">FILTERS</text>
+  <rect x="18" y="240" width="14" height="14" fill="#3B82F6" rx="2"/><text x="42" y="252" font-size="11" fill="#94A3B8">Characters</text>
+  <rect x="18" y="264" width="14" height="14" fill="#10B981" rx="2"/><text x="42" y="276" font-size="11" fill="#94A3B8">Locations</text>
+  <rect x="18" y="288" width="14" height="14" fill="#F59E0B" rx="2"/><text x="42" y="300" font-size="11" fill="#94A3B8">Events</text>
+  <rect x="18" y="312" width="14" height="14" fill="#EF4444" rx="2"/><text x="42" y="324" font-size="11" fill="#94A3B8">Items</text>
+  <rect x="18" y="336" width="14" height="14" fill="#8B5CF6" rx="2"/><text x="42" y="348" font-size="11" fill="#94A3B8">Factions</text>
+  <line x1="12" y1="370" x2="248" y2="370" stroke="#1F2937" stroke-width="1"/>
+  <rect x="12" y="386" width="236" height="32" fill="#050810" rx="6" stroke="#1F2937" stroke-width="1"/>
+  <text x="32" y="407" font-size="11" fill="#475569">🔍 Find node...</text>
+
+  <!-- Ambient glows -->
+  <circle cx="700" cy="400" r="300" fill="url(#graphGlow1)" opacity="0.12"/>
+  <circle cx="1100" cy="600" r="250" fill="url(#graphGlow2)" opacity="0.08"/>
+  <circle cx="500" cy="700" r="200" fill="url(#graphGlow3)" opacity="0.06"/>
+
+  <!-- Graph edges with glow -->
+  <line x1="620" y1="390" x2="900" y2="320" stroke="rgba(59,130,246,.5)" stroke-width="2.5"/>
+  <text x="760" y="346" font-size="10" fill="rgba(148,163,184,.6)">lover</text>
+  <line x1="620" y1="420" x2="780" y2="600" stroke="rgba(59,130,246,.5)" stroke-width="2.5"/>
+  <text x="680" y="504" font-size="10" fill="rgba(148,163,184,.6)" transform="rotate(30,680,504)">father of</text>
+  <line x1="660" y1="410" x2="1080" y2="460" stroke="rgba(148,163,184,.3)" stroke-width="2"/>
+  <text x="870" y="424" font-size="10" fill="rgba(148,163,184,.5)">lives in</text>
+  <line x1="480" y1="680" x2="580" y2="420" stroke="rgba(148,163,184,.25)" stroke-width="1.5"/>
+  <line x1="820" y1="630" x2="1000" y2="730" stroke="rgba(148,163,184,.25)" stroke-width="1.5"/>
+  <line x1="1120" y1="480" x2="1250" y2="350" stroke="rgba(148,163,184,.25)" stroke-width="1.5"/>
+  <line x1="680" y1="860" x2="1080" y2="490" stroke="rgba(148,163,184,.2)" stroke-width="1.5"/>
+  <line x1="930" y1="310" x2="800" y2="580" stroke="rgba(148,163,184,.2)" stroke-width="1.5"/>
+
+  <!-- Nodes with glow -->
+  <circle cx="600" cy="400" r="40" fill="#3B82F6" opacity="0.2" filter="url(#nodeGlow)"/>
+  <circle cx="600" cy="400" r="28" fill="#3B82F6"/>
+  <text x="600" y="404" font-size="11" fill="#FFFFFF" font-weight="600" text-anchor="middle">Geralt</text>
+
+  <circle cx="920" cy="300" r="32" fill="#3B82F6" opacity="0.2" filter="url(#nodeGlow)"/>
+  <circle cx="920" cy="300" r="22" fill="#3B82F6"/>
+  <text x="920" y="304" font-size="10" fill="#FFFFFF" font-weight="600" text-anchor="middle">Yennefer</text>
+
+  <circle cx="800" cy="610" r="30" fill="#3B82F6" opacity="0.2" filter="url(#nodeGlow)"/>
+  <circle cx="800" cy="610" r="20" fill="#3B82F6"/>
+  <text x="800" y="614" font-size="10" fill="#FFFFFF" font-weight="600" text-anchor="middle">Ciri</text>
+
+  <circle cx="1100" cy="460" r="36" fill="#10B981" opacity="0.2" filter="url(#nodeGlow)"/>
+  <circle cx="1100" cy="460" r="24" fill="#10B981"/>
+  <text x="1100" y="456" font-size="9" fill="#FFFFFF" font-weight="600" text-anchor="middle">Kaer</text>
+  <text x="1100" y="468" font-size="9" fill="#FFFFFF" font-weight="600" text-anchor="middle">Morhen</text>
+
+  <circle cx="460" cy="690" r="26" fill="#10B981" opacity="0.15" filter="url(#nodeGlow)"/>
+  <circle cx="460" cy="690" r="18" fill="#10B981"/>
+  <text x="460" y="694" font-size="9" fill="#FFFFFF" font-weight="600" text-anchor="middle">Novigrad</text>
+
+  <circle cx="1020" cy="740" r="22" fill="#F59E0B" opacity="0.15" filter="url(#nodeGlow)"/>
+  <circle cx="1020" cy="740" r="16" fill="#F59E0B"/>
+  <text x="1020" y="744" font-size="8" fill="#FFFFFF" font-weight="600" text-anchor="middle">Battle</text>
+
+  <circle cx="1260" cy="340" r="20" fill="#EF4444" opacity="0.15" filter="url(#nodeGlow)"/>
+  <circle cx="1260" cy="340" r="14" fill="#EF4444"/>
+  <text x="1260" y="344" font-size="8" fill="#FFFFFF" font-weight="600" text-anchor="middle">Sword</text>
+
+  <circle cx="680" cy="860" r="24" fill="#8B5CF6" opacity="0.15" filter="url(#nodeGlow)"/>
+  <circle cx="680" cy="860" r="17" fill="#8B5CF6"/>
+  <text x="680" y="864" font-size="8" fill="#FFFFFF" font-weight="600" text-anchor="middle">Witchers</text>
+
+  <!-- Right panel -->
+  <rect x="1580" y="30" width="310" height="600" fill="rgba(15,22,41,.92)" rx="12" stroke="#1F2937" stroke-width="1"/>
+  <text x="1610" y="62" font-size="11" fill="#64748B" font-weight="500" letter-spacing="1.5">ARTICLE PREVIEW</text>
+  <rect x="1610" y="80" width="250" height="110" fill="#1F2937" rx="8"/>
+  <line x1="1610" y1="80" x2="1860" y2="190" stroke="#334155" stroke-width="1"/><line x1="1860" y1="80" x2="1610" y2="190" stroke="#334155" stroke-width="1"/>
+  <text x="1735" y="140" font-size="10" fill="#475569" text-anchor="middle">Image</text>
+  <text x="1610" y="220" font-size="18" fill="#F1F5F9" font-weight="600">Geralt of Rivia</text>
+  <rect x="1610" y="232" width="72" height="20" fill="rgba(59,130,246,.2)" rx="6"/>
+  <text x="1646" y="246" font-size="9" fill="#3B82F6" font-weight="600" text-anchor="middle">Character</text>
+  <rect x="1610" y="270" width="250" height="6" fill="#1F2937" rx="3"/>
+  <rect x="1610" y="284" width="220" height="6" fill="#1F2937" rx="3"/>
+  <rect x="1610" y="298" width="240" height="6" fill="#1F2937" rx="3"/>
+  <text x="1610" y="340" font-size="11" fill="#94A3B8" font-weight="600">Relations (5)</text>
+  <text x="1618" y="362" font-size="10" fill="#94A3B8">→ Ciri (father of)</text>
+  <text x="1618" y="382" font-size="10" fill="#94A3B8">→ Yennefer (lover)</text>
+  <text x="1618" y="402" font-size="10" fill="#94A3B8">→ Kaer Morhen (lives in)</text>
+  <rect x="1610" y="430" width="250" height="36" fill="#3B82F6" rx="8"/>
+  <text x="1735" y="453" font-size="12" fill="#FFFFFF" font-weight="600" text-anchor="middle">Open Article →</text>
+
+  <!-- Toolbar -->
+  <rect x="290" y="30" width="70" height="30" fill="rgba(17,24,39,.8)" rx="6" stroke="#334155" stroke-width="1"/>
+  <text x="325" y="50" font-size="11" fill="#94A3B8" text-anchor="middle">Zoom +</text>
+  <rect x="368" y="30" width="70" height="30" fill="rgba(17,24,39,.8)" rx="6" stroke="#334155" stroke-width="1"/>
+  <text x="403" y="50" font-size="11" fill="#94A3B8" text-anchor="middle">Zoom −</text>
+  <rect x="446" y="30" width="60" height="30" fill="rgba(17,24,39,.8)" rx="6" stroke="#334155" stroke-width="1"/>
+  <text x="476" y="50" font-size="11" fill="#94A3B8" text-anchor="middle">Reset</text>
+</g>
+
+<!-- ============================================ -->
+<!-- SCREEN 05 — ARTICLE EDITOR -->
+<!-- ============================================ -->
+<text x="2080" y="1216" font-size="13" fill="#3B82F6" font-weight="700" letter-spacing="1">05 — ARTICLE EDITOR</text>
+
+<g transform="translate(2080,1230)">
+  <rect width="1920" height="1080" fill="#0B0F1A" rx="8" stroke="#1F2937" stroke-width="1"/>
+
+  <!-- Sidebar -->
+  <rect width="260" height="1080" fill="#111827" stroke="#1F2937" stroke-width="1"/>
+  <text x="30" y="38" font-size="16" fill="#3B82F6" font-weight="700">LoreGraph</text>
+  <text x="48" y="78" font-size="12" fill="#64748B">📊 Dashboard</text>
+  <text x="48" y="106" font-size="12" fill="#64748B">🔗 Graph</text>
+  <rect x="12" y="118" width="236" height="36" fill="rgba(59,130,246,.12)" rx="8"/>
+  <text x="48" y="141" font-size="12" fill="#3B82F6" font-weight="600">📄 Articles</text>
+  <text x="48" y="172" font-size="12" fill="#64748B">⚙️ Settings</text>
+
+  <!-- Editor -->
+  <rect x="290" y="30" width="1000" height="1020" fill="#111827" rx="12" stroke="#1F2937" stroke-width="1"/>
+
+  <!-- Title -->
+  <text x="330" y="74" font-size="11" fill="#64748B" font-weight="500" letter-spacing="1">ARTICLE TITLE</text>
+  <rect x="330" y="86" width="920" height="44" fill="#0B0F1A" rx="8" stroke="#1F2937" stroke-width="1"/>
+  <text x="354" y="114" font-size="18" fill="#F1F5F9" font-weight="600">Geralt of Rivia</text>
+
+  <!-- Category + Tags -->
+  <text x="330" y="158" font-size="11" fill="#64748B" font-weight="500" letter-spacing="1">CATEGORY</text>
+  <rect x="330" y="168" width="220" height="36" fill="#0B0F1A" rx="8" stroke="#1F2937" stroke-width="1"/>
+  <circle cx="352" cy="186" r="5" fill="#3B82F6"/><text x="368" y="190" font-size="12" fill="#94A3B8">Character ▾</text>
+
+  <text x="580" y="158" font-size="11" fill="#64748B" font-weight="500" letter-spacing="1">TAGS</text>
+  <rect x="580" y="168" width="420" height="36" fill="#0B0F1A" rx="8" stroke="#1F2937" stroke-width="1"/>
+  <rect x="594" y="176" width="66" height="20" fill="rgba(59,130,246,.15)" rx="6"/>
+  <text x="627" y="190" font-size="9" fill="#3B82F6" text-anchor="middle">witcher ×</text>
+  <rect x="668" y="176" width="52" height="20" fill="rgba(59,130,246,.15)" rx="6"/>
+  <text x="694" y="190" font-size="9" fill="#3B82F6" text-anchor="middle">hero ×</text>
+
+  <!-- Toolbar -->
+  <rect x="330" y="224" width="920" height="34" fill="#0F172A" rx="6"/>
+  <text x="360" y="246" font-size="13" fill="#F1F5F9" font-weight="700">B</text>
+  <text x="392" y="246" font-size="13" fill="#94A3B8" font-style="italic">I</text>
+  <text x="420" y="246" font-size="13" fill="#94A3B8">U</text>
+  <text x="448" y="246" font-size="13" fill="#334155">|</text>
+  <text x="468" y="246" font-size="12" fill="#94A3B8">H1</text>
+  <text x="500" y="246" font-size="12" fill="#94A3B8">H2</text>
+  <text x="534" y="246" font-size="13" fill="#334155">|</text>
+  <text x="554" y="246" font-size="13" fill="#94A3B8">☰</text>
+  <text x="582" y="246" font-size="13" fill="#94A3B8">❝</text>
+  <text x="612" y="246" font-size="13" fill="#334155">|</text>
+  <text x="636" y="246" font-size="13" fill="#3B82F6" font-weight="600">@</text>
+
+  <!-- Content lines -->
+  <rect x="330" y="280" width="900" height="7" fill="#1F2937" rx="3"/>
+  <rect x="330" y="296" width="780" height="7" fill="#1F2937" rx="3"/>
+  <rect x="330" y="312" width="850" height="7" fill="#1F2937" rx="3"/>
+  <rect x="330" y="338" width="140" height="10" fill="#374151" rx="3"/>
+  <rect x="330" y="360" width="920" height="7" fill="#1F2937" rx="3"/>
+  <rect x="330" y="376" width="700" height="7" fill="#1F2937" rx="3"/>
+  <!-- @mention -->
+  <rect x="500" y="398" width="100" height="18" fill="rgba(59,130,246,.15)" rx="4"/>
+  <text x="550" y="411" font-size="10" fill="#3B82F6" text-anchor="middle">@Yennefer</text>
+  <rect x="610" y="400" width="600" height="7" fill="#1F2937" rx="3"/>
+
+  <!-- Autosave -->
+  <text x="1220" y="1020" font-size="11" fill="#10B981" text-anchor="end">✓ Saved 2s ago</text>
+
+  <!-- Relations panel -->
+  <rect x="1320" y="30" width="570" height="1020" fill="#111827" rx="12" stroke="#1F2937" stroke-width="1"/>
+  <text x="1350" y="68" font-size="15" fill="#F1F5F9" font-weight="600">Relations</text>
+  <rect x="1740" y="50" width="120" height="30" fill="#3B82F6" rx="8"/>
+  <text x="1800" y="70" font-size="11" fill="#FFFFFF" font-weight="500" text-anchor="middle">+ Add</text>
+
+  <rect x="1350" y="94" width="510" height="54" fill="#0B0F1A" rx="10" stroke="#1F2937" stroke-width="1"/>
+  <text x="1374" y="118" font-size="12" fill="#F1F5F9" font-weight="500">→ Ciri</text>
+  <text x="1374" y="136" font-size="10" fill="#64748B">father of</text>
+  <text x="1840" y="122" font-size="12" fill="#EF4444" text-anchor="end">✕</text>
+
+  <rect x="1350" y="158" width="510" height="54" fill="#0B0F1A" rx="10" stroke="#1F2937" stroke-width="1"/>
+  <text x="1374" y="182" font-size="12" fill="#F1F5F9" font-weight="500">→ Yennefer</text>
+  <text x="1374" y="200" font-size="10" fill="#64748B">lover</text>
+  <text x="1840" y="186" font-size="12" fill="#EF4444" text-anchor="end">✕</text>
+
+  <rect x="1350" y="222" width="510" height="54" fill="#0B0F1A" rx="10" stroke="#1F2937" stroke-width="1"/>
+  <text x="1374" y="246" font-size="12" fill="#F1F5F9" font-weight="500">→ Kaer Morhen</text>
+  <text x="1374" y="264" font-size="10" fill="#64748B">lives in</text>
+  <text x="1840" y="250" font-size="12" fill="#EF4444" text-anchor="end">✕</text>
+
+  <!-- Cover -->
+  <text x="1350" y="314" font-size="15" fill="#F1F5F9" font-weight="600">Cover Image</text>
+  <rect x="1350" y="330" width="510" height="140" fill="#0B0F1A" rx="10" stroke="#1F2937" stroke-width="1" stroke-dasharray="6,4"/>
+  <text x="1605" y="400" font-size="12" fill="#475569" text-anchor="middle">📷 Upload image</text>
+  <text x="1605" y="420" font-size="10" fill="#475569" text-anchor="middle">or drag &amp; drop</text>
+</g>
+
+<!-- ============================================ -->
+<!-- SCREEN 06 — ARTICLE CATALOG -->
+<!-- ============================================ -->
+<text x="4100" y="1216" font-size="13" fill="#3B82F6" font-weight="700" letter-spacing="1">06 — ARTICLE CATALOG</text>
+
+<g transform="translate(4100,1230)">
+  <rect width="1920" height="1080" fill="#0B0F1A" rx="8" stroke="#1F2937" stroke-width="1"/>
+
+  <!-- Sidebar -->
+  <rect width="260" height="1080" fill="#111827" stroke="#1F2937" stroke-width="1"/>
+  <text x="30" y="38" font-size="16" fill="#3B82F6" font-weight="700">LoreGraph</text>
+  <text x="48" y="78" font-size="12" fill="#64748B">📊 Dashboard</text>
+  <text x="48" y="106" font-size="12" fill="#64748B">🔗 Graph</text>
+  <rect x="12" y="118" width="236" height="36" fill="rgba(59,130,246,.12)" rx="8"/>
+  <text x="48" y="141" font-size="12" fill="#3B82F6" font-weight="600">📄 Articles</text>
+  <text x="48" y="172" font-size="12" fill="#64748B">⚙️ Settings</text>
+
+  <!-- Header -->
+  <text x="300" y="50" font-size="24" fill="#F1F5F9" font-weight="700">Articles</text>
+  <text x="300" y="74" font-size="13" fill="#64748B">42 articles in this world</text>
+  <rect x="1680" y="30" width="180" height="40" fill="#3B82F6" rx="8"/>
+  <text x="1770" y="55" font-size="13" fill="#FFFFFF" font-weight="600" text-anchor="middle">+ New Article</text>
+
+  <!-- Search + filters -->
+  <rect x="300" y="100" width="320" height="34" fill="#111827" rx="8" stroke="#1F2937" stroke-width="1"/>
+  <text x="324" y="122" font-size="12" fill="#475569">🔍 Search articles...</text>
+
+  <rect x="640" y="100" width="50" height="32" fill="#F1F5F9" rx="14"/>
+  <text x="665" y="120" font-size="11" fill="#0B0F1A" font-weight="600" text-anchor="middle">All</text>
+  <rect x="700" y="100" width="100" height="32" fill="#111827" rx="14" stroke="#1F2937" stroke-width="1"/>
+  <circle cx="720" cy="116" r="4" fill="#3B82F6"/><text x="758" y="120" font-size="10" fill="#94A3B8" text-anchor="middle">Characters</text>
+  <rect x="810" y="100" width="90" height="32" fill="#111827" rx="14" stroke="#1F2937" stroke-width="1"/>
+  <circle cx="830" cy="116" r="4" fill="#10B981"/><text x="862" y="120" font-size="10" fill="#94A3B8" text-anchor="middle">Locations</text>
+  <rect x="910" y="100" width="80" height="32" fill="#111827" rx="14" stroke="#1F2937" stroke-width="1"/>
+  <circle cx="930" cy="116" r="4" fill="#F59E0B"/><text x="956" y="120" font-size="10" fill="#94A3B8" text-anchor="middle">Events</text>
+
+  <!-- Cards -->
+  <rect x="300" y="156" width="340" height="200" fill="#111827" rx="14" stroke="#1F2937" stroke-width="1"/>
+  <rect x="300" y="156" width="340" height="80" fill="#1F2937" rx="14"/><line x1="300" y1="156" x2="640" y2="236" stroke="#334155" stroke-width="1"/><line x1="640" y1="156" x2="300" y2="236" stroke="#334155" stroke-width="1"/>
+  <circle cx="324" cy="258" r="5" fill="#3B82F6"/><text x="340" y="262" font-size="10" fill="#64748B">Character</text>
+  <text x="324" y="286" font-size="14" fill="#F1F5F9" font-weight="600">Geralt of Rivia</text>
+  <rect x="324" y="296" width="160" height="6" fill="#1F2937" rx="3"/><rect x="324" y="308" width="120" height="6" fill="#1F2937" rx="3"/>
+  <text x="324" y="340" font-size="10" fill="#475569">5 relations</text>
+
+  <rect x="660" y="156" width="340" height="200" fill="#111827" rx="14" stroke="#1F2937" stroke-width="1"/>
+  <rect x="660" y="156" width="340" height="80" fill="#1F2937" rx="14"/><line x1="660" y1="156" x2="1000" y2="236" stroke="#334155" stroke-width="1"/><line x1="1000" y1="156" x2="660" y2="236" stroke="#334155" stroke-width="1"/>
+  <circle cx="684" cy="258" r="5" fill="#3B82F6"/><text x="700" y="262" font-size="10" fill="#64748B">Character</text>
+  <text x="684" y="286" font-size="14" fill="#F1F5F9" font-weight="600">Yennefer</text>
+  <rect x="684" y="296" width="140" height="6" fill="#1F2937" rx="3"/>
+  <text x="684" y="340" font-size="10" fill="#475569">4 relations</text>
+
+  <rect x="1020" y="156" width="340" height="200" fill="#111827" rx="14" stroke="#1F2937" stroke-width="1"/>
+  <rect x="1020" y="156" width="340" height="80" fill="#1F2937" rx="14"/><line x1="1020" y1="156" x2="1360" y2="236" stroke="#334155" stroke-width="1"/><line x1="1360" y1="156" x2="1020" y2="236" stroke="#334155" stroke-width="1"/>
+  <circle cx="1044" cy="258" r="5" fill="#10B981"/><text x="1060" y="262" font-size="10" fill="#64748B">Location</text>
+  <text x="1044" y="286" font-size="14" fill="#F1F5F9" font-weight="600">Kaer Morhen</text>
+  <rect x="1044" y="296" width="130" height="6" fill="#1F2937" rx="3"/>
+  <text x="1044" y="340" font-size="10" fill="#475569">3 relations</text>
+
+  <rect x="1380" y="156" width="340" height="200" fill="#111827" rx="14" stroke="#1F2937" stroke-width="1"/>
+  <rect x="1380" y="156" width="340" height="80" fill="#1F2937" rx="14"/><line x1="1380" y1="156" x2="1720" y2="236" stroke="#334155" stroke-width="1"/><line x1="1720" y1="156" x2="1380" y2="236" stroke="#334155" stroke-width="1"/>
+  <circle cx="1404" cy="258" r="5" fill="#F59E0B"/><text x="1420" y="262" font-size="10" fill="#64748B">Event</text>
+  <text x="1404" y="286" font-size="14" fill="#F1F5F9" font-weight="600">Battle of Sodden</text>
+  <rect x="1404" y="296" width="150" height="6" fill="#1F2937" rx="3"/>
+  <text x="1404" y="340" font-size="10" fill="#475569">6 relations</text>
+
+  <!-- Row 2 -->
+  <rect x="300" y="376" width="340" height="200" fill="#111827" rx="14" stroke="#1F2937" stroke-width="1"/>
+  <rect x="300" y="376" width="340" height="80" fill="#1F2937" rx="14"/>
+  <circle cx="324" cy="478" r="5" fill="#3B82F6"/><text x="340" y="482" font-size="10" fill="#64748B">Character</text>
+  <text x="324" y="506" font-size="14" fill="#F1F5F9" font-weight="600">Ciri</text>
+  <rect x="324" y="516" width="120" height="6" fill="#1F2937" rx="3"/>
+  <text x="324" y="560" font-size="10" fill="#475569">4 relations</text>
+
+  <rect x="660" y="376" width="340" height="200" fill="#111827" rx="14" stroke="#1F2937" stroke-width="1"/>
+  <rect x="660" y="376" width="340" height="80" fill="#1F2937" rx="14"/>
+  <circle cx="684" cy="478" r="5" fill="#10B981"/><text x="700" y="482" font-size="10" fill="#64748B">Location</text>
+  <text x="684" y="506" font-size="14" fill="#F1F5F9" font-weight="600">Novigrad</text>
+  <rect x="684" y="516" width="140" height="6" fill="#1F2937" rx="3"/>
+  <text x="684" y="560" font-size="10" fill="#475569">2 relations</text>
+
+  <rect x="1020" y="376" width="340" height="200" fill="#111827" rx="14" stroke="#1F2937" stroke-width="1"/>
+  <rect x="1020" y="376" width="340" height="80" fill="#1F2937" rx="14"/>
+  <circle cx="1044" cy="478" r="5" fill="#EF4444"/><text x="1060" y="482" font-size="10" fill="#64748B">Item</text>
+  <text x="1044" y="506" font-size="14" fill="#F1F5F9" font-weight="600">Silver Sword</text>
+  <rect x="1044" y="516" width="110" height="6" fill="#1F2937" rx="3"/>
+  <text x="1044" y="560" font-size="10" fill="#475569">2 relations</text>
+
+  <rect x="1380" y="376" width="340" height="200" fill="#111827" rx="14" stroke="#1F2937" stroke-width="1"/>
+  <rect x="1380" y="376" width="340" height="80" fill="#1F2937" rx="14"/>
+  <circle cx="1404" cy="478" r="5" fill="#8B5CF6"/><text x="1420" y="482" font-size="10" fill="#64748B">Faction</text>
+  <text x="1404" y="506" font-size="14" fill="#F1F5F9" font-weight="600">School of the Wolf</text>
+  <rect x="1404" y="516" width="150" height="6" fill="#1F2937" rx="3"/>
+  <text x="1404" y="560" font-size="10" fill="#475569">3 relations</text>
+
+  <!-- Pagination -->
+  <rect x="820" y="600" width="28" height="28" fill="#3B82F6" rx="6"/>
+  <text x="834" y="618" font-size="11" fill="#FFFFFF" text-anchor="middle">1</text>
+  <rect x="856" y="600" width="28" height="28" fill="#111827" rx="6" stroke="#1F2937" stroke-width="1"/>
+  <text x="870" y="618" font-size="11" fill="#94A3B8" text-anchor="middle">2</text>
+  <rect x="892" y="600" width="28" height="28" fill="#111827" rx="6" stroke="#1F2937" stroke-width="1"/>
+  <text x="906" y="618" font-size="11" fill="#94A3B8" text-anchor="middle">3</text>
+  <text x="936" y="618" font-size="11" fill="#94A3B8">→</text>
+</g>
+
+<!-- DEFS -->
+<defs>
+  <radialGradient id="authGlow1"><stop offset="0%" stop-color="#3B82F6"/><stop offset="100%" stop-color="transparent"/></radialGradient>
+  <radialGradient id="authGlow2"><stop offset="0%" stop-color="#7C3AED"/><stop offset="100%" stop-color="transparent"/></radialGradient>
+  <radialGradient id="graphGlow1"><stop offset="0%" stop-color="#3B82F6"/><stop offset="100%" stop-color="transparent"/></radialGradient>
+  <radialGradient id="graphGlow2"><stop offset="0%" stop-color="#7C3AED"/><stop offset="100%" stop-color="transparent"/></radialGradient>
+  <radialGradient id="graphGlow3"><stop offset="0%" stop-color="#10B981"/><stop offset="100%" stop-color="transparent"/></radialGradient>
+  <filter id="nodeGlow"><feGaussianBlur stdDeviation="8" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+</defs>
+
+</svg>

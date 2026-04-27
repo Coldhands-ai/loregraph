@@ -1,0 +1,62 @@
+@startuml seq-registration
+title Регистрация пользователя
+
+skinparam backgroundColor #FFFFFF
+skinparam sequenceArrowThickness 2
+skinparam roundcorner 8
+skinparam maxmessagesize 200
+skinparam sequenceParticipant underline
+
+skinparam participant {
+    BackgroundColor #EFF6FF
+    BorderColor #3B82F6
+    FontColor #000000
+    FontSize 13
+    FontStyle bold
+}
+skinparam arrow {
+    Color #555555
+    FontColor #000000
+    FontSize 12
+}
+skinparam sequence {
+    LifeLineBorderColor #BBBBBB
+    DividerBackgroundColor #F3F4F6
+    DividerBorderColor #CCCCCC
+    DividerFontColor #555555
+    DividerFontSize 11
+}
+
+participant "Пользователь" as U
+participant "Frontend\n(React)" as FE
+participant "Supabase Auth" as AUTH
+participant "PostgreSQL\n(Supabase)" as DB
+
+== Регистрация по email ==
+
+U -> FE : Заполняет форму (email, пароль, имя)
+FE -> FE : Валидация на клиенте\n(формат email, длина пароля)
+FE -> AUTH : supabase.auth.signUp({ email, password })
+AUTH -> AUTH : Проверить, существует ли email
+AUTH -> AUTH : Хешировать пароль (bcrypt)
+AUTH -> DB : INSERT INTO auth.users
+DB --> AUTH : user_id = uuid
+AUTH -> AUTH : Создать JWT (access_token + refresh_token)
+AUTH --> FE : 201 Created { session, user }
+FE -> DB : INSERT INTO profiles\n{ id, email, display_name, role: 'user' }
+DB --> FE : OK
+FE -> FE : Сохранить сессию
+FE --> U : ✅ Регистрация успешна,\nперенаправление на «Мои миры»
+
+== OAuth через Google ==
+
+U -> FE : Нажимает «Continue with Google»
+FE -> AUTH : supabase.auth.signInWithOAuth({ provider: 'google' })
+AUTH --> U : Редирект на Google OAuth
+U -> AUTH : Подтверждает доступ
+AUTH -> DB : INSERT / SELECT auth.users
+AUTH --> FE : Callback с session
+FE -> DB : UPSERT profiles
+FE --> U : ✅ Вход выполнен
+
+@enduml

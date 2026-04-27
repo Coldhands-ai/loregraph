@@ -1,0 +1,63 @@
+@startuml seq-relations
+title Управление связями между статьями
+
+skinparam backgroundColor #FFFFFF
+skinparam sequenceArrowThickness 2
+skinparam roundcorner 8
+skinparam maxmessagesize 200
+skinparam sequenceParticipant underline
+
+skinparam participant {
+    BackgroundColor #EFF6FF
+    BorderColor #3B82F6
+    FontColor #000000
+    FontSize 13
+    FontStyle bold
+}
+skinparam arrow {
+    Color #555555
+    FontColor #000000
+    FontSize 12
+}
+skinparam sequence {
+    LifeLineBorderColor #BBBBBB
+    DividerBackgroundColor #F3F4F6
+    DividerBorderColor #CCCCCC
+    DividerFontColor #555555
+    DividerFontSize 11
+}
+
+participant "Пользователь" as U
+participant "Frontend\n(React)" as FE
+participant "PostgreSQL\n(Supabase)" as DB
+
+== Просмотр связей статьи ==
+
+U -> FE : Открывает статью «Geralt of Rivia»
+FE -> DB : SELECT r.*, a.title, a.category_id\nFROM relations r\nJOIN articles a ON a.id IN\n(r.source_article_id, r.target_article_id)\nWHERE source_article_id = ? OR target_article_id = ?
+DB --> FE : { relations[] }
+FE --> U : Панель «Relations»:\n→ Ciri (father of)\n→ Yennefer (lover)\n→ Kaer Morhen (lives in)
+
+== Добавление связи ==
+
+U -> FE : Нажимает «+ Add»
+FE --> U : Модальное окно
+U -> FE : Начинает вводить «Ci...»
+FE -> DB : SELECT id, title FROM articles\nWHERE project_id = ? AND title ILIKE '%Ci%'
+DB --> FE : [{ id: 3, title: 'Ciri' }, { id: 7, title: 'Cintra' }]
+FE --> U : Выпадающий список совпадений
+U -> FE : Выбирает «Ciri»,\nвводит тип связи «father of»
+FE -> DB : INSERT INTO relations\n{ project_id, source_article_id,\ntarget_article_id, label: 'father of' }
+DB --> FE : { relation_id }
+FE --> U : ✅ Связь добавлена:\n→ Ciri (father of)
+
+== Удаление связи ==
+
+U -> FE : Нажимает ✕ рядом со связью «→ Ciri»
+FE --> U : Диалог «Удалить связь?»
+U -> FE : Подтверждает
+FE -> DB : DELETE FROM relations WHERE id = ?
+DB --> FE : OK
+FE --> U : Связь удалена из списка
+
+@enduml
