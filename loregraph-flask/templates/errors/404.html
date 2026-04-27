@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}404 — LoreGraph{% endblock %}
+{% block main_class %}flex-1 flex items-center justify-center p-8{% endblock %}
+{% block content %}
+<div class="text-center space-y-6 max-w-md animate-fade-in">
+  <p class="font-mono text-xs tracking-widest text-text-dim uppercase">404</p>
+  <h1 class="font-serif text-4xl">Эта тропа никуда не ведёт</h1>
+  <p class="text-text-muted">Узла, который ты ищешь, нет на графе. Возможно, его удалили — или он тебе приснился.</p>
+  <a href="{{ url_for('worlds.index') }}"
+     class="inline-flex items-center justify-center h-12 px-6 rounded bg-brand-gradient text-white text-sm font-semibold tracking-wider hover:-translate-y-px transition-transform">
+    Вернуться в миры
+  </a>
+</div>
+{% endblock %}

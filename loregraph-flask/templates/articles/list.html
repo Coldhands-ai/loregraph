@@ -1,0 +1,125 @@
+{% extends "base.html" %}
+{% block title %}{{ world.title }} — статьи — LoreGraph{% endblock %}
+
+{% block content %}
+<div class="space-y-6" x-data="{ createOpen: false }">
+  <header class="flex items-end justify-between gap-4">
+    <div>
+      <p class="text-xs uppercase tracking-[0.3em] text-text-dim mb-2">Мир</p>
+      <h1 class="font-serif text-3xl">{{ world.title }}</h1>
+      {% if world.description %}<p class="mt-1 text-sm text-text-muted">{{ world.description }}</p>{% endif %}
+    </div>
+    <button @click="createOpen = true"
+            class="inline-flex items-center gap-2 h-10 px-4 rounded bg-brand-gradient text-white text-sm font-semibold tracking-wider hover:-translate-y-px transition-transform shadow-[0_4px_16px_-4px_rgba(59,130,246,0.5)]">
+      + Новая статья
+    </button>
+  </header>
+
+  <!-- Поиск + фильтр -->
+  <form method="get" class="flex flex-col md:flex-row md:items-center gap-3">
+    <div class="relative flex-1 max-w-md">
+      <span class="absolute left-3 top-1/2 -translate-y-1/2 text-text-dim">🔍</span>
+      <input type="search" name="q" value="{{ search }}" placeholder="Поиск по названию"
+             class="h-10 w-full pl-9 pr-3 rounded border border-border-strong bg-bg-surface text-sm placeholder:text-text-dim focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand">
+    </div>
+    {% if filter_cat %}<input type="hidden" name="category" value="{{ filter_cat }}">{% endif %}
+    <button type="submit" class="hidden">Найти</button>
+  </form>
+
+  <!-- Чипы категорий -->
+  <div class="flex flex-wrap gap-2">
+    <a href="{{ url_for('articles.index', world_id=world.id, q=search) }}"
+       class="inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-medium transition-all
+              {% if not filter_cat %}text-white border-text-muted bg-text-muted/30{% else %}text-text-muted border-border hover:border-text-muted{% endif %}">
+      <span class="h-1.5 w-1.5 rounded-full bg-text-muted"></span>
+      Все
+    </a>
+    {% for c in categories %}
+      <a href="{{ url_for('articles.index', world_id=world.id, q=search, category=c.id) }}"
+         class="inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-medium transition-all"
+         style="color: {% if filter_cat == c.id %}#fff{% else %}{{ c.color }}{% endif %};
+                background-color: {% if filter_cat == c.id %}{{ c.color }}{% else %}{{ c.color }}1A{% endif %};
+                border-color: {% if filter_cat == c.id %}{{ c.color }}{% else %}{{ c.color }}55{% endif %};">
+        <span class="h-1.5 w-1.5 rounded-full" style="background-color: {% if filter_cat == c.id %}#fff{% else %}{{ c.color }}{% endif %}"></span>
+        {{ c.name }}
+      </a>
+    {% endfor %}
+  </div>
+
+  {% if articles %}
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+      {% for a in articles %}
+        <a href="{{ url_for('articles.edit', world_id=world.id, article_id=a.id) }}"
+           class="group rounded-lg border border-border bg-bg-surface/60 hover:border-brand/50 hover:bg-bg-surface/80 hover:-translate-y-0.5 transition-all p-5 block">
+          <div class="flex items-start gap-2">
+            <h3 class="font-serif text-xl font-medium leading-tight line-clamp-1 flex-1">{{ a.title }}</h3>
+            {% if a.is_pinned %}<span class="text-brand mt-1" title="Закреплено">📌</span>{% endif %}
+          </div>
+          {% if a.summary %}
+            <p class="mt-2 text-sm text-text-muted line-clamp-2 leading-relaxed">{{ a.summary }}</p>
+          {% endif %}
+          <div class="mt-4 flex items-center justify-between gap-3">
+            {% set cat = a.category %}
+            {% if cat %}
+              <span class="inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-xs font-medium"
+                    style="color: {{ cat.color }}; background-color: {{ cat.color }}1A; border-color: {{ cat.color }}55;">
+                <span class="h-1.5 w-1.5 rounded-full" style="background-color: {{ cat.color }}"></span>
+                {{ cat.name }}
+              </span>
+            {% else %}
+              <span class="inline-flex items-center gap-1.5 rounded-full border border-text-dim/30 px-2.5 py-0.5 text-xs text-text-dim">без категории</span>
+            {% endif %}
+            <span class="text-xs text-text-dim">{{ a.updated_at.strftime('%d.%m.%Y') }}</span>
+          </div>
+        </a>
+      {% endfor %}
+    </div>
+  {% elif search %}
+    <p class="text-text-muted text-sm py-8 text-center">По запросу «{{ search }}» ничего не нашлось.</p>
+  {% else %}
+    <div class="flex flex-col items-center justify-center gap-4 rounded-lg border border-dashed border-border-strong p-12 text-center">
+      <div class="rounded-full bg-bg-surface p-4 text-text-dim border border-border">📄</div>
+      <h3 class="font-serif text-xl">Чистый лист</h3>
+      <p class="text-sm text-text-muted max-w-md">
+        Это идеальный момент, чтобы записать первый кусок лора. Кто, где и зачем?
+      </p>
+      <button @click="createOpen = true"
+              class="inline-flex items-center gap-2 h-10 px-4 rounded bg-brand-gradient text-white text-sm font-semibold hover:-translate-y-px transition-transform">
+        + Новая статья
+      </button>
+    </div>
+  {% endif %}
+
+  <!-- Модалка создания статьи -->
+  <div x-show="createOpen" x-transition.opacity x-cloak
+       class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm"
+       @click.self="createOpen = false"
+       @keydown.escape.window="createOpen = false">
+    <div class="relative w-full max-w-lg rounded-lg border border-border-strong bg-bg-surface p-6 shadow-2xl">
+      <button @click="createOpen = false" class="absolute top-4 right-4 text-text-dim hover:text-text" aria-label="Закрыть">✕</button>
+      <h2 class="font-serif text-2xl font-medium mb-4">Новая статья</h2>
+      <form method="post" action="{{ url_for('articles.create', world_id=world.id) }}" class="space-y-4">
+        {{ form.hidden_tag() }}
+        <div>
+          {{ form.title.label(class="block text-xs font-medium uppercase tracking-wider text-text-muted mb-1.5") }}
+          {{ form.title(class="h-10 w-full rounded border border-border-strong bg-bg-surface2 px-3.5 text-sm placeholder:text-text-dim focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand", autofocus=true, maxlength=200, placeholder="Имя персонажа, название локации, событие…") }}
+        </div>
+        <div>
+          {{ form.category_id.label(class="block text-xs font-medium uppercase tracking-wider text-text-muted mb-1.5") }}
+          {{ form.category_id(class="h-10 w-full rounded border border-border-strong bg-bg-surface2 px-3.5 text-sm focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand") }}
+        </div>
+        <div class="flex justify-end gap-2 pt-2">
+          <button type="button" @click="createOpen = false"
+                  class="h-10 px-4 rounded text-sm text-text-muted hover:bg-bg-surface2 hover:text-text transition-colors">
+            Отмена
+          </button>
+          <button type="submit"
+                  class="h-10 px-5 rounded bg-brand-gradient text-white text-sm font-semibold hover:-translate-y-px transition-transform">
+            Создать и открыть
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

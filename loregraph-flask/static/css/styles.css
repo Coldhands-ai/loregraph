@@ -1,0 +1,99 @@
+/* Точечные стили поверх Tailwind. Всё, что нельзя сделать утилитами. */
+
+[x-cloak] { display: none !important; }
+
+/* Scrollbar — тёмный, минимальный */
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #1f2937; border-radius: 8px; }
+::-webkit-scrollbar-thumb:hover { background: #374151; }
+
+::selection { background: #3b82f6; color: #fff; }
+
+/* ─── EasyMDE: тёмная тема ─── */
+.EasyMDEContainer .editor-toolbar {
+  background: #111827;
+  border: 1px solid rgba(255,255,255,0.12);
+  border-bottom: none;
+  border-top-left-radius: 12px;
+  border-top-right-radius: 12px;
+  opacity: 1;
+}
+.EasyMDEContainer .editor-toolbar button {
+  color: #94A3B8;
+  border: none;
+}
+.EasyMDEContainer .editor-toolbar button:hover,
+.EasyMDEContainer .editor-toolbar button.active {
+  background: #1F2937;
+  color: #F1F5F9;
+  border: none;
+}
+.EasyMDEContainer .editor-toolbar i.separator {
+  border-color: rgba(255,255,255,0.08);
+}
+.EasyMDEContainer .CodeMirror {
+  background: rgba(17, 24, 39, 0.4);
+  color: #F1F5F9;
+  border: 1px solid rgba(255,255,255,0.12);
+  border-bottom-left-radius: 12px;
+  border-bottom-right-radius: 12px;
+  min-height: 480px;
+  font-family: 'Space Grotesk', system-ui, sans-serif;
+  font-size: 15px;
+  line-height: 1.7;
+  padding: 8px 4px;
+}
+.EasyMDEContainer .CodeMirror-cursor { border-left-color: #3B82F6; }
+.EasyMDEContainer .CodeMirror-selected { background: rgba(59, 130, 246, 0.25) !important; }
+.EasyMDEContainer .CodeMirror-fullscreen,
+.EasyMDEContainer .editor-toolbar.fullscreen {
+  background: #0B0F1A;
+}
+.EasyMDEContainer .editor-preview,
+.EasyMDEContainer .editor-preview-side {
+  background: #111827;
+  color: #F1F5F9;
+  border-color: rgba(255,255,255,0.12);
+  padding: 16px 20px;
+  font-family: 'Space Grotesk', sans-serif;
+}
+.EasyMDEContainer .editor-preview h1,
+.EasyMDEContainer .editor-preview-side h1,
+.EasyMDEContainer .editor-preview h2,
+.EasyMDEContainer .editor-preview-side h2,
+.EasyMDEContainer .editor-preview h3,
+.EasyMDEContainer .editor-preview-side h3 {
+  font-family: 'Newsreader', Georgia, serif;
+  color: #F1F5F9;
+}
+.EasyMDEContainer .editor-preview a,
+.EasyMDEContainer .editor-preview-side a {
+  color: #3B82F6;
+}
+.EasyMDEContainer .editor-preview code,
+.EasyMDEContainer .editor-preview-side code {
+  background: #1F2937;
+  color: #F1F5F9;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+.EasyMDEContainer .editor-statusbar {
+  color: #64748B;
+  padding-right: 6px;
+}
+.cm-s-easymde .cm-header { color: #F1F5F9; }
+.cm-s-easymde .cm-link { color: #3B82F6; }
+.cm-s-easymde .cm-quote { color: #94A3B8; font-style: italic; }
+.cm-s-easymde .cm-strong { color: #F1F5F9; }
+.cm-s-easymde .cm-em { color: #C7D2FE; }
+
+/* ─── Cytoscape ─── */
+#cy { display: block; }
+
+/* ─── Relations search dropdown ─── */
+#rel-matches li button {
+  width: 100%; text-align: left; padding: 8px 12px; font-size: 14px; color: #F1F5F9;
+  transition: background 0.15s;
+}
+#rel-matches li button:hover { background: #1F2937; }

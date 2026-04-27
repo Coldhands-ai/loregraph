@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+{% block title %}Мои миры — LoreGraph{% endblock %}
+
+{% block content %}
+<div class="space-y-8" x-data="{ createOpen: false }">
+  <header class="flex items-end justify-between gap-4">
+    <div>
+      <p class="text-xs uppercase tracking-[0.3em] text-text-dim mb-2">Мои миры</p>
+      <h1 class="font-serif text-4xl">Вселенные ждут</h1>
+      <p class="mt-2 text-text-muted max-w-xl">
+        Каждый мир — самостоятельная вики со своими персонажами, локациями и графом связей.
+      </p>
+    </div>
+    {% if worlds %}
+      <button @click="createOpen = true"
+              class="inline-flex items-center gap-2 h-12 px-6 rounded bg-brand-gradient text-white text-sm font-semibold tracking-wider hover:-translate-y-px transition-transform shadow-[0_4px_16px_-4px_rgba(59,130,246,0.5)]">
+        ✦ Новый мир
+      </button>
+    {% endif %}
+  </header>
+
+  {% if worlds %}
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+      {% for w in worlds %}
+        <div class="group relative rounded-lg border border-border bg-bg-surface/60 hover:border-brand/50 hover:bg-bg-surface/80 hover:-translate-y-0.5 transition-all duration-200 hover:shadow-[0_12px_32px_-12px_rgba(59,130,246,0.3)] overflow-hidden">
+          <div class="absolute top-0 left-0 right-0 h-1 bg-brand-gradient opacity-0 group-hover:opacity-100 transition-opacity"></div>
+
+          <a href="{{ url_for('articles.index', world_id=w.id) }}" class="block p-5">
+            <h3 class="font-serif text-xl font-medium leading-tight line-clamp-1">{{ w.title }}</h3>
+            {% if w.description %}
+              <p class="mt-2 text-sm text-text-muted leading-relaxed line-clamp-2">{{ w.description }}</p>
+            {% endif %}
+            <div class="mt-4 flex items-center gap-4 text-xs text-text-dim">
+              <span>📄 {{ article_counts.get(w.id, 0) }}</span>
+              <span>🔗 {{ relation_counts.get(w.id, 0) }}</span>
+              <span class="ml-auto">обновлён {{ w.updated_at.strftime('%d.%m.%Y') }}</span>
+            </div>
+          </a>
+
+          <form method="post" action="{{ url_for('worlds.delete', world_id=w.id) }}"
+                onsubmit="return confirm('Удалить мир «{{ w.title|e }}»? Все статьи и связи исчезнут.');"
+                class="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button type="submit" aria-label="Удалить мир"
+                    class="rounded-sm p-1.5 text-text-dim hover:bg-bg-surface2 hover:text-red-400 transition-colors">
+              ✕
+            </button>
+          </form>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="flex flex-col items-center justify-center gap-4 rounded-lg border border-dashed border-border-strong p-12 text-center">
+      <div class="rounded-full bg-bg-surface p-4 text-text-dim border border-border">🌐</div>
+      <div class="space-y-1">
+        <h3 class="font-serif text-xl font-medium">Здесь пока пусто</h3>
+        <p class="text-sm text-text-muted max-w-md">
+          Создай первый мир — мы сразу подкинем 5 готовых категорий, чтобы ты не начинал с чистого листа.
+        </p>
+      </div>
+      <button @click="createOpen = true"
+              class="inline-flex items-center gap-2 h-12 px-6 rounded bg-brand-gradient text-white text-sm font-semibold tracking-wider hover:-translate-y-px transition-transform shadow-[0_4px_16px_-4px_rgba(59,130,246,0.5)]">
+        ✦ Создать первый мир
+      </button>
+    </div>
+  {% endif %}
+
+  <!-- Модалка создания -->
+  <div x-show="createOpen" x-transition.opacity x-cloak
+       class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm"
+       @click.self="createOpen = false"
+       @keydown.escape.window="createOpen = false">
+    <div class="relative w-full max-w-lg rounded-lg border border-border-strong bg-bg-surface p-6 shadow-2xl"
+         x-transition.scale.duration.200ms>
+      <button @click="createOpen = false" class="absolute top-4 right-4 text-text-dim hover:text-text" aria-label="Закрыть">✕</button>
+      <h2 class="font-serif text-2xl font-medium mb-1">Новый мир</h2>
+      <p class="text-sm text-text-muted mb-4">
+        Каждый мир получит 5 предустановленных категорий: персонаж, локация, событие, предмет, фракция.
+      </p>
+      <form method="post" action="{{ url_for('worlds.create') }}" class="space-y-4">
+        {{ form.hidden_tag() }}
+        <div>
+          {{ form.title.label(class="block text-xs font-medium uppercase tracking-wider text-text-muted mb-1.5") }}
+          {{ form.title(class="h-10 w-full rounded border border-border-strong bg-bg-surface2 px-3.5 text-sm placeholder:text-text-dim focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand", placeholder="Например, «Северные королевства»", maxlength=100, autofocus=true) }}
+        </div>
+        <div>
+          {{ form.description.label(class="block text-xs font-medium uppercase tracking-wider text-text-muted mb-1.5") }}
+          {{ form.description(class="min-h-[88px] w-full rounded border border-border-strong bg-bg-surface2 px-3.5 py-2 text-sm placeholder:text-text-dim focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand resize-y leading-6", placeholder="О чём этот мир, чего ждать читателю", maxlength=500) }}
+        </div>
+        <div class="flex justify-end gap-2 pt-2">
+          <button type="button" @click="createOpen = false"
+                  class="h-10 px-4 rounded text-sm text-text-muted hover:bg-bg-surface2 hover:text-text transition-colors">
+            Отмена
+          </button>
+          <button type="submit"
+                  class="h-10 px-5 rounded bg-brand-gradient text-white text-sm font-semibold tracking-wider hover:-translate-y-px transition-transform">
+            Создать
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

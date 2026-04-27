@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+{% block title %}{{ article.title }} — LoreGraph{% endblock %}
+
+{% block head_extra %}
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/easymde@2.18.0/dist/easymde.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/easymde@2.18.0/dist/easymde.min.js" defer></script>
+{% endblock %}
+
+{% block content %}
+<div class="grid grid-cols-1 xl:grid-cols-[1fr_320px] gap-6"
+     data-world-id="{{ world.id }}"
+     data-article-id="{{ article.id }}"
+     data-csrf="{{ csrf_token() }}">
+
+  <!-- Левая колонка: редактор -->
+  <div class="space-y-4 min-w-0">
+    <div class="flex items-center justify-between gap-4">
+      <a href="{{ url_for('articles.index', world_id=world.id) }}"
+         class="inline-flex items-center gap-1 text-sm text-text-muted hover:text-text">
+        ← Все статьи
+      </a>
+      <div class="flex items-center gap-2">
+        <span id="save-indicator" class="text-xs text-text-dim">Сохранено</span>
+
+        <form method="post" action="{{ url_for('articles.toggle_pin', world_id=world.id, article_id=article.id) }}" id="pin-form">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <button type="button" id="pin-btn" data-pinned="{{ 'true' if article.is_pinned else 'false' }}"
+                  class="h-9 w-9 inline-flex items-center justify-center rounded transition-colors
+                         {% if article.is_pinned %}bg-brand-gradient text-white{% else %}text-text-muted hover:bg-bg-surface2 hover:text-text{% endif %}"
+                  aria-label="Закрепить">📌</button>
+        </form>
+
+        <form method="post" action="{{ url_for('articles.delete', world_id=world.id, article_id=article.id) }}"
+              onsubmit="return confirm('Удалить статью «{{ article.title|e }}»?');">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <button type="submit" aria-label="Удалить"
+                  class="h-9 w-9 inline-flex items-center justify-center rounded text-text-muted hover:bg-bg-surface2 hover:text-red-400 transition-colors">🗑</button>
+        </form>
+      </div>
+    </div>
+
+    <input id="title-input" type="text" value="{{ article.title }}" maxlength="200"
+           class="w-full font-serif text-3xl font-medium px-4 py-3 bg-transparent border border-transparent rounded focus:outline-none focus:border-border-strong">
+
+    <!-- Селектор категории -->
+    <div x-data="{ open: false }" class="relative inline-block">
+      <button @click="open = !open" @click.outside="open = false" type="button"
+              class="inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-medium transition-all"
+              style="color: {{ article.category.color if article.category else '#94A3B8' }};
+                     background-color: {{ (article.category.color + '1A') if article.category else 'transparent' }};
+                     border-color: {{ (article.category.color + '55') if article.category else 'rgba(148,163,184,0.3)' }};">
+        <span class="h-1.5 w-1.5 rounded-full" style="background-color: {{ article.category.color if article.category else '#94A3B8' }}"></span>
+        <span id="cat-label">{{ article.category.name if article.category else 'без категории' }}</span>
+        <span class="text-text-dim">▾</span>
+      </button>
+      <div x-show="open" x-transition.opacity
+           class="absolute top-full left-0 mt-2 z-30 rounded border border-border-strong bg-bg-surface p-2 shadow-xl min-w-[200px] flex flex-col gap-1">
+        <button type="button" data-cat-id="" data-cat-name="без категории" data-cat-color="#94A3B8"
+                @click="open = false"
+                class="cat-option flex items-center gap-2 px-2.5 py-1.5 rounded-sm text-sm text-text-muted hover:bg-bg-surface2 hover:text-text transition-colors">
+          <span class="h-2 w-2 rounded-full bg-text-muted"></span>без категории
+        </button>
+        {% for c in categories %}
+          <button type="button" data-cat-id="{{ c.id }}" data-cat-name="{{ c.name }}" data-cat-color="{{ c.color }}"
+                  @click="open = false"
+                  class="cat-option flex items-center gap-2 px-2.5 py-1.5 rounded-sm text-sm text-text-muted hover:bg-bg-surface2 hover:text-text transition-colors">
+            <span class="h-2 w-2 rounded-full" style="background-color: {{ c.color }}"></span>{{ c.name }}
+          </button>
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- EasyMDE контейнер -->
+    <textarea id="md-editor">{{ article.content_md }}</textarea>
+  </div>
+
+  <!-- Правая колонка: связи -->
+  <aside class="space-y-4">
+    {% include "articles/_relations_panel.html" %}
+  </aside>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/editor.js') }}" defer></script>
+<script src="{{ url_for('static', filename='js/relations.js') }}" defer></script>
+{% endblock %}

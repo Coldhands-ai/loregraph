@@ -1,0 +1,63 @@
+<div class="rounded-lg border border-border bg-bg-surface/60 p-5">
+  <div class="flex items-center gap-2 mb-3">
+    <span class="text-brand">🔗</span>
+    <h3 class="text-sm font-semibold uppercase tracking-wider">Связи</h3>
+    <span class="ml-auto text-xs text-text-dim">{{ relations|length }}</span>
+  </div>
+
+  {% if relations %}
+    <ul class="space-y-1.5 mb-3">
+      {% for r in relations %}
+        <li class="group flex items-center gap-2 rounded-sm px-2 py-1.5 hover:bg-bg-surface2/80 transition-colors">
+          <span class="{% if r.outgoing %}text-brand{% else %}text-brand-violet{% endif %} shrink-0 text-xs">
+            {{ '→' if r.outgoing else '←' }}
+          </span>
+          <a href="{{ url_for('articles.edit', world_id=world.id, article_id=r.other.id) }}"
+             class="text-sm font-medium text-text hover:text-brand transition-colors line-clamp-1 flex-1">
+            {{ r.other.title }}
+          </a>
+          <span class="text-xs text-text-dim shrink-0 italic">{{ r.rel.label }}</span>
+          <form method="post" action="{{ url_for('articles.delete_relation', world_id=world.id, article_id=article.id, relation_id=r.rel.id) }}"
+                onsubmit="return confirm('Удалить связь?');" class="opacity-0 group-hover:opacity-100 transition-opacity">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button type="submit" aria-label="Удалить связь" class="text-text-dim hover:text-red-400 text-xs">✕</button>
+          </form>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p class="text-sm text-text-muted py-2">
+      Пока ни одной связи. Свяжи эту статью с другими — и&nbsp;граф оживёт.
+    </p>
+  {% endif %}
+
+  <form method="post" action="{{ url_for('articles.add_relation', world_id=world.id, article_id=article.id) }}"
+        class="space-y-2 pt-2 border-t border-border" data-search-url="{{ url_for('articles.search_json', world_id=world.id) }}"
+        data-exclude="{{ article.id }}" id="relation-form">
+    {{ relation_form.csrf_token }}
+
+    <div class="relative">
+      <input type="text" id="rel-search" placeholder="Связать со статьёй…" autocomplete="off"
+             class="h-9 w-full rounded border border-border-strong bg-bg-surface px-3 text-sm placeholder:text-text-dim focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand">
+      <ul id="rel-matches" class="hidden absolute top-full left-0 right-0 mt-1 z-30 max-h-56 overflow-auto rounded border border-border bg-bg-surface divide-y divide-border"></ul>
+      <input type="hidden" name="target_article_id" id="rel-target-id">
+    </div>
+
+    <input type="text" name="label" placeholder="Тип связи (напр. «друг»)" maxlength="100" required
+           class="h-9 w-full rounded border border-border-strong bg-bg-surface px-3 text-sm placeholder:text-text-dim focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand">
+
+    <div class="flex flex-wrap gap-1">
+      {% for preset in ['друг', 'враг', 'владеет', 'находится в', 'участвовал в', 'родитель'] %}
+        <button type="button" data-preset="{{ preset }}"
+                class="preset-label text-xs text-text-dim hover:text-brand transition-colors px-2 py-0.5 rounded-sm hover:bg-bg-surface2">
+          {{ preset }}
+        </button>
+      {% endfor %}
+    </div>
+
+    <button type="submit" id="rel-submit" disabled
+            class="w-full h-9 rounded border border-border-strong text-sm text-text-muted hover:bg-bg-surface2 hover:text-text disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
+      Добавить связь
+    </button>
+  </form>
+</div>
