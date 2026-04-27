@@ -1,8 +1,13 @@
 {% extends "base.html" %}
 {% block title %}Категории — {{ world.title }} — LoreGraph{% endblock %}
 
+{% block head_extra %}
+  {# Регистрируем Alpine-компонент ДО того как Alpine стартует #}
+  <script src="{{ url_for('static', filename='js/categories.js') }}" defer></script>
+{% endblock %}
+
 {% block content %}
-<div class="space-y-8" x-data="categoriesPage()">
+<div class="space-y-8" x-data="categoriesPage">
   <header class="flex items-end justify-between gap-4">
     <div>
       <p class="text-xs uppercase tracking-[0.3em] text-text-dim mb-2">{{ world.title }}</p>
@@ -78,7 +83,7 @@
       <h2 class="font-serif text-2xl font-medium mb-4" x-text="editingId ? 'Редактирование категории' : 'Новая категория'"></h2>
 
       <form :action="editingId
-              ? '{{ url_for("categories.index", world_id=world.id) }}/' + editingId + '/update'
+              ? '{{ url_for("categories.update", world_id=world.id, category_id="__CID__") }}'.replace('__CID__', editingId)
               : '{{ url_for("categories.create", world_id=world.id) }}'"
             method="post" class="space-y-4">
         {{ form.hidden_tag() }}
@@ -157,6 +162,3 @@
 </div>
 {% endblock %}
 
-{% block scripts %}
-<script src="{{ url_for('static', filename='js/categories.js') }}" defer></script>
-{% endblock %}

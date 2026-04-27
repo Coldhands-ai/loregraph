@@ -51,13 +51,19 @@
   const persistDebounced = debounce(persist, 2000);
 
   // ─── Toast UI Editor ─────────────────────────────────────
-  const initial = JSON.parse(editorEl.dataset.initial || '""');
+  const initialEl = document.getElementById('md-initial');
+  const initial = initialEl ? initialEl.value : '';
+
+  // Флаг готовности — игнорируем change-события, которые Toast UI стреляет
+  // в момент инициализации (иначе пустой автосейв затрёт контент).
+  let ready = false;
+
   const editor = new toastui.Editor({
     el: editorEl,
     height: '600px',
-    initialEditType: 'wysiwyg',          // открываем сразу в WYSIWYG-режиме
+    initialEditType: 'wysiwyg',
     previewStyle: 'vertical',
-    initialValue: initial || '',
+    initialValue: initial,
     theme: 'dark',
     placeholder: 'Начни писать… Что случилось в этом мире?',
     usageStatistics: false,
@@ -72,11 +78,15 @@
     ],
     events: {
       change: () => {
+        if (!ready) return;
         setIndicator('dirty');
         persistDebounced({ content_md: editor.getMarkdown() });
       },
     },
   });
+
+  // Один тик после инициализации — теперь любые изменения это уже от пользователя
+  setTimeout(() => { ready = true; }, 200);
 
   // ─── Название ────────────────────────────────────────────
   if (titleInput) {

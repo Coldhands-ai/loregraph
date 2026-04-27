@@ -52,9 +52,11 @@
 
   <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
 
-  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.8/dist/cdn.min.js"></script>
-
+  {# head_extra идёт РАНЬШЕ Alpine, чтобы скрипты страницы успели зарегистрировать
+     слушатели alpine:init до его инициализации. #}
   {% block head_extra %}{% endblock %}
+
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.8/dist/cdn.min.js"></script>
 </head>
 <body class="bg-bg text-text font-sans antialiased min-h-screen flex flex-col">
 

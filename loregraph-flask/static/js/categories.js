@@ -1,26 +1,27 @@
-// Alpine-компонент для страницы категорий: открытие/закрытие модалки create/edit
-// и динамический редактор template_fields.
+// Alpine-компонент для страницы категорий: модалка create/edit + редактор template_fields.
+// Регистрируем через alpine:init — гарантирует, что компонент известен Alpine
+// до момента, когда он начнёт вычислять x-data в DOM.
 
-window.categoriesPage = function () {
+function _blankCategory() {
   return {
+    name: '',
+    color: '#3B82F6',
+    icon: '',
+    weight: 3,
+    sort_order: 0,
+    template_fields: [],
+  };
+}
+
+document.addEventListener('alpine:init', () => {
+  Alpine.data('categoriesPage', () => ({
     modalOpen: false,
     editingId: null,
-    data: this._blank(),
-
-    _blank() {
-      return {
-        name: '',
-        color: '#3B82F6',
-        icon: '',
-        weight: 3,
-        sort_order: 0,
-        template_fields: [],
-      };
-    },
+    data: _blankCategory(),
 
     openCreate() {
       this.editingId = null;
-      this.data = this._blank();
+      this.data = _blankCategory();
       this.modalOpen = true;
     },
 
@@ -46,5 +47,5 @@ window.categoriesPage = function () {
     addField() {
       this.data.template_fields.push({ key: '', label: '', type: 'text' });
     },
-  };
-};
+  }));
+});

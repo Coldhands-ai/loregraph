@@ -88,7 +88,8 @@ def _relation_counts(world_id: str) -> dict[str, int]:
         ),
         {"wid": world_id},
     ).all()
-    return {r[0]: r[1] for r in rows}
+    # psycopg возвращает UUID как объекты — приводим к str, чтобы лукап в шаблоне совпал
+    return {str(r[0]): r[1] for r in rows}
 
 
 @bp.route("/create", methods=["POST"])

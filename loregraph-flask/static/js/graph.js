@@ -163,131 +163,118 @@
       return;
     }
 
-    cy = cytoscape({
-      container: cyEl,
-      elements: [...raw.nodes, ...raw.edges],
-      style: [
-        {
-          selector: 'node',
-          style: {
-            'background-color': 'data(color)',
-            'background-opacity': 0.95,
-            'label': 'data(initial)',
-            'color': '#ffffff',
-            'font-family': 'Newsreader, Georgia, serif',
-            'font-weight': 700,
-            'font-size': (n) => Math.round(n.data('size') * 0.45),
-            'text-valign': 'center',
-            'text-halign': 'center',
-            'text-outline-width': 0,
-            'border-color': '#0B0F1A',
-            'border-width': 2,
-            'border-opacity': 0.9,
-            'width': 'data(size)',
-            'height': 'data(size)',
-            'overlay-padding': 4,
-            'transition-property': 'border-color, border-width, background-opacity',
-            'transition-duration': 200,
+    try {
+      cy = cytoscape({
+        container: cyEl,
+        elements: [...raw.nodes, ...raw.edges],
+        style: [
+          {
+            selector: 'node',
+            style: {
+              'background-color': 'data(color)',
+              'label': 'data(initial)',
+              'color': '#ffffff',
+              'font-family': 'Newsreader, Georgia, serif',
+              'font-weight': 700,
+              'font-size': 14,
+              'text-valign': 'center',
+              'text-halign': 'center',
+              'border-color': '#0B0F1A',
+              'border-width': 2,
+              'width': 'data(size)',
+              'height': 'data(size)',
+              'overlay-padding': 4,
+              'transition-property': 'border-color, border-width, opacity',
+              'transition-duration': 200,
+            },
           },
-        },
-        // Подпись под узлом — отдельной техникой (через ghost-node не делаем).
-        // Используем дополнительный label через text-halign не позволит, поэтому
-        // подпись рендерится только на hover/select через class .with-name.
-        {
-          selector: 'node.with-name',
-          style: {
-            'text-margin-y': 0,
-            'font-family': 'Space Grotesk, sans-serif',
-            'font-weight': 500,
+          {
+            selector: 'node[?pinned]',
+            style: {
+              'border-color': '#3B82F6',
+              'border-width': 3,
+            },
           },
-        },
-        {
-          selector: 'node[?pinned]',
-          style: {
-            'border-color': '#3B82F6',
-            'border-width': 3,
+          {
+            selector: 'edge',
+            style: {
+              'curve-style': 'bezier',
+              'line-color': 'data(source_color)',
+              'line-style': 'dashed',
+              'line-dash-pattern': [6, 4],
+              'line-dash-offset': 0,
+              'width': 1.8,
+              'opacity': 0.7,
+              'target-arrow-shape': 'triangle',
+              'target-arrow-color': 'data(target_color)',
+              'arrow-scale': 1,
+              'label': 'data(label)',
+              'font-size': 9,
+              'color': '#94A3B8',
+              'text-rotation': 'autorotate',
+              'text-background-opacity': 1,
+              'text-background-color': '#0B0F1A',
+              'text-background-padding': 3,
+              'text-background-shape': 'roundrectangle',
+              'transition-property': 'opacity, width',
+              'transition-duration': 200,
+            },
           },
-        },
-        {
-          selector: 'edge',
-          style: {
-            'curve-style': 'bezier',
-            'line-fill': 'linear-gradient',
-            'line-gradient-stop-colors': 'data(source_color) data(target_color)',
-            'line-gradient-stop-positions': '0 100',
-            'line-style': 'dashed',
-            'line-dash-pattern': [6, 4],
-            'line-dash-offset': 0,
-            'width': 1.6,
-            'opacity': 0.85,
-            'target-arrow-shape': 'triangle',
-            'target-arrow-color': 'data(target_color)',
-            'arrow-scale': 0.9,
-            'label': 'data(label)',
-            'font-size': 9,
-            'color': '#94A3B8',
-            'text-rotation': 'autorotate',
-            'text-background-opacity': 1,
-            'text-background-color': '#0B0F1A',
-            'text-background-padding': 3,
-            'text-background-shape': 'roundrectangle',
-            'transition-property': 'opacity, width',
-            'transition-duration': 200,
+          {
+            selector: 'node:selected',
+            style: {
+              'border-color': 'data(color)',
+              'border-width': 5,
+            },
           },
-        },
-        {
-          selector: 'node:selected',
-          style: {
-            'border-color': 'data(color)',
-            'border-width': 5,
-            'border-opacity': 1,
+          {
+            selector: '.focused',
+            style: {
+              'border-color': '#6366F1',
+              'border-width': 5,
+            },
           },
-        },
-        {
-          selector: '.focused',
-          style: {
-            'border-color': '#6366F1',
-            'border-width': 5,
-            'border-opacity': 1,
+          {
+            selector: 'node.hovered',
+            style: {
+              'border-color': 'data(color)',
+              'border-width': 4,
+            },
           },
-        },
-        {
-          selector: 'node.hovered',
-          style: {
-            'background-opacity': 1,
-            'border-color': 'data(color)',
-            'border-width': 4,
+          {
+            selector: '.faded',
+            style: {
+              'opacity': 0.18,
+              'text-opacity': 0.18,
+            },
           },
-        },
-        {
-          selector: '.faded',
-          style: {
-            'opacity': 0.18,
-            'text-opacity': 0.18,
+          {
+            selector: 'edge.highlight',
+            style: {
+              'opacity': 1,
+              'width': 3,
+            },
           },
+        ],
+        layout: {
+          name: 'cose',
+          animate: true,
+          animationDuration: 700,
+          nodeRepulsion: 9000,
+          idealEdgeLength: 130,
+          edgeElasticity: 80,
+          gravity: 0.4,
+          numIter: 1500,
         },
-        {
-          selector: 'edge.highlight',
-          style: {
-            'opacity': 1,
-            'width': 2.5,
-          },
-        },
-      ],
-      layout: {
-        name: 'cose',
-        animate: true,
-        animationDuration: 700,
-        nodeRepulsion: () => 9000,
-        idealEdgeLength: () => 130,
-        edgeElasticity: () => 80,
-        gravity: 0.4,
-        numIter: 1500,
-      },
-      wheelSensitivity: 0.3,
-      minZoom: 0.2,
-      maxZoom: 3,
-    });
+        wheelSensitivity: 0.3,
+        minZoom: 0.2,
+        maxZoom: 3,
+      });
+    } catch (err) {
+      console.error('Cytoscape init failed', err);
+      cyEl.innerHTML = `<div class="p-6 text-red-400 text-sm">Не удалось построить граф: ${err.message}</div>`;
+      return;
+    }
 
     // ─── Бегущий пунктир по рёбрам ───────────────────────
     let dashOffset = 0;

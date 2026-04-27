@@ -128,8 +128,9 @@
       </div>
     {% endif %}
 
-    <!-- Toast UI Editor -->
-    <div id="md-editor" data-initial="{{ article.content_md|tojson|safe }}"></div>
+    <!-- Toast UI Editor: initial value кладём в hidden textarea, чтобы кавычки/HTML не ломали -->
+    <textarea id="md-initial" hidden>{{ article.content_md }}</textarea>
+    <div id="md-editor"></div>
   </div>
 
   <!-- Правая колонка -->

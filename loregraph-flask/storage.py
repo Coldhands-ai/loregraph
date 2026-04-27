@@ -13,8 +13,9 @@ class UploadError(ValueError):
     pass
 
 
-def save_image(file: FileStorage, subdir: str, base_dir: Path) -> str:
+def save_image(file: FileStorage, subdir: str, base_dir) -> str:
     """Сохраняет файл в base_dir/static/uploads/<subdir>/. Возвращает URL."""
+    base_dir = Path(base_dir)
     if not file or not file.filename:
         raise UploadError("Файл пустой.")
 
@@ -47,12 +48,12 @@ def save_image(file: FileStorage, subdir: str, base_dir: Path) -> str:
     return f"/static/uploads/{subdir}/{name}"
 
 
-def delete_image(url: str | None, base_dir: Path) -> None:
+def delete_image(url: str | None, base_dir) -> None:
     """Удаляет файл по url. Безопасно: только в static/uploads/."""
     if not url or not url.startswith("/static/uploads/"):
         return
     rel = url.removeprefix("/")
-    path = base_dir / rel
+    path = Path(base_dir) / rel
     try:
         if path.exists() and path.is_file():
             path.unlink()
