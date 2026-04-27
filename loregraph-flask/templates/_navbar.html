@@ -59,6 +59,12 @@
            class="block px-3 py-2 text-sm text-text-muted hover:bg-bg-surface2 hover:text-text rounded-sm transition-colors">
           Профиль
         </a>
+        {% if current_user.is_admin %}
+        <a href="{{ url_for('admin.dashboard') }}"
+           class="block px-3 py-2 text-sm text-amber-400 hover:bg-bg-surface2 rounded-sm transition-colors">
+          ⚙ Админ-панель
+        </a>
+        {% endif %}
         <form method="post" action="{{ url_for('auth.logout') }}">
           <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
           <button type="submit" class="w-full text-left px-3 py-2 text-sm text-text-muted hover:bg-bg-surface2 hover:text-text rounded-sm transition-colors">

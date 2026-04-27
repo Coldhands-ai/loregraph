@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block title %}Лог действий — Админ — LoreGraph{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+  <header class="flex items-end justify-between gap-4">
+    <div>
+      <p class="text-xs uppercase tracking-[0.3em] text-amber-400 mb-2">⚙ Администрирование</p>
+      <h1 class="font-serif text-3xl">Лог действий</h1>
+      <p class="mt-2 text-text-muted max-w-xl">
+        Append-only журнал — записи нельзя редактировать или удалять. Показаны последние 50.
+      </p>
+    </div>
+    <a href="{{ url_for('admin.dashboard') }}" class="text-sm text-text-muted hover:text-text">← Дашборд</a>
+  </header>
+
+  <div class="rounded-lg border border-border bg-bg-surface/40 divide-y divide-border">
+    {% for l in logs %}
+      <div class="p-4 flex items-start gap-4">
+        <span class="text-xs text-text-dim font-mono whitespace-nowrap pt-0.5 w-32">
+          {{ l.created_at.strftime('%d.%m.%Y %H:%M') }}
+        </span>
+        <div class="flex-1 min-w-0">
+          <div class="flex items-center gap-2 flex-wrap">
+            <span class="text-sm font-medium">{{ l.admin.email if l.admin else '?' }}</span>
+            <span class="text-xs px-2 py-0.5 rounded bg-amber-400/10 text-amber-400 border border-amber-400/30">{{ l.action }}</span>
+            {% if l.target_user %}
+              <span class="text-xs text-text-muted">→ user: {{ l.target_user.email }}</span>
+            {% endif %}
+            {% if l.target_world %}
+              <span class="text-xs text-text-muted">→ world: «{{ l.target_world.title }}»</span>
+            {% elif l.details and l.details.title %}
+              <span class="text-xs text-text-muted italic">→ был world: «{{ l.details.title }}»{% if l.details.owner %} ({{ l.details.owner }}){% endif %}</span>
+            {% endif %}
+          </div>
+          {% if l.details and not (l.details.title and not l.target_world) %}
+            <pre class="mt-1 text-xs text-text-dim font-mono">{{ l.details|tojson(indent=2) }}</pre>
+          {% endif %}
+        </div>
+      </div>
+    {% else %}
+      <div class="p-8 text-center text-text-dim">Действий пока не было.</div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

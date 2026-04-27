@@ -218,6 +218,31 @@ class Article(db.Model):
     )
 
 
+class AdminLog(db.Model):
+    """Append-only журнал действий админа: блокировки, удаления, смены ролей."""
+    __tablename__ = "admin_logs"
+
+    id: Mapped[str] = mapped_column(UUID(as_uuid=False), primary_key=True, default=_uuid)
+    admin_id: Mapped[str] = mapped_column(
+        UUID(as_uuid=False), ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True
+    )
+    action: Mapped[str] = mapped_column(String(50), nullable=False, index=True)
+    target_user_id: Mapped[str | None] = mapped_column(
+        UUID(as_uuid=False), ForeignKey("users.id", ondelete="SET NULL")
+    )
+    target_world_id: Mapped[str | None] = mapped_column(
+        UUID(as_uuid=False), ForeignKey("worlds.id", ondelete="SET NULL")
+    )
+    details: Mapped[dict | None] = mapped_column(JSONB)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=_now, nullable=False, index=True
+    )
+
+    admin: Mapped[User] = relationship(foreign_keys=[admin_id])
+    target_user: Mapped[User | None] = relationship(foreign_keys=[target_user_id])
+    target_world: Mapped[World | None] = relationship(foreign_keys=[target_world_id])
+
+
 class Relation(db.Model):
     __tablename__ = "relations"
 

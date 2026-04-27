@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% block title %}Миры — Админ — LoreGraph{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+  <header class="flex items-end justify-between gap-4">
+    <div>
+      <p class="text-xs uppercase tracking-[0.3em] text-amber-400 mb-2">⚙ Администрирование</p>
+      <h1 class="font-serif text-3xl">Миры</h1>
+    </div>
+    <a href="{{ url_for('admin.dashboard') }}" class="text-sm text-text-muted hover:text-text">← Дашборд</a>
+  </header>
+
+  <form method="get" class="max-w-md relative">
+    <span class="absolute left-3 top-1/2 -translate-y-1/2 text-text-dim">🔍</span>
+    <input type="search" name="q" value="{{ q }}" placeholder="Поиск по названию мира или email владельца"
+           class="h-10 w-full pl-9 pr-3 rounded border border-border-strong bg-bg-surface text-sm placeholder:text-text-dim focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand">
+  </form>
+
+  <div class="overflow-x-auto rounded-lg border border-border bg-bg-surface/40">
+    <table class="w-full text-sm">
+      <thead class="text-xs uppercase tracking-wider text-text-dim bg-bg-surface2/50">
+        <tr>
+          <th class="text-left px-4 py-3">Название</th>
+          <th class="text-left px-4 py-3">Владелец</th>
+          <th class="text-center px-4 py-3">Статей</th>
+          <th class="text-left px-4 py-3">Создан</th>
+          <th class="text-left px-4 py-3">Обновлён</th>
+          <th class="text-right px-4 py-3">Действия</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-border">
+        {% for world, user, n_articles in rows %}
+          <tr class="hover:bg-bg-surface/60 transition-colors">
+            <td class="px-4 py-3">
+              <div class="font-medium">{{ world.title }}</div>
+              {% if world.description %}
+                <div class="text-xs text-text-dim line-clamp-1 max-w-md">{{ world.description }}</div>
+              {% endif %}
+            </td>
+            <td class="px-4 py-3 text-text-muted text-xs">{{ user.email }}</td>
+            <td class="px-4 py-3 text-center text-text-muted">{{ n_articles }}</td>
+            <td class="px-4 py-3 text-text-muted text-xs">{{ world.created_at.strftime('%d.%m.%Y') }}</td>
+            <td class="px-4 py-3 text-text-muted text-xs">{{ world.updated_at.strftime('%d.%m.%Y') }}</td>
+            <td class="px-4 py-3 text-right">
+              <form method="post" action="{{ url_for('admin.delete_world', world_id=world.id) }}"
+                    onsubmit="return confirm('Удалить мир «{{ world.title|e }}» владельца {{ user.email|e }}? Все статьи и связи исчезнут.');"
+                    class="inline">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button type="submit" class="text-xs px-2 py-1 rounded border border-red-500/30 text-red-400 hover:bg-red-500/10 transition-colors">
+                  удалить
+                </button>
+              </form>
+            </td>
+          </tr>
+        {% else %}
+          <tr><td colspan="6" class="px-4 py-8 text-center text-text-dim">Миров пока нет.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

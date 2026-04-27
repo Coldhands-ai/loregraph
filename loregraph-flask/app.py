@@ -1,6 +1,7 @@
 """Точка входа: фабрика приложения + регистрация blueprint'ов."""
 from pathlib import Path
 
+import click
 from flask import Flask, redirect, render_template, url_for
 from flask_login import current_user
 
@@ -43,6 +44,7 @@ def create_app(config_class: type = Config) -> Flask:
     from routes.graph import bp as graph_bp
     from routes.categories import bp as categories_bp
     from routes.profile import bp as profile_bp
+    from routes.admin import bp as admin_bp
 
     app.register_blueprint(auth_bp, url_prefix="/auth")
     app.register_blueprint(worlds_bp, url_prefix="/worlds")
@@ -50,6 +52,7 @@ def create_app(config_class: type = Config) -> Flask:
     app.register_blueprint(graph_bp)
     app.register_blueprint(categories_bp)
     app.register_blueprint(profile_bp)
+    app.register_blueprint(admin_bp)
 
     # Корень → мирам или логину
     @app.route("/")
@@ -59,6 +62,10 @@ def create_app(config_class: type = Config) -> Flask:
         return redirect(url_for("auth.login"))
 
     # Ошибки
+    @app.errorhandler(403)
+    def forbidden(_e):
+        return render_template("errors/403.html"), 403
+
     @app.errorhandler(404)
     def not_found(_e):
         return render_template("errors/404.html"), 404
@@ -66,6 +73,27 @@ def create_app(config_class: type = Config) -> Flask:
     @app.errorhandler(500)
     def server_error(_e):
         return render_template("errors/500.html"), 500
+
+    # CLI-команды
+    @app.cli.command("make-admin")
+    @click.argument("email")
+    def make_admin(email: str) -> None:
+        """Выдать роль admin пользователю по email.
+
+        Использование: flask --app app make-admin user@example.com
+        """
+        user = db.session.execute(
+            db.select(User).filter_by(email=email.lower().strip())
+        ).scalar_one_or_none()
+        if user is None:
+            click.echo(f"Пользователь {email} не найден.", err=True)
+            return
+        if user.role == "admin":
+            click.echo(f"{email} уже администратор.")
+            return
+        user.role = "admin"
+        db.session.commit()
+        click.echo(f"OK: {email} → admin")
 
     # Создание схемы при первом запуске. Без миграций — для учебного проекта норм.
     with app.app_context():
