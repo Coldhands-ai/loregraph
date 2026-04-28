@@ -5,70 +5,40 @@
   "detailLevel": "All",
   "tablePositions": [
     {
-      "name": "profiles",
+      "name": "users",
       "schemaName": "public",
-      "x": 276.8267633731813,
-      "y": -353.773052769423
+      "x": 165.36165982269927,
+      "y": -165.36165982269924
     },
     {
-      "name": "projects",
+      "name": "worlds",
       "schemaName": "public",
-      "x": 912.9118361605321,
-      "y": -353.773052769423
+      "x": 514.468106988259,
+      "y": 176.76591222426475
     },
     {
       "name": "categories",
       "schemaName": "public",
-      "x": 912.911836160532,
-      "y": -18.70420753406256
+      "x": 79.82976681095826,
+      "y": 371.65960218512794
     },
     {
       "name": "articles",
       "schemaName": "public",
-      "x": 1485.6655519695466,
-      "y": -464.51612847355744
+      "x": 491.6596021851281,
+      "y": 559.8297668109585
     },
     {
       "name": "relations",
       "schemaName": "public",
-      "x": 1490.3945558757966,
-      "y": -37.79770373153531
-    },
-    {
-      "name": "tags",
-      "schemaName": "public",
-      "x": 1269.8739239900412,
-      "y": -666.199903494227
-    },
-    {
-      "name": "article_tags",
-      "schemaName": "public",
-      "x": 1596.9732250957097,
-      "y": -666.199903494227
-    },
-    {
-      "name": "relation_types",
-      "schemaName": "public",
-      "x": 1032,
-      "y": 294.37383782554434
-    },
-    {
-      "name": "article_versions",
-      "schemaName": "public",
-      "x": 1944.6939582550567,
-      "y": -498.32791245625094
+      "x": 1200,
+      "y": 480
     },
     {
       "name": "admin_logs",
       "schemaName": "public",
-      "x": 276.8267633731813,
-      "y": 19.687695958312474
-    },
-    {
-      "name": "bookmarks",
-      "schemaName": "public",
-      "x": 912.9118361605321,
-      "y": -528.2102266912092
+      "x": 1200,
+      "y": 0
     }
   ],
   "tableGroupCollapseStates": [],
@@ -78,13 +48,13 @@
       "firstFieldNames": [
         "id"
       ],
-      "firstTableName": "profiles",
+      "firstTableName": "users",
       "firstSchemaName": "public",
       "firstRelation": "1",
       "secondFieldNames": [
         "user_id"
       ],
-      "secondTableName": "projects",
+      "secondTableName": "worlds",
       "secondSchemaName": "public",
       "secondRelation": "*",
       "checkPoints": []
@@ -93,40 +63,40 @@
       "firstFieldNames": [
         "id"
       ],
-      "firstTableName": "projects",
+      "firstTableName": "worlds",
       "firstSchemaName": "public",
       "firstRelation": "1",
       "secondFieldNames": [
-        "project_id"
+        "world_id"
       ],
       "secondTableName": "categories",
       "secondSchemaName": "public",
       "secondRelation": "*",
-      "checkPoints": []
+      "checkPoints": [
+        {
+          "x": 434.8083162542991,
+          "y": 224.76591222426475
+        },
+        {
+          "x": 434.8083162542991,
+          "y": 451.65960218512794
+        }
+      ]
     },
     {
       "firstFieldNames": [
         "id"
       ],
-      "firstTableName": "projects",
+      "firstTableName": "worlds",
       "firstSchemaName": "public",
       "firstRelation": "1",
       "secondFieldNames": [
-        "project_id"
+        "world_id"
       ],
       "secondTableName": "articles",
       "secondSchemaName": "public",
       "secondRelation": "*",
-      "checkPoints": [
-        {
-          "x": 1264.0235497900908,
-          "y": -305.773052769423
-        },
-        {
-          "x": 1264.0235497900908,
-          "y": -384.51612847355744
-        }
-      ]
+      "checkPoints": []
     },
     {
       "firstFieldNames": [
@@ -141,31 +111,31 @@
       "secondTableName": "articles",
       "secondSchemaName": "public",
       "secondRelation": "*",
-      "checkPoints": []
+      "checkPoints": [
+        {
+          "x": 383.4891804472545,
+          "y": 419.65960218512794
+        },
+        {
+          "x": 383.4891804472545,
+          "y": 671.8297668109585
+        }
+      ]
     },
     {
       "firstFieldNames": [
         "id"
       ],
-      "firstTableName": "projects",
+      "firstTableName": "worlds",
       "firstSchemaName": "public",
       "firstRelation": "1",
       "secondFieldNames": [
-        "project_id"
+        "world_id"
       ],
       "secondTableName": "relations",
       "secondSchemaName": "public",
       "secondRelation": "*",
-      "checkPoints": [
-        {
-          "x": 1384.0705286559496,
-          "y": -305.773052769423
-        },
-        {
-          "x": 1384.0705286559496,
-          "y": 42.20229626846469
-        }
-      ]
+      "checkPoints": []
     },
     {
       "firstFieldNames": [
@@ -201,82 +171,7 @@
       "firstFieldNames": [
         "id"
       ],
-      "firstTableName": "projects",
-      "firstSchemaName": "public",
-      "firstRelation": "1",
-      "secondFieldNames": [
-        "project_id"
-      ],
-      "secondTableName": "tags",
-      "secondSchemaName": "public",
-      "secondRelation": "*",
-      "checkPoints": []
-    },
-    {
-      "firstFieldNames": [
-        "id"
-      ],
-      "firstTableName": "articles",
-      "firstSchemaName": "public",
-      "firstRelation": "1",
-      "secondFieldNames": [
-        "article_id"
-      ],
-      "secondTableName": "article_tags",
-      "secondSchemaName": "public",
-      "secondRelation": "*",
-      "checkPoints": []
-    },
-    {
-      "firstFieldNames": [
-        "id"
-      ],
-      "firstTableName": "tags",
-      "firstSchemaName": "public",
-      "firstRelation": "1",
-      "secondFieldNames": [
-        "tag_id"
-      ],
-      "secondTableName": "article_tags",
-      "secondSchemaName": "public",
-      "secondRelation": "*",
-      "checkPoints": []
-    },
-    {
-      "firstFieldNames": [
-        "id"
-      ],
-      "firstTableName": "projects",
-      "firstSchemaName": "public",
-      "firstRelation": "1",
-      "secondFieldNames": [
-        "project_id"
-      ],
-      "secondTableName": "relation_types",
-      "secondSchemaName": "public",
-      "secondRelation": "*",
-      "checkPoints": []
-    },
-    {
-      "firstFieldNames": [
-        "id"
-      ],
-      "firstTableName": "articles",
-      "firstSchemaName": "public",
-      "firstRelation": "1",
-      "secondFieldNames": [
-        "article_id"
-      ],
-      "secondTableName": "article_versions",
-      "secondSchemaName": "public",
-      "secondRelation": "*",
-      "checkPoints": []
-    },
-    {
-      "firstFieldNames": [
-        "id"
-      ],
-      "firstTableName": "profiles",
+      "firstTableName": "users",
       "firstSchemaName": "public",
       "firstRelation": "1",
       "secondFieldNames": [
@@ -285,22 +180,13 @@
       "secondTableName": "admin_logs",
       "secondSchemaName": "public",
       "secondRelation": "*",
-      "checkPoints": [
-        {
-          "x": 572.927819658609,
-          "y": -297.773052769423
-        },
-        {
-          "x": 572.927819658609,
-          "y": 99.68769595831247
-        }
-      ]
+      "checkPoints": []
     },
     {
       "firstFieldNames": [
         "id"
       ],
-      "firstTableName": "profiles",
+      "firstTableName": "users",
       "firstSchemaName": "public",
       "firstRelation": "1",
       "secondFieldNames": [
@@ -309,67 +195,19 @@
       "secondTableName": "admin_logs",
       "secondSchemaName": "public",
       "secondRelation": "*",
-      "checkPoints": [
-        {
-          "x": 616.1776240204345,
-          "y": -313.773052769423
-        },
-        {
-          "x": 616.1776240204345,
-          "y": 163.68769595831247
-        }
-      ]
-    },
-    {
-      "firstFieldNames": [
-        "id"
-      ],
-      "firstTableName": "projects",
-      "firstSchemaName": "public",
-      "firstRelation": "1",
-      "secondFieldNames": [
-        "target_project_id"
-      ],
-      "secondTableName": "admin_logs",
-      "secondSchemaName": "public",
-      "secondRelation": "*",
-      "checkPoints": [
-        {
-          "x": 757.0095679397574,
-          "y": -305.773052769423
-        },
-        {
-          "x": 757.0095679397574,
-          "y": 195.68769595831247
-        }
-      ]
-    },
-    {
-      "firstFieldNames": [
-        "id"
-      ],
-      "firstTableName": "profiles",
-      "firstSchemaName": "public",
-      "firstRelation": "1",
-      "secondFieldNames": [
-        "user_id"
-      ],
-      "secondTableName": "bookmarks",
-      "secondSchemaName": "public",
-      "secondRelation": "*",
       "checkPoints": []
     },
     {
       "firstFieldNames": [
         "id"
       ],
-      "firstTableName": "articles",
+      "firstTableName": "worlds",
       "firstSchemaName": "public",
       "firstRelation": "1",
       "secondFieldNames": [
-        "article_id"
+        "target_world_id"
       ],
-      "secondTableName": "bookmarks",
+      "secondTableName": "admin_logs",
       "secondSchemaName": "public",
       "secondRelation": "*",
       "checkPoints": []

@@ -28,36 +28,57 @@ skinparam sequence {
 }
 
 participant "Пользователь" as U
-participant "Frontend\n(React)" as FE
-participant "PostgreSQL\n(Supabase)" as DB
+participant "Браузер\n(сайдбар «Связи»)" as FE
+participant "Flask\nblueprint articles" as APP
+participant "PostgreSQL" as DB
 
 == Просмотр связей статьи ==
 
-U -> FE : Открывает статью «Geralt of Rivia»
-FE -> DB : SELECT r.*, a.title, a.category_id\nFROM relations r\nJOIN articles a ON a.id IN\n(r.source_article_id, r.target_article_id)\nWHERE source_article_id = ? OR target_article_id = ?
-DB --> FE : { relations[] }
-FE --> U : Панель «Relations»:\n→ Ciri (father of)\n→ Yennefer (lover)\n→ Kaer Morhen (lives in)
+U -> FE : Открывает /worlds/<id>/articles/<aid>
+FE -> APP : GET .../articles/<aid>
+APP -> APP : @login_required + проверка владения
+APP -> DB : SELECT relations WHERE\n  source_article_id = ? OR target_article_id = ?\nс JOIN-связанными статьями (source, target)
+DB --> APP : { relations[] с двумя концами }
+APP --> FE : render_template('articles/edit.html', relations=...)
+FE --> U : Сайдбар:\n→ Цири (отец)\n→ Йеннифэр (любовники)\n→ Каэр Морхен (живёт в)
 
 == Добавление связи ==
 
-U -> FE : Нажимает «+ Add»
-FE --> U : Модальное окно
-U -> FE : Начинает вводить «Ci...»
-FE -> DB : SELECT id, title FROM articles\nWHERE project_id = ? AND title ILIKE '%Ci%'
-DB --> FE : [{ id: 3, title: 'Ciri' }, { id: 7, title: 'Cintra' }]
+U -> FE : Нажимает «+ Добавить связь»\n(форма уже на странице)
+U -> FE : Печатает «Ци...» в поле поиска статьи
+FE -> APP : GET /worlds/<id>/articles/search.json?q=Ци
+APP -> DB : SELECT id, title FROM articles\nWHERE world_id = ? AND title ILIKE '%Ци%'\nLIMIT 8
+DB --> APP : [{ id, title }, ...]
+APP --> FE : { results: [...] }
 FE --> U : Выпадающий список совпадений
-U -> FE : Выбирает «Ciri»,\nвводит тип связи «father of»
-FE -> DB : INSERT INTO relations\n{ project_id, source_article_id,\ntarget_article_id, label: 'father of' }
-DB --> FE : { relation_id }
-FE --> U : ✅ Связь добавлена:\n→ Ciri (father of)
+U -> FE : Кликает на «Цири» → выбирает label (или пишет свой)
+U -> FE : Submit формы
+FE -> APP : POST .../articles/<aid>/relations\n(target_article_id, label, csrf_token)
+APP -> APP : RelationForm.validate_on_submit()
+APP -> APP : Проверки: target.world_id == world_id,\nsource != target
+APP -> DB : INSERT INTO relations\n(world_id, source_article_id,\n target_article_id, label)
+note right of DB
+  CHECK source != target
+  UNIQUE (source, target, label)
+  → если нарушение — IntegrityError
+end note
+DB --> APP : OK или 23505 (дубликат)
+alt успех
+    APP --> FE : 302 → редактор (со свежим списком связей)
+else дубликат
+    APP -> APP : flash «Такая связь уже существует»
+    APP --> FE : 302 → редактор
+end
 
 == Удаление связи ==
 
-U -> FE : Нажимает ✕ рядом со связью «→ Ciri»
-FE --> U : Диалог «Удалить связь?»
+U -> FE : Кликает ✕ рядом со связью
+FE --> U : confirm() — подтвердить?
 U -> FE : Подтверждает
-FE -> DB : DELETE FROM relations WHERE id = ?
-DB --> FE : OK
-FE --> U : Связь удалена из списка
+FE -> APP : POST .../relations/<rid>/delete (csrf)
+APP -> APP : Проверка владения миром
+APP -> DB : DELETE FROM relations WHERE id = ?
+DB --> APP : OK
+APP --> FE : 302 → редактор (без удалённой связи)
 
 @enduml

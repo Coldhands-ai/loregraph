@@ -1,0 +1,101 @@
+@startuml seq-admin
+title Администрирование
+
+skinparam backgroundColor #FFFFFF
+skinparam sequenceArrowThickness 2
+skinparam roundcorner 8
+skinparam maxmessagesize 200
+skinparam sequenceParticipant underline
+
+skinparam participant {
+    BackgroundColor #FEF3C7
+    BorderColor #F59E0B
+    FontColor #000000
+    FontSize 13
+    FontStyle bold
+}
+skinparam arrow {
+    Color #555555
+    FontColor #000000
+    FontSize 12
+}
+skinparam sequence {
+    LifeLineBorderColor #BBBBBB
+    DividerBackgroundColor #FEF3C7
+    DividerBorderColor #F59E0B
+    DividerFontColor #555555
+    DividerFontSize 11
+}
+
+participant "Админ" as A
+participant "Браузер" as FE
+participant "Flask\nblueprint admin" as APP
+participant "PostgreSQL" as DB
+participant "static/uploads/" as DISK
+
+== Выдача роли admin (одноразово, через CLI) ==
+
+note over A, DB
+  flask --app app make-admin user@example.com
+  → SQL: UPDATE users SET role='admin' WHERE email=?
+end note
+
+== Открытие админ-панели ==
+
+A -> FE : Клик по аватару → дропдаун\n→ «⚙ Админ-панель»
+FE -> APP : GET /admin/
+APP -> APP : @before_request: проверка current_user.is_admin
+note right of APP
+  Защита всего blueprint:
+  if not current_user.is_admin:
+      abort(403)
+end note
+APP -> DB : COUNT(users), COUNT(worlds), COUNT(articles)\n+ топ-5 миров, последние 10 действий из admin_logs
+DB --> APP : статистика
+APP --> FE : render_template('admin/dashboard.html')
+FE --> A : Дашборд: карточки чисел, топ миров, лента действий
+
+== Блокировка пользователя ==
+
+A -> FE : Открывает /admin/users\nна строке нужного юзера → кнопка «блок.»
+FE -> APP : POST /admin/users/<id>/block (csrf)
+APP -> APP : Защита: нельзя себя
+APP -> DB : UPDATE users SET is_blocked = true WHERE id = ?
+APP -> DB : INSERT INTO admin_logs\n(admin_id, action='block_user', target_user_id, created_at)
+DB --> APP : OK
+APP --> FE : 302 → /admin/users\n+ flash «Пользователь ... заблокирован»
+
+== Удаление мира ==
+
+A -> FE : /admin/worlds → строка мира → «удалить» (confirm)
+FE -> APP : POST /admin/worlds/<id>/delete (csrf)
+APP -> DB : SELECT world WITH owner, articles
+DB --> APP : world
+loop для каждой статьи с image_url
+    APP -> DISK : storage.delete_image(article.image_url)
+end
+APP -> DB : INSERT INTO admin_logs\n(action='delete_world', target_user_id=owner.id,\n target_world_id, details={title, owner_email})
+APP -> DB : DELETE FROM worlds WHERE id = ?\n(каскад → categories, articles, relations)
+DB --> APP : OK
+APP --> FE : 302 → /admin/worlds + flash
+
+== Повышение/понижение роли ==
+
+A -> FE : «в admin» (или «снять admin»)
+FE -> APP : POST /admin/users/<id>/promote\n(или demote)
+APP -> APP : Защита: нельзя себя; нельзя снять последнего админа
+APP -> DB : UPDATE users SET role = 'admin' (или 'user')
+APP -> DB : INSERT INTO admin_logs\n(action='promote_admin' / 'demote_admin')
+DB --> APP : OK
+APP --> FE : 302 → /admin/users + flash
+
+== Просмотр аудит-лога ==
+
+A -> FE : Открывает /admin/logs
+FE -> APP : GET /admin/logs
+APP -> DB : SELECT * FROM admin_logs\nORDER BY created_at DESC LIMIT 50
+DB --> APP : { logs[] с join к admin/target_user/target_world }
+APP --> FE : render_template('admin/logs.html')
+FE --> A : Лента: время, кто, действие, цель, детали (JSON)
+
+@enduml

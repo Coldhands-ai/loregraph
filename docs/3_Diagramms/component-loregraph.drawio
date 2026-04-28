@@ -1,145 +1,196 @@
-<mxfile host="65bd71144e">
-    <diagram name="Component Diagram — LoreGraph" id="component-loregraph">
-        <mxGraphModel dx="1146" dy="779" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1654" pageHeight="1169" background="#808080" math="0" shadow="1">
-            <root>
-                <mxCell id="0"/>
-                <mxCell id="1" parent="0"/>
-                <mxCell id="11" value="LoreGraph — Component Diagram" style="text;html=1;align=center;verticalAlign=middle;fontSize=17;fontStyle=1;fontColor=#000000;strokeColor=none;fillColor=none;" parent="1" vertex="1">
-                    <mxGeometry x="80" y="10" width="500" height="30" as="geometry"/>
-                </mxCell>
-                <mxCell id="12" value="🌐  Frontend Layer (React + Vite + TypeScript)" style="swimlane;startSize=36;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=13;fontStyle=1;rounded=1;arcSize=4;swimlaneLine=1;horizontal=1;align=center;shadow=1;" parent="1" vertex="1">
-                    <mxGeometry x="40" y="60" width="330" height="860" as="geometry"/>
-                </mxCell>
-                <mxCell id="24" value="Supabase JS Client (@supabase/supabase-js)" style="shape=component;whiteSpace=wrap;html=1;fillColor=#f1f5f9;strokeColor=#94a3b8;fontColor=#000000;fontSize=11;rounded=1;arcSize=8;align=center;" parent="12" vertex="1">
-                    <mxGeometry x="30" y="56" width="260" height="44" as="geometry"/>
-                </mxCell>
-                <mxCell id="13" value="Auth Pages (Login / Register)" style="shape=component;whiteSpace=wrap;html=1;fillColor=#eff6ff;strokeColor=#93c5fd;fontColor=#000000;fontSize=11;rounded=1;arcSize=8;align=center;" parent="12" vertex="1">
-                    <mxGeometry x="30" y="130" width="260" height="48" as="geometry"/>
-                </mxCell>
-                <mxCell id="23" value="React Router v6 (маршрутизация)" style="shape=component;whiteSpace=wrap;html=1;fillColor=#fdf4ff;strokeColor=#d8b4fe;fontColor=#000000;fontSize=11;rounded=1;arcSize=8;align=center;" parent="12" vertex="1">
-                    <mxGeometry x="30" y="770" width="260" height="44" as="geometry"/>
-                </mxCell>
-                <mxCell id="22" value="Recharts (статистика и графики)" style="shape=component;whiteSpace=wrap;html=1;fillColor=#f0fdf4;strokeColor=#86efac;fontColor=#000000;fontSize=11;rounded=1;arcSize=8;align=center;" parent="12" vertex="1">
-                    <mxGeometry x="30" y="706" width="260" height="48" as="geometry"/>
-                </mxCell>
-                <mxCell id="21" value="UI Kit (shadcn/ui + Tailwind CSS)" style="shape=component;whiteSpace=wrap;html=1;fillColor=#f0fdf4;strokeColor=#86efac;fontColor=#000000;fontSize=11;rounded=1;arcSize=8;align=center;" parent="12" vertex="1">
-                    <mxGeometry x="30" y="644" width="260" height="48" as="geometry"/>
-                </mxCell>
-                <mxCell id="20" value="Admin Panel UI" style="shape=component;whiteSpace=wrap;html=1;fillColor=#fef3c7;strokeColor=#f59e0b;fontColor=#000000;fontSize=11;rounded=1;arcSize=8;align=center;" parent="12" vertex="1">
-                    <mxGeometry x="30" y="570" width="260" height="48" as="geometry"/>
-                </mxCell>
-                <mxCell id="19" value="World Settings" style="shape=component;whiteSpace=wrap;html=1;fillColor=#eff6ff;strokeColor=#93c5fd;fontColor=#000000;fontSize=11;rounded=1;arcSize=8;align=center;" parent="12" vertex="1">
-                    <mxGeometry x="30" y="502" width="260" height="48" as="geometry"/>
-                </mxCell>
-                <mxCell id="18" value="Graph View (react-force-graph)" style="shape=component;whiteSpace=wrap;html=1;fillColor=#eff6ff;strokeColor=#93c5fd;fontColor=#000000;fontSize=11;rounded=1;arcSize=8;align=center;" parent="12" vertex="1">
-                    <mxGeometry x="30" y="440" width="260" height="48" as="geometry"/>
-                </mxCell>
-                <mxCell id="17" value="Article Catalog" style="shape=component;whiteSpace=wrap;html=1;fillColor=#eff6ff;strokeColor=#93c5fd;fontColor=#000000;fontSize=11;rounded=1;arcSize=8;align=center;" parent="12" vertex="1">
-                    <mxGeometry x="30" y="378" width="260" height="48" as="geometry"/>
-                </mxCell>
-                <mxCell id="16" value="Article Editor (TipTap WYSIWYG)" style="shape=component;whiteSpace=wrap;html=1;fillColor=#eff6ff;strokeColor=#93c5fd;fontColor=#000000;fontSize=11;rounded=1;arcSize=8;align=center;" parent="12" vertex="1">
-                    <mxGeometry x="30" y="316" width="260" height="48" as="geometry"/>
-                </mxCell>
-                <mxCell id="15" value="World Dashboard" style="shape=component;whiteSpace=wrap;html=1;fillColor=#eff6ff;strokeColor=#93c5fd;fontColor=#000000;fontSize=11;rounded=1;arcSize=8;align=center;" parent="12" vertex="1">
-                    <mxGeometry x="30" y="254" width="260" height="48" as="geometry"/>
-                </mxCell>
-                <mxCell id="14" value="My Worlds Page" style="shape=component;whiteSpace=wrap;html=1;fillColor=#eff6ff;strokeColor=#93c5fd;fontColor=#000000;fontSize=11;rounded=1;arcSize=8;align=center;" parent="12" vertex="1">
-                    <mxGeometry x="30" y="192" width="260" height="48" as="geometry"/>
-                </mxCell>
-                <mxCell id="30" value="⚙️  Supabase Platform (BaaS)" style="swimlane;startSize=36;fillColor=#dcfce7;strokeColor=#4ade80;fontColor=#000000;fontSize=13;fontStyle=1;rounded=1;arcSize=4;swimlaneLine=1;horizontal=1;align=center;shadow=1;" parent="1" vertex="1">
-                    <mxGeometry x="420" y="60" width="330" height="860" as="geometry"/>
-                </mxCell>
-                <mxCell id="31" value="Supabase Auth&#xa;(JWT · email/password · OAuth Google)" style="shape=component;whiteSpace=wrap;html=1;fillColor=#f0fdf4;strokeColor=#4ade80;fontColor=#000000;fontSize=11;rounded=1;arcSize=8;align=center;" parent="1" vertex="1">
-                    <mxGeometry x="455" y="116" width="260" height="56" as="geometry"/>
-                </mxCell>
-                <mxCell id="32" value="Supabase REST API (PostgREST)&#xa;автоматический CRUD" style="shape=component;whiteSpace=wrap;html=1;fillColor=#f0fdf4;strokeColor=#4ade80;fontColor=#000000;fontSize=11;rounded=1;arcSize=8;align=center;" parent="1" vertex="1">
-                    <mxGeometry x="455" y="190" width="260" height="56" as="geometry"/>
-                </mxCell>
-                <mxCell id="33" value="Supabase Storage&#xa;(обложки миров, статей, аватары)" style="shape=component;whiteSpace=wrap;html=1;fillColor=#f0fdf4;strokeColor=#4ade80;fontColor=#000000;fontSize=11;rounded=1;arcSize=8;align=center;" parent="1" vertex="1">
-                    <mxGeometry x="455" y="264" width="260" height="56" as="geometry"/>
-                </mxCell>
-                <mxCell id="34" value="Row Level Security (RLS)&#xa;политики безопасности" style="shape=component;whiteSpace=wrap;html=1;fillColor=#fff1f2;strokeColor=#fca5a5;fontColor=#000000;fontSize=11;rounded=1;arcSize=8;align=center;" parent="1" vertex="1">
-                    <mxGeometry x="455" y="340" width="260" height="56" as="geometry"/>
-                </mxCell>
-                <mxCell id="35" value="Database Triggers&#xa;(auto-create profile on signup)" style="shape=component;whiteSpace=wrap;html=1;fillColor=#fef3c7;strokeColor=#f59e0b;fontColor=#000000;fontSize=11;rounded=1;arcSize=8;align=center;" parent="1" vertex="1">
-                    <mxGeometry x="455" y="416" width="260" height="56" as="geometry"/>
-                </mxCell>
-                <mxCell id="36" value="Realtime Subscriptions&#xa;(обновления в реальном времени)" style="shape=component;whiteSpace=wrap;html=1;fillColor=#fdf4ff;strokeColor=#d8b4fe;fontColor=#000000;fontSize=11;rounded=1;arcSize=8;align=center;" parent="1" vertex="1">
-                    <mxGeometry x="455" y="492" width="260" height="56" as="geometry"/>
-                </mxCell>
-                <mxCell id="40" value="🗄️  Database Layer (PostgreSQL)" style="swimlane;startSize=36;fillColor=#fce7f3;strokeColor=#f472b6;fontColor=#000000;fontSize=13;fontStyle=1;rounded=1;arcSize=4;swimlaneLine=1;horizontal=1;align=center;shadow=1;" parent="1" vertex="1">
-                    <mxGeometry x="800" y="60" width="330" height="860" as="geometry"/>
-                </mxCell>
-                <mxCell id="49" value="Все таблицы защищены RLS.&#xa;user видит только свои данные,&#xa;admin может читать все profiles и projects." style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;fillColor=#fffde7;strokeColor=#d6b656;fontSize=10;fontColor=#000000;" parent="40" vertex="1">
-                    <mxGeometry x="35" y="570" width="260" height="60" as="geometry"/>
-                </mxCell>
-                <mxCell id="41" value="auth.users (Supabase managed)" style="shape=component;whiteSpace=wrap;html=1;fillColor=#fdf2f8;strokeColor=#f0abfc;fontColor=#000000;fontSize=11;rounded=1;arcSize=8;align=center;" parent="1" vertex="1">
-                    <mxGeometry x="835" y="116" width="260" height="48" as="geometry"/>
-                </mxCell>
-                <mxCell id="42" value="profiles" style="shape=component;whiteSpace=wrap;html=1;fillColor=#fdf2f8;strokeColor=#f0abfc;fontColor=#000000;fontSize=11;rounded=1;arcSize=8;align=center;" parent="1" vertex="1">
-                    <mxGeometry x="835" y="178" width="260" height="48" as="geometry"/>
-                </mxCell>
-                <mxCell id="43" value="projects" style="shape=component;whiteSpace=wrap;html=1;fillColor=#fdf2f8;strokeColor=#f0abfc;fontColor=#000000;fontSize=11;rounded=1;arcSize=8;align=center;" parent="1" vertex="1">
-                    <mxGeometry x="835" y="240" width="260" height="48" as="geometry"/>
-                </mxCell>
-                <mxCell id="44" value="categories" style="shape=component;whiteSpace=wrap;html=1;fillColor=#fdf2f8;strokeColor=#f0abfc;fontColor=#000000;fontSize=11;rounded=1;arcSize=8;align=center;" parent="1" vertex="1">
-                    <mxGeometry x="835" y="302" width="260" height="48" as="geometry"/>
-                </mxCell>
-                <mxCell id="45" value="articles (content: JSONB)" style="shape=component;whiteSpace=wrap;html=1;fillColor=#fdf2f8;strokeColor=#f0abfc;fontColor=#000000;fontSize=11;rounded=1;arcSize=8;align=center;" parent="1" vertex="1">
-                    <mxGeometry x="835" y="364" width="260" height="48" as="geometry"/>
-                </mxCell>
-                <mxCell id="46" value="relations (source ↔ target + label)" style="shape=component;whiteSpace=wrap;html=1;fillColor=#fdf2f8;strokeColor=#f0abfc;fontColor=#000000;fontSize=11;rounded=1;arcSize=8;align=center;" parent="1" vertex="1">
-                    <mxGeometry x="835" y="426" width="260" height="48" as="geometry"/>
-                </mxCell>
-                <mxCell id="47" value="tags" style="shape=component;whiteSpace=wrap;html=1;fillColor=#fdf2f8;strokeColor=#f0abfc;fontColor=#000000;fontSize=11;rounded=1;arcSize=8;align=center;" parent="1" vertex="1">
-                    <mxGeometry x="835" y="488" width="260" height="48" as="geometry"/>
-                </mxCell>
-                <mxCell id="48" value="article_tags (M2M)" style="shape=component;whiteSpace=wrap;html=1;fillColor=#fdf2f8;strokeColor=#f0abfc;fontColor=#000000;fontSize=11;rounded=1;arcSize=8;align=center;" parent="1" vertex="1">
-                    <mxGeometry x="835" y="550" width="260" height="48" as="geometry"/>
-                </mxCell>
-                <mxCell id="50" value="🚀  Deploy Layer" style="swimlane;startSize=36;fillColor=#fef9c3;strokeColor=#facc15;fontColor=#000000;fontSize=13;fontStyle=1;rounded=1;arcSize=4;swimlaneLine=1;horizontal=1;align=center;shadow=1;" parent="1" vertex="1">
-                    <mxGeometry x="1180" y="60" width="330" height="300" as="geometry"/>
-                </mxCell>
-                <mxCell id="51" value="Vercel&#xa;(хостинг React SPA, автодеплой из GitHub)" style="shape=component;whiteSpace=wrap;html=1;fillColor=#fefce8;strokeColor=#fde047;fontColor=#000000;fontSize=11;rounded=1;arcSize=8;align=center;" parent="1" vertex="1">
-                    <mxGeometry x="1215" y="116" width="260" height="56" as="geometry"/>
-                </mxCell>
-                <mxCell id="52" value="GitHub Repository&#xa;(Git, CI/CD, code review)" style="shape=component;whiteSpace=wrap;html=1;fillColor=#fefce8;strokeColor=#fde047;fontColor=#000000;fontSize=11;rounded=1;arcSize=8;align=center;" parent="1" vertex="1">
-                    <mxGeometry x="1215" y="190" width="260" height="56" as="geometry"/>
-                </mxCell>
-                <mxCell id="53" value="Supabase Cloud&#xa;(free tier: DB + Auth + Storage)" style="shape=component;whiteSpace=wrap;html=1;fillColor=#fefce8;strokeColor=#fde047;fontColor=#000000;fontSize=11;rounded=1;arcSize=8;align=center;" parent="1" vertex="1">
-                    <mxGeometry x="1215" y="264" width="260" height="56" as="geometry"/>
-                </mxCell>
-                <mxCell id="601" value="" style="endArrow=block;html=1;strokeColor=#FFFFFF;strokeWidth=2;entryX=0;entryY=0.5;exitX=1;exitY=0.5;fontColor=#FFFFFF;" parent="1" source="24" target="31" edge="1">
-                    <mxGeometry relative="1" as="geometry"/>
-                </mxCell>
-                <mxCell id="602" value="" style="endArrow=block;html=1;strokeColor=#FFFFFF;strokeWidth=2;entryX=0;entryY=0.5;fontColor=#FFFFFF;" parent="1" source="24" target="32" edge="1">
-                    <mxGeometry relative="1" as="geometry"/>
-                </mxCell>
-                <mxCell id="603" value="" style="endArrow=block;html=1;strokeColor=#FFFFFF;strokeWidth=2;entryX=0;entryY=0.5;fontColor=#FFFFFF;" parent="1" source="24" target="33" edge="1">
-                    <mxGeometry relative="1" as="geometry"/>
-                </mxCell>
-                <mxCell id="604" value="" style="endArrow=block;html=1;strokeColor=#FFFFFF;strokeWidth=2;entryX=0;entryY=0.5;exitX=1;exitY=0.5;fontColor=#FFFFFF;" parent="1" source="32" target="43" edge="1">
-                    <mxGeometry relative="1" as="geometry"/>
-                </mxCell>
-                <mxCell id="605" value="" style="endArrow=block;html=1;strokeColor=#FFFFFF;strokeWidth=2;entryX=0;entryY=0.5;exitX=1;exitY=0.5;fontColor=#FFFFFF;" parent="1" source="31" target="41" edge="1">
-                    <mxGeometry relative="1" as="geometry"/>
-                </mxCell>
-                <mxCell id="606" value="" style="endArrow=block;html=1;strokeColor=#FFFFFF;strokeWidth=2;entryX=0;entryY=0.5;exitX=1;exitY=0.5;fontColor=#FFFFFF;" parent="1" source="34" target="45" edge="1">
-                    <mxGeometry relative="1" as="geometry"/>
-                </mxCell>
-                <mxCell id="607" value="" style="endArrow=block;html=1;strokeColor=#facc15;strokeWidth=1.5;dashed=1;dashPattern=4 3;" parent="1" source="52" target="51" edge="1">
-                    <mxGeometry relative="1" as="geometry"/>
-                </mxCell>
-                <mxCell id="700" value="supabase-js client" style="text;html=1;align=center;verticalAlign=middle;fontSize=10;fontColor=#FFFFFF;strokeColor=none;fillColor=none;" parent="1" vertex="1">
-                    <mxGeometry x="330" y="116" width="120" height="20" as="geometry"/>
-                </mxCell>
-                <mxCell id="701" value="PostgREST API" style="text;html=1;align=center;verticalAlign=middle;fontSize=10;fontColor=#FFFFFF;strokeColor=none;fillColor=none;" parent="1" vertex="1">
-                    <mxGeometry x="715" y="246" width="100" height="20" as="geometry"/>
-                </mxCell>
-                <mxCell id="702" value="JWT Auth" style="text;html=1;align=center;verticalAlign=middle;fontSize=10;fontColor=#FFFFFF;strokeColor=none;fillColor=none;" parent="1" vertex="1">
-                    <mxGeometry x="735" y="144" width="80" height="20" as="geometry"/>
-                </mxCell>
-            </root>
-        </mxGraphModel>
-    </diagram>
+<mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/29.6.1 Chrome/142.0.7444.265 Electron/39.8.0 Safari/537.36" version="29.6.1">
+  <diagram name="Component Diagram — LoreGraph" id="component-loregraph">
+    <mxGraphModel dx="1678" dy="989" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1654" pageHeight="1169" background="#808080" math="0" shadow="1">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="611" edge="1" parent="1" source="62" style="endArrow=block;html=1;strokeColor=#FFFFFF;strokeWidth=2;entryX=0;entryY=0.5;exitX=1;exitY=0.5;fontColor=#000000;" target="51" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="612" edge="1" parent="1" source="33" style="endArrow=block;html=1;strokeColor=#FFFFFF;strokeWidth=2;entryX=0;entryY=0.5;exitX=1;exitY=0.5;dashed=1;dashPattern=4 3;" target="53" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="11" parent="1" style="text;html=1;align=center;verticalAlign=middle;fontSize=17;fontStyle=1;fontColor=#000000;strokeColor=none;fillColor=none;" value="LoreGraph — Component Diagram" vertex="1">
+          <mxGeometry height="30" width="700" x="80" y="10" as="geometry" />
+        </mxCell>
+        <mxCell id="12" parent="1" style="swimlane;startSize=36;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=13;fontStyle=1;rounded=1;arcSize=4;swimlaneLine=1;horizontal=1;align=center;shadow=1;" value="🌐  Browser (Jinja2 templates + Tailwind + Alpine.js)" vertex="1">
+          <mxGeometry height="940" width="330" x="40" y="60" as="geometry" />
+        </mxCell>
+        <mxCell id="13" parent="12" style="shape=component;whiteSpace=wrap;html=1;fillColor=#eff6ff;strokeColor=#93c5fd;fontColor=#000000;fontSize=11;rounded=1;arcSize=8;align=center;" value="Auth Pages (login / register)" vertex="1">
+          <mxGeometry height="44" width="260" x="30" y="56" as="geometry" />
+        </mxCell>
+        <mxCell id="14" parent="12" style="shape=component;whiteSpace=wrap;html=1;fillColor=#eff6ff;strokeColor=#93c5fd;fontColor=#000000;fontSize=11;rounded=1;arcSize=8;align=center;" value="My Worlds Page" vertex="1">
+          <mxGeometry height="44" width="260" x="30" y="114" as="geometry" />
+        </mxCell>
+        <mxCell id="15" parent="12" style="shape=component;whiteSpace=wrap;html=1;fillColor=#eff6ff;strokeColor=#93c5fd;fontColor=#000000;fontSize=11;rounded=1;arcSize=8;align=center;" value="Article Catalog (list, search, filter)" vertex="1">
+          <mxGeometry height="44" width="260" x="30" y="172" as="geometry" />
+        </mxCell>
+        <mxCell id="16" parent="12" style="shape=component;whiteSpace=wrap;html=1;fillColor=#eff6ff;strokeColor=#93c5fd;fontColor=#000000;fontSize=11;rounded=1;arcSize=8;align=center;" value="Article Editor&#xa;(Toast UI Editor — WYSIWYG/Markdown)" vertex="1">
+          <mxGeometry height="56" width="260" x="30" y="230" as="geometry" />
+        </mxCell>
+        <mxCell id="17" parent="12" style="shape=component;whiteSpace=wrap;html=1;fillColor=#eff6ff;strokeColor=#93c5fd;fontColor=#000000;fontSize=11;rounded=1;arcSize=8;align=center;" value="Template Fields Block&#xa;(свойства категории над текстом)" vertex="1">
+          <mxGeometry height="56" width="260" x="30" y="300" as="geometry" />
+        </mxCell>
+        <mxCell id="18" parent="12" style="shape=component;whiteSpace=wrap;html=1;fillColor=#eff6ff;strokeColor=#93c5fd;fontColor=#000000;fontSize=11;rounded=1;arcSize=8;align=center;" value="Relations Sidebar (autocomplete)" vertex="1">
+          <mxGeometry height="44" width="260" x="30" y="370" as="geometry" />
+        </mxCell>
+        <mxCell id="19" parent="12" style="shape=component;whiteSpace=wrap;html=1;fillColor=#eff6ff;strokeColor=#93c5fd;fontColor=#000000;fontSize=11;rounded=1;arcSize=8;align=center;" value="Graph View (Cytoscape.js)&#xa;force-layout, dashed flow, hover" vertex="1">
+          <mxGeometry height="56" width="260" x="30" y="496.5" as="geometry" />
+        </mxCell>
+        <mxCell id="20" parent="12" style="shape=component;whiteSpace=wrap;html=1;fillColor=#eff6ff;strokeColor=#93c5fd;fontColor=#000000;fontSize=11;rounded=1;arcSize=8;align=center;" value="Categories Settings&#xa;(CRUD + цвет + вес + template_fields)" vertex="1">
+          <mxGeometry height="56" width="260" x="32" y="427" as="geometry" />
+        </mxCell>
+        <mxCell id="21" parent="12" style="shape=component;whiteSpace=wrap;html=1;fillColor=#eff6ff;strokeColor=#93c5fd;fontColor=#000000;fontSize=11;rounded=1;arcSize=8;align=center;" value="Profile Page (имя, аватар, пароль)" vertex="1">
+          <mxGeometry height="44" width="260" x="30" y="568" as="geometry" />
+        </mxCell>
+        <mxCell id="22" parent="12" style="shape=component;whiteSpace=wrap;html=1;fillColor=#fef3c7;strokeColor=#f59e0b;fontColor=#000000;fontSize=11;rounded=1;arcSize=8;align=center;" value="Admin Panel UI&#xa;(dashboard, users, worlds, logs)" vertex="1">
+          <mxGeometry height="56" width="260" x="30" y="626" as="geometry" />
+        </mxCell>
+        <mxCell id="23" parent="12" style="shape=component;whiteSpace=wrap;html=1;fillColor=#f0fdf4;strokeColor=#86efac;fontColor=#000000;fontSize=11;rounded=1;arcSize=8;align=center;" value="UI Kit&#xa;Tailwind CSS (CDN) + кастомные стили" vertex="1">
+          <mxGeometry height="56" width="260" x="30" y="696" as="geometry" />
+        </mxCell>
+        <mxCell id="24" parent="12" style="shape=component;whiteSpace=wrap;html=1;fillColor=#f0fdf4;strokeColor=#86efac;fontColor=#000000;fontSize=11;rounded=1;arcSize=8;align=center;" value="Alpine.js&#xa;(модалки, дропдауны, реактивность)" vertex="1">
+          <mxGeometry height="56" width="260" x="30" y="766" as="geometry" />
+        </mxCell>
+        <mxCell id="25" parent="12" style="shape=component;whiteSpace=wrap;html=1;fillColor=#fdf4ff;strokeColor=#d8b4fe;fontColor=#000000;fontSize=11;rounded=1;arcSize=8;align=center;" value="Свой JS&#xa;editor.js · graph.js · categories.js · relations.js" vertex="1">
+          <mxGeometry height="56" width="260" x="30" y="836" as="geometry" />
+        </mxCell>
+        <mxCell id="30" parent="1" style="swimlane;startSize=36;fillColor=#dcfce7;strokeColor=#4ade80;fontColor=#000000;fontSize=13;fontStyle=1;rounded=1;arcSize=4;swimlaneLine=1;horizontal=1;align=center;shadow=1;" value="🐍  Flask Application (Python 3.13)" vertex="1">
+          <mxGeometry height="940" width="330" x="420" y="60" as="geometry" />
+        </mxCell>
+        <mxCell id="31" parent="30" style="shape=component;whiteSpace=wrap;html=1;fillColor=#f0fdf4;strokeColor=#4ade80;fontColor=#000000;fontSize=11;rounded=1;arcSize=8;align=center;" value="app.py — Application Factory&#xa;create_app() · register blueprints" vertex="1">
+          <mxGeometry height="56" width="260" x="30" y="56" as="geometry" />
+        </mxCell>
+        <mxCell id="32" parent="30" style="shape=component;whiteSpace=wrap;html=1;fillColor=#f0fdf4;strokeColor=#4ade80;fontColor=#000000;fontSize=11;rounded=1;arcSize=8;align=center;" value="extensions.py&#xa;db · login_manager · csrf · oauth" vertex="1">
+          <mxGeometry height="56" width="260" x="30" y="126" as="geometry" />
+        </mxCell>
+        <mxCell id="33" parent="30" style="shape=component;whiteSpace=wrap;html=1;fillColor=#eff6ff;strokeColor=#93c5fd;fontColor=#000000;fontSize=11;rounded=1;arcSize=8;align=center;" value="routes/auth.py&#xa;Flask-Login + bcrypt + Authlib (Google)" vertex="1">
+          <mxGeometry height="56" width="260" x="30" y="196" as="geometry" />
+        </mxCell>
+        <mxCell id="34" parent="30" style="shape=component;whiteSpace=wrap;html=1;fillColor=#eff6ff;strokeColor=#93c5fd;fontColor=#000000;fontSize=11;rounded=1;arcSize=8;align=center;" value="routes/worlds.py&#xa;CRUD миров + сид 5 категорий" vertex="1">
+          <mxGeometry height="56" width="260" x="30" y="266" as="geometry" />
+        </mxCell>
+        <mxCell id="35" parent="30" style="shape=component;whiteSpace=wrap;html=1;fillColor=#eff6ff;strokeColor=#93c5fd;fontColor=#000000;fontSize=11;rounded=1;arcSize=8;align=center;" value="routes/articles.py&#xa;CRUD + autosave + cover + relations" vertex="1">
+          <mxGeometry height="56" width="260" x="30" y="336" as="geometry" />
+        </mxCell>
+        <mxCell id="36" parent="30" style="shape=component;whiteSpace=wrap;html=1;fillColor=#eff6ff;strokeColor=#93c5fd;fontColor=#000000;fontSize=11;rounded=1;arcSize=8;align=center;" value="routes/categories.py&#xa;CRUD + редактор template_fields" vertex="1">
+          <mxGeometry height="56" width="260" x="30" y="406" as="geometry" />
+        </mxCell>
+        <mxCell id="37" parent="30" style="shape=component;whiteSpace=wrap;html=1;fillColor=#eff6ff;strokeColor=#93c5fd;fontColor=#000000;fontSize=11;rounded=1;arcSize=8;align=center;" value="routes/graph.py&#xa;JSON-эндпоинт для Cytoscape" vertex="1">
+          <mxGeometry height="56" width="260" x="30" y="476" as="geometry" />
+        </mxCell>
+        <mxCell id="38" parent="30" style="shape=component;whiteSpace=wrap;html=1;fillColor=#eff6ff;strokeColor=#93c5fd;fontColor=#000000;fontSize=11;rounded=1;arcSize=8;align=center;" value="routes/profile.py&#xa;имя · аватар (загрузка) · пароль" vertex="1">
+          <mxGeometry height="56" width="260" x="30" y="546" as="geometry" />
+        </mxCell>
+        <mxCell id="39" parent="30" style="shape=component;whiteSpace=wrap;html=1;fillColor=#fef3c7;strokeColor=#f59e0b;fontColor=#000000;fontSize=11;rounded=1;arcSize=8;align=center;" value="routes/admin.py&#xa;dashboard · users · worlds · audit log" vertex="1">
+          <mxGeometry height="56" width="260" x="30" y="616" as="geometry" />
+        </mxCell>
+        <mxCell id="60" parent="30" style="shape=component;whiteSpace=wrap;html=1;fillColor=#fff1f2;strokeColor=#fca5a5;fontColor=#000000;fontSize=11;rounded=1;arcSize=8;align=center;" value="models.py&#xa;SQLAlchemy 2.0: User, World, Category,&#xa;Article, Relation, AdminLog" vertex="1">
+          <mxGeometry height="68" width="260" x="30" y="686" as="geometry" />
+        </mxCell>
+        <mxCell id="61" parent="30" style="shape=component;whiteSpace=wrap;html=1;fillColor=#fff1f2;strokeColor=#fca5a5;fontColor=#000000;fontSize=11;rounded=1;arcSize=8;align=center;" value="forms.py&#xa;WTForms + CSRF (Flask-WTF)" vertex="1">
+          <mxGeometry height="56" width="260" x="30" y="768" as="geometry" />
+        </mxCell>
+        <mxCell id="62" parent="30" style="shape=component;whiteSpace=wrap;html=1;fillColor=#fff1f2;strokeColor=#fca5a5;fontColor=#000000;fontSize=11;rounded=1;arcSize=8;align=center;" value="storage.py&#xa;валидация (Pillow.verify) + сохранение картинок" vertex="1">
+          <mxGeometry height="56" width="260" x="30" y="838" as="geometry" />
+        </mxCell>
+        <mxCell id="40" parent="1" style="swimlane;startSize=36;fillColor=#fce7f3;strokeColor=#f472b6;fontColor=#000000;fontSize=13;fontStyle=1;rounded=1;arcSize=4;swimlaneLine=1;horizontal=1;align=center;shadow=1;" value="🗄️  PostgreSQL 17 (Docker)" vertex="1">
+          <mxGeometry height="940" width="330" x="800" y="60" as="geometry" />
+        </mxCell>
+        <mxCell id="41" parent="40" style="shape=component;whiteSpace=wrap;html=1;fillColor=#fdf2f8;strokeColor=#f0abfc;fontColor=#000000;fontSize=11;rounded=1;arcSize=8;align=center;" value="users (id, email, password_hash,&#xa;display_name, avatar_url, role,&#xa;is_blocked, google_sub, ...)" vertex="1">
+          <mxGeometry height="68" width="260" x="35" y="56" as="geometry" />
+        </mxCell>
+        <mxCell id="42" parent="40" style="shape=component;whiteSpace=wrap;html=1;fillColor=#fdf2f8;strokeColor=#f0abfc;fontColor=#000000;fontSize=11;rounded=1;arcSize=8;align=center;" value="worlds (id, user_id, title,&#xa;description, cover_url, ...)" vertex="1">
+          <mxGeometry height="56" width="260" x="35" y="138" as="geometry" />
+        </mxCell>
+        <mxCell id="43" parent="40" style="shape=component;whiteSpace=wrap;html=1;fillColor=#fdf2f8;strokeColor=#f0abfc;fontColor=#000000;fontSize=11;rounded=1;arcSize=8;align=center;" value="categories (id, world_id, name,&#xa;color, icon, weight,&#xa;template_fields: JSONB)" vertex="1">
+          <mxGeometry height="68" width="260" x="35" y="208" as="geometry" />
+        </mxCell>
+        <mxCell id="44" parent="40" style="shape=component;whiteSpace=wrap;html=1;fillColor=#fdf2f8;strokeColor=#f0abfc;fontColor=#000000;fontSize=11;rounded=1;arcSize=8;align=center;" value="articles (id, world_id, category_id,&#xa;title, content_md, summary, image_url,&#xa;field_values: JSONB, is_pinned, ...)" vertex="1">
+          <mxGeometry height="68" width="260" x="35" y="290" as="geometry" />
+        </mxCell>
+        <mxCell id="45" parent="40" style="shape=component;whiteSpace=wrap;html=1;fillColor=#fdf2f8;strokeColor=#f0abfc;fontColor=#000000;fontSize=11;rounded=1;arcSize=8;align=center;" value="relations (id, world_id,&#xa;source_article_id, target_article_id,&#xa;label, description)&#xa;CHECK source != target" vertex="1">
+          <mxGeometry height="80" width="260" x="35" y="372" as="geometry" />
+        </mxCell>
+        <mxCell id="46" parent="40" style="shape=component;whiteSpace=wrap;html=1;fillColor=#fef3c7;strokeColor=#f59e0b;fontColor=#000000;fontSize=11;rounded=1;arcSize=8;align=center;" value="admin_logs (append-only)&#xa;admin_id, action, target_user_id,&#xa;target_world_id, details: JSONB" vertex="1">
+          <mxGeometry height="68" width="260" x="35" y="466" as="geometry" />
+        </mxCell>
+        <mxCell id="47" parent="40" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;fillColor=#fffde7;strokeColor=#d6b656;fontSize=10;fontColor=#000000;" value="RLS не используется.&#xa;Доступ контролируется в Flask-слое:&#xa;@login_required + проверка владения миром&#xa;(world.user_id == current_user.id)." vertex="1">
+          <mxGeometry height="78" width="260" x="35" y="556" as="geometry" />
+        </mxCell>
+        <mxCell id="48" parent="40" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;fillColor=#f3f4f6;strokeColor=#9ca3af;fontSize=10;fontColor=#000000;fontStyle=2;" value="Будущие таблицы (см. ROADMAP):&#xa;tags, article_tags,&#xa;article_versions, bookmarks" vertex="1">
+          <mxGeometry height="58" width="260" x="35" y="650" as="geometry" />
+        </mxCell>
+        <mxCell id="49" parent="40" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;fillColor=#fffde7;strokeColor=#d6b656;fontSize=10;fontColor=#000000;" value="Схема создаётся через&#xa;db.create_all() при старте.&#xa;Миграции (Flask-Migrate) — на v2." vertex="1">
+          <mxGeometry height="58" width="260" x="35" y="724" as="geometry" />
+        </mxCell>
+        <mxCell id="50" parent="1" style="swimlane;startSize=36;fillColor=#fef9c3;strokeColor=#facc15;fontColor=#000000;fontSize=13;fontStyle=1;rounded=1;arcSize=4;swimlaneLine=1;horizontal=1;align=center;shadow=1;" value="💾  Локальный диск + ☁️  Внешние сервисы" vertex="1">
+          <mxGeometry height="940" width="330" x="1180" y="60" as="geometry" />
+        </mxCell>
+        <mxCell id="51" parent="50" style="shape=component;whiteSpace=wrap;html=1;fillColor=#fefce8;strokeColor=#fde047;fontColor=#000000;fontSize=11;rounded=1;arcSize=8;align=center;" value="static/uploads/avatars/&lt;user_id&gt;/&#xa;файлы аватарок (jpg/png/webp/gif)" vertex="1">
+          <mxGeometry height="56" width="260" x="35" y="56" as="geometry" />
+        </mxCell>
+        <mxCell id="52" parent="50" style="shape=component;whiteSpace=wrap;html=1;fillColor=#fefce8;strokeColor=#fde047;fontColor=#000000;fontSize=11;rounded=1;arcSize=8;align=center;" value="static/uploads/articles/&lt;article_id&gt;/&#xa;обложки статей (≤5 МБ)" vertex="1">
+          <mxGeometry height="56" width="260" x="35" y="126" as="geometry" />
+        </mxCell>
+        <mxCell id="53" parent="50" style="shape=component;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontColor=#000000;fontSize=11;rounded=1;arcSize=8;align=center;" value="Google OAuth 2.0 (OIDC)&#xa;Authlib client_id/secret в .env" vertex="1">
+          <mxGeometry height="56" width="260" x="35" y="210" as="geometry" />
+        </mxCell>
+        <mxCell id="54" parent="50" style="shape=component;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontColor=#000000;fontSize=11;rounded=1;arcSize=8;align=center;" value="Toast UI Editor · Cytoscape.js&#xa;Tailwind CSS · Alpine.js&#xa;(всё через CDN — без сборщика)" vertex="1">
+          <mxGeometry height="68" width="260" x="35" y="280" as="geometry" />
+        </mxCell>
+        <mxCell id="55" parent="50" style="text;html=1;align=center;verticalAlign=middle;fontSize=12;fontStyle=1;fontColor=#000000;strokeColor=none;fillColor=none;" value="🚀  Окружение разработки" vertex="1">
+          <mxGeometry height="20" width="260" x="35" y="380" as="geometry" />
+        </mxCell>
+        <mxCell id="56" parent="50" style="shape=component;whiteSpace=wrap;html=1;fillColor=#fefce8;strokeColor=#fde047;fontColor=#000000;fontSize=11;rounded=1;arcSize=8;align=center;" value="Docker Desktop&#xa;(Postgres 17 контейнер)" vertex="1">
+          <mxGeometry height="56" width="260" x="35" y="406" as="geometry" />
+        </mxCell>
+        <mxCell id="57" parent="50" style="shape=component;whiteSpace=wrap;html=1;fillColor=#fefce8;strokeColor=#fde047;fontColor=#000000;fontSize=11;rounded=1;arcSize=8;align=center;" value="GitHub Repository&#xa;(Git, ветки flask и main, ROADMAP)" vertex="1">
+          <mxGeometry height="56" width="260" x="35" y="476" as="geometry" />
+        </mxCell>
+        <mxCell id="58" parent="50" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;fillColor=#f3f4f6;strokeColor=#9ca3af;fontSize=10;fontColor=#000000;fontStyle=2;" value="Production deploy (TODO):&#xa;gunicorn / waitress + nginx,&#xa;managed Postgres, S3-совместимое&#xa;хранилище для аватаров и обложек." vertex="1">
+          <mxGeometry height="78" width="260" x="35" y="556" as="geometry" />
+        </mxCell>
+        <mxCell id="601" edge="1" parent="1" source="13" style="endArrow=block;html=1;strokeColor=#FFFFFF;strokeWidth=2;entryX=0;entryY=0.5;exitX=1;exitY=0.5;" target="33" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="602" edge="1" parent="1" source="14" style="endArrow=block;html=1;strokeColor=#FFFFFF;strokeWidth=2;entryX=0;entryY=0.5;exitX=1;exitY=0.5;" target="34" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="603" edge="1" parent="1" source="15" style="endArrow=block;html=1;strokeColor=#FFFFFF;strokeWidth=2;entryX=0;entryY=0.5;exitX=1;exitY=0.5;" target="35" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="604" edge="1" parent="1" source="16" style="endArrow=block;html=1;strokeColor=#FFFFFF;strokeWidth=2;entryX=0;entryY=0.5;exitX=1;exitY=0.5;" target="35" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="605" edge="1" parent="1" source="19" style="endArrow=block;html=1;strokeColor=#FFFFFF;strokeWidth=2;entryX=0;entryY=0.5;exitX=1;exitY=0.5;" target="37" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="606" edge="1" parent="1" source="20" style="endArrow=block;html=1;strokeColor=#FFFFFF;strokeWidth=2;entryX=0;entryY=0.5;exitX=1;exitY=0.5;" target="36" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="607" edge="1" parent="1" source="21" style="endArrow=block;html=1;strokeColor=#FFFFFF;strokeWidth=2;entryX=0;entryY=0.5;exitX=1;exitY=0.5;" target="38" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="608" edge="1" parent="1" source="22" style="endArrow=block;html=1;strokeColor=#FFFFFF;strokeWidth=2;entryX=0;entryY=0.5;exitX=1;exitY=0.5;" target="39" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="610" edge="1" parent="1" source="60" style="endArrow=block;html=1;strokeColor=#FFFFFF;strokeWidth=2;entryX=0;entryY=0.5;exitX=1;exitY=0.5;" target="41" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="613" edge="1" parent="1" source="56" style="endArrow=block;html=1;strokeColor=#facc15;strokeWidth=1.5;dashed=1;dashPattern=4 3;exitX=0;exitY=0.5;entryX=1;entryY=0.5;" target="40" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="700" parent="1" style="text;html=1;align=center;verticalAlign=middle;fontSize=10;fontColor=#FFFFFF;strokeColor=none;fillColor=none;" value="HTTP + сессионная cookie" vertex="1">
+          <mxGeometry height="20" width="180" x="335" y="42" as="geometry" />
+        </mxCell>
+        <mxCell id="701" parent="1" style="text;html=1;align=center;verticalAlign=middle;fontSize=10;fontColor=#FFFFFF;strokeColor=none;fillColor=none;" value="SQLAlchemy" vertex="1">
+          <mxGeometry height="20" width="100" x="715" y="722" as="geometry" />
+        </mxCell>
+        <mxCell id="702" parent="1" style="text;html=1;align=center;verticalAlign=middle;fontSize=10;fontColor=#FFFFFF;strokeColor=none;fillColor=none;" value="Authlib" vertex="1">
+          <mxGeometry height="20" width="80" x="1095" y="232" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
 </mxfile>

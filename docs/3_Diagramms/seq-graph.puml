@@ -28,43 +28,62 @@ skinparam sequence {
 }
 
 participant "Пользователь" as U
-participant "Frontend\n(React)" as FE
-participant "react-force-graph" as GRAPH
-participant "PostgreSQL\n(Supabase)" as DB
+participant "Браузер\n(Cytoscape.js)" as FE
+participant "graph.js" as JS
+participant "Flask\nblueprint graph" as APP
+participant "PostgreSQL" as DB
 
 == Загрузка графа ==
 
-U -> FE : Открывает вкладку «Graph»
-FE -> DB : SELECT id, title, category_id, image_url\nFROM articles WHERE project_id = ?
-DB --> FE : { articles[] } (узлы)
-FE -> DB : SELECT source_article_id, target_article_id,\nlabel FROM relations WHERE project_id = ?
-DB --> FE : { relations[] } (рёбра)
-FE -> DB : SELECT id, name, color\nFROM categories WHERE project_id = ?
-DB --> FE : { categories[] } (цвета узлов)
-FE -> GRAPH : Передать nodes[] и links[]\nс цветами по категориям
-GRAPH --> U : 🔗 Интерактивный граф отрисован
+U -> FE : Открывает /worlds/<id>/graph
+FE -> APP : GET .../graph
+APP --> FE : render_template('graph/view.html')\n(пустой контейнер #cy + фильтры по категориям)
+FE -> JS : DOMContentLoaded → graph.js
+JS -> APP : fetch /worlds/<id>/graph/data.json
+APP -> APP : @login_required + проверка владения
+APP -> DB : SELECT articles WHERE world_id = ?
+DB --> APP : { articles[] }
+APP -> DB : SELECT relations WHERE world_id = ?
+DB --> APP : { relations[] }
+APP -> APP : Маппинг в формат Cytoscape:\n{ nodes: [{data:{id,label,initial,color,size,...}}],\n  edges: [{data:{id,source,target,label,source_color,target_color}}]}
+APP --> JS : JSON
+JS -> FE : cytoscape({ elements, style, layout: 'cose' })
+note right of FE
+  Стилизация:
+  - размер узла = data(size) (зависит от веса категории)
+  - буква в центре узла = data(initial)
+  - цвет ребра = data(source_color)
+  - бегущая пунктирная анимация
+    (setInterval line-dash-offset)
+end note
+FE --> U : Граф нарисован, force-layout раскладывает узлы
 
-== Взаимодействие с графом ==
+== Hover на узле — превью ==
 
-U -> GRAPH : Наводит курсор на узел «Geralt»
-GRAPH --> U : Подсветка всех связей Geralt
+U -> JS : Наводит курсор на узел «Геральт»
+JS -> JS : cy.on('mouseover', 'node'):\n- closedNeighborhood().removeClass('faded')\n- остальные узлы и рёбра .addClass('faded')\n- node.addClass('hovered')
+JS -> FE : Показывает HTML-tooltip:\nкатегория, обложка, summary
+FE --> U : Связанные подсвечены, остальные тускнеют, рядом всплывает карточка
 
-U -> GRAPH : Клик по узлу «Geralt»
-GRAPH -> FE : onNodeClick(node)
-FE -> DB : SELECT title, content, image_url\nFROM articles WHERE id = ?
-DB --> FE : { article preview }
-FE --> U : Боковая панель:\nназвание, категория, превью,\nкнопка «Open Article →»
+== Клик на узле — превью в боковой панели ==
 
-== Фильтрация ==
+U -> JS : Клик по узлу
+JS -> JS : cy.on('tap', 'node') → renderPreview(node)
+JS -> FE : Заполняет sticky-панель справа:\nобложка, категория, название, summary, кнопка «Открыть статью →»
+FE --> U : Превью статьи без перехода
 
-U -> FE : Снимает чекбокс «Locations»
-FE -> GRAPH : Обновить graphData:\nфильтр nodes WHERE category ≠ 'location',\nфильтр links
-GRAPH --> U : Граф перестроен без локаций
+== Поиск и фокусировка ==
 
-== Поиск по графу ==
+U -> FE : Печатает «Цири» в поле поиска
+FE -> JS : input event (debounce 200мс)
+JS -> JS : cy.nodes().find(label.includes(q))
+JS -> FE : cy.animate({ center: node, zoom: 1.6 })\nnode.flashClass('focused', 1500)
+FE --> U : Камера летит к узлу, ободок мигает
 
-U -> FE : Вводит «Ciri» в поле поиска
-FE -> GRAPH : centerAt(node_ciri.x, node_ciri.y)\nzoom(2)
-GRAPH --> U : Камера фокусируется на узле «Ciri»
+== Двойной клик — переход в статью ==
+
+U -> JS : Двойной клик по узлу
+JS -> FE : window.location = '/worlds/<id>/articles/<aid>'
+FE --> U : Открывается редактор статьи
 
 @enduml
