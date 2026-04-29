@@ -6,7 +6,7 @@
 {% endblock %}
 
 {% block content %}
-<div class="grid grid-cols-1 xl:grid-cols-[1fr_320px] gap-6"
+<div class="grid grid-cols-1 xl:grid-cols-[1fr_380px] gap-6"
      data-world-id="{{ world.id }}"
      data-data-url="{{ url_for('graph.data', world_id=world.id) }}"
      data-article-base="{{ url_for('articles.index', world_id=world.id) }}/">
@@ -25,10 +25,16 @@
     </header>
 
     <!-- Поиск -->
-    <div class="relative max-w-md">
-      <span class="absolute left-3 top-1/2 -translate-y-1/2 text-text-dim">🔍</span>
-      <input type="search" id="graph-search" placeholder="Найти узел и сфокусироваться"
-             class="h-10 w-full pl-9 pr-3 rounded border border-border-strong bg-bg-surface text-sm placeholder:text-text-dim focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand">
+    <div class="flex flex-col sm:flex-row gap-2 sm:items-center">
+      <div class="relative max-w-md flex-1">
+        <span class="absolute left-3 top-1/2 -translate-y-1/2 text-text-dim">🔍</span>
+        <input type="search" id="graph-search" placeholder="Найти узел и сфокусироваться"
+               class="h-10 w-full pl-9 pr-3 rounded border border-border-strong bg-bg-surface text-sm placeholder:text-text-dim focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand">
+      </div>
+      <button type="button" id="graph-reset-layout"
+              class="h-10 px-3 rounded border border-border-strong bg-bg-surface text-xs font-medium text-text-muted hover:text-text hover:bg-bg-surface2 transition-colors">
+        Сбросить расположение
+      </button>
     </div>
 
     <!-- Фильтры по категориям -->

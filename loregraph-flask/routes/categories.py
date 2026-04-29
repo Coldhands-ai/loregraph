@@ -104,12 +104,18 @@ def update(world_id: str, category_id: str):
         flash("Проверь форму.", "error")
         return redirect(url_for("categories.index", world_id=world_id))
 
+    template_fields = _parse_template_fields(request.form.get("template_fields", ""))
+    allowed_keys = {f["key"] for f in template_fields}
     cat.name = form.name.data.strip()
     cat.color = form.color.data.strip()
     cat.icon = (form.icon.data or "").strip() or None
     cat.weight = form.weight.data
     cat.sort_order = form.sort_order.data or 0
-    cat.template_fields = _parse_template_fields(request.form.get("template_fields", ""))
+    cat.template_fields = template_fields
+    for article in cat.articles:
+        article.field_values = {
+            k: v for k, v in (article.field_values or {}).items() if k in allowed_keys
+        }
     try:
         db.session.commit()
     except Exception:
@@ -125,6 +131,9 @@ def update(world_id: str, category_id: str):
 def delete(world_id: str, category_id: str):
     cat = _get_owned_category(world_id, category_id)
     name = cat.name
+    for article in cat.articles:
+        article.category_id = None
+        article.field_values = {}
     db.session.delete(cat)
     db.session.commit()
     flash(f"Категория «{name}» удалена. Статьи в ней теперь без категории.", "info")

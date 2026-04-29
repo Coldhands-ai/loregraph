@@ -46,6 +46,7 @@ def data(world_id: str):
     cat_color = {c.id: c.color for c in world.categories}
     cat_name = {c.id: c.name for c in world.categories}
     cat_weight = {c.id: c.weight for c in world.categories}
+    cat_fields = {c.id: c.template_fields or [] for c in world.categories}
 
     nodes = []
     for a in articles:
@@ -54,6 +55,17 @@ def data(world_id: str):
         size = 14 + weight * 5
         # Первая буква для отображения внутри
         first = (a.title.strip()[:1] or "·").upper()
+        fields = []
+        field_values = a.field_values or {}
+        for field in cat_fields.get(a.category_id, []):
+            key = field.get("key")
+            value = field_values.get(key) if key else None
+            if value is None or str(value).strip() == "":
+                continue
+            fields.append({
+                "label": field.get("label") or key,
+                "value": str(value),
+            })
         nodes.append({
             "data": {
                 "id": a.id,
@@ -67,6 +79,7 @@ def data(world_id: str):
                 "pinned": a.is_pinned,
                 "summary": a.summary or "",
                 "image_url": a.image_url or "",
+                "fields": fields,
             }
         })
     edges = []

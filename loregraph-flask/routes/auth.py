@@ -92,7 +92,7 @@ def google_callback():
 
     try:
         token = oauth.google.authorize_access_token()
-    except Exception as e:  # noqa: BLE001
+    except Exception as e:
         flash(f"Не удалось войти через Google: {e}", "error")
         return redirect(url_for("auth.login"))
 

@@ -154,7 +154,9 @@ def autosave(world_id: str, article_id: str):
             cat = db.session.get(Category, cat_id)
             if cat is None or cat.world_id != article.world_id:
                 return jsonify(ok=False, error="Чужая категория."), 400
-        article.category_id = cat_id
+        if cat_id != article.category_id:
+            article.category_id = cat_id
+            article.field_values = {}
     if "field_values" in data and isinstance(data["field_values"], dict):
         # Принимаем только поля, объявленные у текущей категории
         if article.category_id:

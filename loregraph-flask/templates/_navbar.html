@@ -42,7 +42,7 @@
       <button @click="open = !open" @click.outside="open = false"
               class="flex items-center gap-2 rounded-full focus:outline-none focus:ring-2 focus:ring-brand">
         {% if current_user.avatar_url %}
-          <img src="{{ current_user.avatar_url }}" alt="" class="h-9 w-9 rounded-full object-cover ring-2 ring-border">
+          <img src="{{ current_user.avatar_url }}" alt="" class="h-9 w-9 rounded-full object-cover bg-bg-surface2 ring-2 ring-border">
         {% else %}
           <span class="h-9 w-9 rounded-full bg-brand-gradient text-white text-xs font-semibold inline-flex items-center justify-center select-none">
             {{ (current_user.display_name or current_user.email)[:2]|upper }}

@@ -41,8 +41,10 @@
 
     <!-- Обложка -->
     <div class="relative group rounded-lg overflow-hidden border border-border bg-bg-surface/40 aspect-[3/1] flex items-center justify-center"
-         {% if article.image_url %}style="background: url('{{ article.image_url }}') center/cover; border-color: transparent;"{% endif %}>
-      {% if not article.image_url %}
+         {% if article.image_url %}style="border-color: transparent;"{% endif %}>
+      {% if article.image_url %}
+        <img src="{{ article.image_url }}" alt="" class="absolute inset-0 h-full w-full object-cover bg-bg-surface2/70">
+      {% else %}
         <div class="text-center text-text-dim">
           <div class="text-3xl mb-1">🖼</div>
           <div class="text-xs uppercase tracking-wider">Обложка не задана</div>

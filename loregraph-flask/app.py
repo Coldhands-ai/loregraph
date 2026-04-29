@@ -9,7 +9,6 @@ from config import Config
 from extensions import db, login_manager, csrf, oauth
 from models import User
 
-
 def create_app(config_class: type = Config) -> Flask:
     app = Flask(__name__)
     app.config.from_object(config_class)

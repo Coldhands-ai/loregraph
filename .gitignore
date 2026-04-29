@@ -9,6 +9,9 @@
 .idea/
 .DS_Store
 Thumbs.db
+.venv/
+__pycache__/
+*.pyc
 
 # Внутренние заметки / служебное (не для публичного репозитория)
 .claude/
@@ -22,3 +25,9 @@ CLAUDE.md
 # drawio backup files
 .$*.drawio.bkp
 *.drawio.bkp
+
+# OS
+.DS_Store
+
+# DB
+*.db
