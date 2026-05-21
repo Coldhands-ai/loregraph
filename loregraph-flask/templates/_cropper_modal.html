@@ -1,0 +1,39 @@
+{# Модалка-кроппер. Управляется JS из static/js/image-cropper.js.
+   Включается на страницах, где надо обрезать загружаемое изображение. #}
+<div id="cropper-modal"
+     class="fixed inset-0 z-50 items-center justify-center p-4 bg-black/70 backdrop-blur-sm"
+     style="display: none;"
+     aria-hidden="true">
+  <div class="relative w-full max-w-2xl rounded-lg border border-border-strong bg-bg-surface p-6 shadow-2xl">
+    <button type="button" data-cropper-close
+            class="absolute top-4 right-4 text-text-dim hover:text-text" aria-label="Закрыть">✕</button>
+
+    <h2 class="font-serif text-xl mb-1" id="cropper-title">Подгони область</h2>
+    <p class="text-xs text-text-muted mb-4">Перетаскивай рамку, меняй размер, при необходимости поворачивай.</p>
+
+    <div class="rounded border border-border-strong bg-bg-surface2 overflow-hidden" style="max-height: 60vh;">
+      <img id="cropper-image" alt="" style="max-width: 100%; display: block;">
+    </div>
+
+    <div class="flex flex-wrap items-center justify-between gap-3 mt-4">
+      <div class="flex items-center gap-1 text-text-muted">
+        <button type="button" data-cropper-zoom="0.1"
+                class="h-9 w-9 inline-flex items-center justify-center rounded hover:bg-bg-surface2 hover:text-text transition-colors" title="Приблизить">＋</button>
+        <button type="button" data-cropper-zoom="-0.1"
+                class="h-9 w-9 inline-flex items-center justify-center rounded hover:bg-bg-surface2 hover:text-text transition-colors" title="Отдалить">−</button>
+        <button type="button" data-cropper-rotate="-90"
+                class="h-9 w-9 inline-flex items-center justify-center rounded hover:bg-bg-surface2 hover:text-text transition-colors" title="Повернуть влево">↺</button>
+        <button type="button" data-cropper-rotate="90"
+                class="h-9 w-9 inline-flex items-center justify-center rounded hover:bg-bg-surface2 hover:text-text transition-colors" title="Повернуть вправо">↻</button>
+        <button type="button" data-cropper-reset
+                class="h-9 px-3 text-xs inline-flex items-center justify-center rounded hover:bg-bg-surface2 hover:text-text transition-colors" title="Сбросить">сброс</button>
+      </div>
+      <div class="flex items-center gap-2">
+        <button type="button" data-cropper-close
+                class="h-10 px-4 rounded text-sm text-text-muted hover:bg-bg-surface2 hover:text-text transition-colors">Отмена</button>
+        <button type="button" data-cropper-apply id="cropper-apply"
+                class="h-10 px-5 rounded bg-brand-gradient text-white text-sm font-semibold tracking-wider hover:-translate-y-px transition-transform">Применить</button>
+      </div>
+    </div>
+  </div>
+</div>

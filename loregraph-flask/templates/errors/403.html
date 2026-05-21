@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}403 — LoreGraph{% endblock %}
+{% block main_class %}flex-1 flex items-center justify-center p-8{% endblock %}
+{% block content %}
+<div class="text-center space-y-6 max-w-md">
+  <p class="font-mono text-xs tracking-widest text-text-dim uppercase">403</p>
+  <h1 class="font-serif text-4xl">Сюда нельзя</h1>
+  <p class="text-text-muted">Эта страница только для администраторов.</p>
+  <a href="{{ url_for('worlds.index') }}"
+     class="inline-flex items-center justify-center h-12 px-6 rounded bg-brand-gradient text-white text-sm font-semibold tracking-wider hover:-translate-y-px transition-transform">
+    К мирам
+  </a>
+</div>
+{% endblock %}

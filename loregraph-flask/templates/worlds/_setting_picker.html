@@ -1,0 +1,64 @@
+{# Пикер сеттинга. Каждая карточка — мини-мокап с реальной палитрой и шрифтом темы. #}
+{% set selected = form.setting.data or 'default' %}
+{#
+  Параметры тем для превью: bg, text, brand, accent, font, hint (краткая атмосфера).
+  Hex-цвета здесь — мини-копия CSS-переменных из styles.css (для inline-стилей).
+#}
+{% set themes = [
+  {'key':'default',   'name':'По умолчанию',    'bg':'#0B0F1A', 'text':'#F1F5F9', 'brand':'#3B82F6', 'accent':'#6366F1', 'font':'Newsreader, serif',         'hint':'нейтрально'},
+  {'key':'fantasy',     'name':'Фэнтези',       'bg':'#0A1610', 'text':'#EEDEC4', 'brand':'#D9B25A', 'accent':'#649150', 'font':"'Cinzel Decorative', serif", 'hint':'лес + сигилы'},
+  {'key':'darkfantasy', 'name':'Тёмное фэнтези','bg':'#0E0E14', 'text':'#E0DCE2', 'brand':'#A82430', 'accent':'#84849A', 'font':"'MedievalSharp', serif",     'hint':'ворон + меч'},
+  {'key':'scifi',     'name':'Sci-Fi',          'bg':'#030A16', 'text':'#DCF0FF', 'brand':'#38C8EB', 'accent':'#50DCB4', 'font':"'Orbitron', sans-serif",   'hint':'звёзды + планета'},
+  {'key':'cyberpunk', 'name':'Киберпанк',       'bg':'#08041A', 'text':'#FFE2F5', 'brand':'#FF32AF', 'accent':'#32E6FF', 'font':"'Audiowide', sans-serif",  'hint':'неон + соты'},
+  {'key':'steampunk', 'name':'Стимпанк',        'bg':'#160E08', 'text':'#F2DEC0', 'brand':'#CD6E32', 'accent':'#5A8773', 'font':"'IM Fell English', serif", 'hint':'шестерни + медь'},
+  {'key':'wasteland', 'name':'Постапокалипсис', 'bg':'#14140E', 'text':'#E1DABC', 'brand':'#C85A28', 'accent':'#A5B246', 'font':"'Rye', serif",                'hint':'радиация + пыль'},
+  {'key':'custom',    'name':'Кастом',          'bg':'#0B0F1A', 'text':'#F1F5F9', 'brand':'#3B82F6', 'accent':'#94A3B8', 'font':'Newsreader, serif',         'hint':'твой цвет + шрифт'},
+] %}
+
+<div x-data="{ setting: '{{ selected }}' }" class="space-y-3">
+  <div>
+    <label class="block text-xs font-medium uppercase tracking-wider text-text-muted mb-2">Сеттинг</label>
+    <input type="hidden" name="setting" x-model="setting">
+
+    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2.5">
+      {% for t in themes %}
+        <label @click="setting = '{{ t.key }}'"
+               :class="setting === '{{ t.key }}' ? 'ring-2 ring-brand ring-offset-2 ring-offset-bg-surface scale-[1.02]' : 'opacity-80 hover:opacity-100 hover:scale-[1.01]'"
+               class="cursor-pointer block rounded-md transition-all">
+          {# Мини-мокап — реальные цвета + display-шрифт темы #}
+          <div class="aspect-[5/3] rounded-md overflow-hidden p-2 flex flex-col justify-between border"
+               style="background: {{ t.bg }}; color: {{ t.text }}; border-color: {{ t.brand }}44; font-family: {{ t.font }};">
+            <div class="flex items-baseline gap-1.5">
+              <span class="text-base font-bold leading-none" style="color: {{ t.brand }};">Aa</span>
+              <span class="text-[9px] uppercase tracking-wider" style="color: {{ t.text }}99;">{{ t.hint }}</span>
+            </div>
+            <div class="flex gap-1 items-center">
+              <span class="h-1.5 rounded-full" style="background: {{ t.brand }}; width: 32%;"></span>
+              <span class="h-1.5 rounded-full" style="background: {{ t.accent }}; width: 20%;"></span>
+              <span class="h-1.5 rounded-full" style="background: {{ t.text }}33; width: 14%;"></span>
+            </div>
+          </div>
+          <div class="mt-1 text-center text-xs text-text-muted truncate">{{ t.name }}</div>
+        </label>
+      {% endfor %}
+    </div>
+  </div>
+
+  <div x-show="setting === 'custom'" x-cloak x-transition.opacity
+       class="grid grid-cols-1 sm:grid-cols-[auto_1fr] gap-3 rounded-lg border border-border bg-bg-surface/40 p-3">
+    <div>
+      <label class="block text-xs uppercase tracking-wider text-text-muted mb-1.5">Brand-цвет</label>
+      <input type="color" name="custom_brand" value="{{ form.custom_brand.data or '#3B82F6' }}"
+             class="h-10 w-20 rounded border border-border-strong bg-bg-surface2 cursor-pointer">
+    </div>
+    <div>
+      <label class="block text-xs uppercase tracking-wider text-text-muted mb-1.5">Display-шрифт</label>
+      <select name="custom_font"
+              class="h-10 w-full rounded border border-border-strong bg-bg-surface2 px-2 text-sm focus:outline-none focus:border-brand">
+        {% for value, label in form.custom_font.choices %}
+          <option value="{{ value }}" {% if form.custom_font.data == value %}selected{% endif %}>{{ label }}</option>
+        {% endfor %}
+      </select>
+    </div>
+  </div>
+</div>

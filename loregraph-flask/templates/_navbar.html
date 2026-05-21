@@ -1,0 +1,90 @@
+<header class="sticky top-0 z-40 bg-bg-surface/80 backdrop-blur-xl border-b border-border">
+  <div class="mx-auto max-w-[1400px] flex items-center gap-6 px-6 h-14">
+    <a href="{{ url_for('worlds.index') }}" class="flex items-center gap-2 font-bold text-base">
+      <svg viewBox="0 0 32 32" class="h-5 w-5">
+        <defs>
+          <linearGradient id="logo-grad" x1="0" y1="0" x2="32" y2="32" gradientUnits="userSpaceOnUse">
+            <stop stop-color="#3B82F6"/><stop offset="1" stop-color="#6366F1"/>
+          </linearGradient>
+        </defs>
+        <circle cx="6" cy="6" r="3" fill="url(#logo-grad)"/>
+        <circle cx="26" cy="10" r="3" fill="url(#logo-grad)"/>
+        <circle cx="16" cy="22" r="3" fill="url(#logo-grad)"/>
+        <path d="M6 6 L16 22 M26 10 L16 22 M6 6 L26 10" stroke="url(#logo-grad)" stroke-width="1.4" stroke-linecap="round" opacity="0.7"/>
+      </svg>
+      <span><span class="bg-brand-gradient bg-clip-text text-transparent">Lore</span><span>Graph</span></span>
+    </a>
+
+    <nav class="flex items-center gap-1 text-sm min-w-0">
+      <a href="{{ url_for('worlds.index') }}"
+         class="px-2.5 py-1 rounded transition-colors shrink-0 {% if request.endpoint == 'worlds.index' %}text-text font-medium{% else %}text-text-muted hover:text-text hover:bg-bg-surface{% endif %}">
+        Миры
+      </a>
+      {% if current_world %}
+        <span class="text-text-dim shrink-0">/</span>
+        <a href="{{ url_for('worlds.detail', world_id=current_world.id) }}"
+           class="px-2.5 py-1 rounded font-serif transition-colors truncate max-w-[200px] {% if request.endpoint == 'worlds.detail' %}text-text font-medium{% else %}text-text-muted hover:text-text hover:bg-bg-surface{% endif %}"
+           title="{{ current_world.title }}">
+          {{ current_world.title }}
+        </a>
+        <span class="text-text-dim shrink-0 mx-1">·</span>
+        <a href="{{ url_for('articles.index', world_id=current_world.id) }}"
+           class="px-2.5 py-1 rounded transition-colors shrink-0 {% if request.endpoint and request.endpoint.startswith('articles.') %}text-text font-medium{% else %}text-text-muted hover:text-text hover:bg-bg-surface{% endif %}">
+          Статьи
+        </a>
+        <a href="{{ url_for('graph.view', world_id=current_world.id) }}"
+           class="px-2.5 py-1 rounded transition-colors shrink-0 {% if request.endpoint and request.endpoint.startswith('graph.') %}text-text font-medium{% else %}text-text-muted hover:text-text hover:bg-bg-surface{% endif %}">
+          Граф
+        </a>
+        <a href="{{ url_for('categories.index', world_id=current_world.id) }}"
+           class="px-2.5 py-1 rounded transition-colors shrink-0 {% if request.endpoint and request.endpoint.startswith('categories.') %}text-text font-medium{% else %}text-text-muted hover:text-text hover:bg-bg-surface{% endif %}">
+          Категории
+        </a>
+      {% endif %}
+    </nav>
+
+    <a href="{{ url_for('search.index') }}"
+       class="ml-auto h-9 w-9 inline-flex items-center justify-center rounded text-text-muted hover:text-text hover:bg-bg-surface transition-colors {% if request.endpoint and request.endpoint.startswith('search.') %}text-text bg-bg-surface{% endif %}"
+       aria-label="Поиск" title="Поиск по всем мирам">🔍</a>
+
+    <div x-data="{ open: false }">
+      <button @click="open = !open" @click.outside="open = false"
+              class="flex items-center gap-2 rounded-full focus:outline-none focus:ring-2 focus:ring-brand">
+        {% if current_user.avatar_url %}
+          <img src="{{ current_user.avatar_url }}" alt="" class="h-9 w-9 rounded-full object-cover bg-bg-surface2 ring-2 ring-border">
+        {% else %}
+          <span class="h-9 w-9 rounded-full bg-brand-gradient text-white text-xs font-semibold inline-flex items-center justify-center select-none">
+            {{ (current_user.display_name or current_user.email)[:2]|upper }}
+          </span>
+        {% endif %}
+      </button>
+      <div x-show="open" x-transition.opacity x-cloak
+           class="absolute right-6 mt-2 w-56 rounded border border-border-strong bg-bg-surface p-1 shadow-xl">
+        <div class="px-3 py-2 border-b border-border">
+          <div class="text-sm font-medium text-text truncate">{{ current_user.display_name or 'Без имени' }}</div>
+          <div class="text-xs text-text-dim truncate">{{ current_user.email }}</div>
+        </div>
+        <a href="{{ url_for('profile.view') }}"
+           class="block px-3 py-2 text-sm text-text-muted hover:bg-bg-surface2 hover:text-text rounded-sm transition-colors">
+          Профиль
+        </a>
+        <a href="{{ url_for('bookmarks.index') }}"
+           class="block px-3 py-2 text-sm text-text-muted hover:bg-bg-surface2 hover:text-text rounded-sm transition-colors">
+          ★ Закладки
+        </a>
+        {% if current_user.is_admin %}
+        <a href="{{ url_for('admin.dashboard') }}"
+           class="block px-3 py-2 text-sm text-amber-400 hover:bg-bg-surface2 rounded-sm transition-colors">
+          ⚙ Админ-панель
+        </a>
+        {% endif %}
+        <form method="post" action="{{ url_for('auth.logout') }}">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <button type="submit" class="w-full text-left px-3 py-2 text-sm text-text-muted hover:bg-bg-surface2 hover:text-text rounded-sm transition-colors">
+            Выйти
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</header>

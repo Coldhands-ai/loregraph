@@ -1,0 +1,209 @@
+{% extends "base.html" %}
+{% block title %}{{ world.title }} — LoreGraph{% endblock %}
+
+{% block head_extra %}
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/cropperjs@1.6.2/dist/cropper.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/cropperjs@1.6.2/dist/cropper.min.js" defer></script>
+{% endblock %}
+
+{% block content %}
+<div class="space-y-8">
+  {# ─── Hero ─────────────────────────────────────────── #}
+  <header class="group relative rounded-xl border border-border bg-bg-surface/60 overflow-hidden">
+    {% if world.cover_url %}
+      <img src="{{ world.cover_url }}" alt=""
+           class="absolute inset-0 h-full w-full object-cover">
+      <div aria-hidden class="absolute inset-0 bg-gradient-to-br from-bg/85 via-bg/65 to-bg/95"></div>
+    {% else %}
+      <div aria-hidden class="absolute -top-24 -right-24 h-72 w-72 rounded-full bg-brand/10 blur-3xl"></div>
+      <div aria-hidden class="absolute -bottom-32 -left-24 h-72 w-72 rounded-full bg-brand-violet/10 blur-3xl"></div>
+    {% endif %}
+
+    <div class="relative px-8 py-10">
+      <div class="flex items-start justify-between gap-4">
+        <p class="text-xs uppercase tracking-[0.3em] text-text-dim mb-3">Мир</p>
+        <a href="{{ url_for('worlds.edit', world_id=world.id) }}"
+           class="text-xs text-text-muted hover:text-brand transition-colors">
+          ⚙ Настройки →
+        </a>
+      </div>
+      <h1 class="font-serif text-4xl leading-tight">{{ world.title }}</h1>
+      {% if world.description %}
+        <p class="mt-4 text-text-muted max-w-3xl leading-relaxed">{{ world.description }}</p>
+      {% endif %}
+
+      <div class="mt-6 flex flex-wrap gap-2">
+        <a href="{{ url_for('articles.index', world_id=world.id) }}"
+           class="inline-flex items-center gap-2 h-10 px-5 rounded bg-brand-gradient text-white text-sm font-semibold hover:-translate-y-px transition-transform shadow-[0_4px_16px_-4px_rgba(59,130,246,0.5)]">
+          📄 Статьи
+          <span class="text-xs opacity-80">{{ article_count }}</span>
+        </a>
+        <a href="{{ url_for('graph.view', world_id=world.id) }}"
+           class="inline-flex items-center gap-2 h-10 px-5 rounded border border-border-strong bg-bg-surface text-sm font-medium hover:bg-bg-surface2 hover:border-brand/40 transition-colors">
+          🌐 Граф
+          <span class="text-xs text-text-dim">{{ relation_count }}</span>
+        </a>
+        <a href="{{ url_for('categories.index', world_id=world.id) }}"
+           class="inline-flex items-center gap-2 h-10 px-5 rounded border border-border-strong bg-bg-surface text-sm font-medium hover:bg-bg-surface2 hover:border-brand/40 transition-colors">
+          🎨 Категории
+          <span class="text-xs text-text-dim">{{ world.categories|length }}</span>
+        </a>
+      </div>
+    </div>
+
+    {# ─── Hover-кнопки обложки ──────────────────────── #}
+    <div class="absolute bottom-3 right-3 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+      <form method="post" action="{{ url_for('worlds.upload_cover', world_id=world.id) }}" enctype="multipart/form-data" class="inline">
+        {{ cover_form.hidden_tag() }}
+        <label class="cursor-pointer inline-flex items-center gap-1 px-3 py-1.5 rounded bg-bg-surface/90 border border-border-strong text-xs text-text hover:bg-bg-surface2 backdrop-blur-sm">
+          <input type="file" name="cover" accept="image/*" class="sr-only"
+                 data-cropper-input
+                 data-cropper-title="Обрезка обложки мира"
+                 data-cropper-aspect="3"
+                 data-cropper-max-width="1500"
+                 data-cropper-max-height="500">
+          {% if world.cover_url %}Заменить обложку{% else %}Загрузить обложку{% endif %}
+        </label>
+      </form>
+      {% if world.cover_url %}
+        <form method="post" action="{{ url_for('worlds.delete_cover', world_id=world.id) }}" class="inline">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <button type="submit" class="px-3 py-1.5 rounded bg-bg-surface/90 border border-border-strong text-xs text-text-muted hover:text-red-400 backdrop-blur-sm">
+            Удалить
+          </button>
+        </form>
+      {% endif %}
+    </div>
+  </header>
+
+  {# ─── Двухколоночный лейаут ─────────────────────────── #}
+  <div class="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-6">
+
+    {# ─── Левая: закрепы + недавнее ──────────────────── #}
+    <div class="space-y-8">
+      {% if pinned %}
+        <section>
+          <div class="flex items-center gap-2 mb-3">
+            <span class="text-brand">📌</span>
+            <h2 class="text-xs uppercase tracking-wider text-text-dim">Закреплено</h2>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {% for a in pinned %}
+              {% set color = (a.category.color if a.category else '#64748B') %}
+              <a href="{{ url_for('articles.view', world_id=world.id, article_id=a.id) }}"
+                 class="group rounded-lg border bg-bg-surface/40 hover:bg-bg-surface/70 hover:-translate-y-0.5 transition-all p-4 flex items-start gap-3"
+                 style="border-color: {{ color }}33;">
+                {% if a.image_url %}
+                  <div class="h-12 w-12 rounded shrink-0 overflow-hidden bg-bg-surface2"
+                       style="background: url('{{ a.image_url }}') center/cover;"></div>
+                {% else %}
+                  <div class="h-12 w-12 rounded shrink-0 flex items-center justify-center font-bold text-white"
+                       style="background: linear-gradient(135deg, {{ color }}, {{ color }}cc);">
+                    {{ a.title[:1]|upper }}
+                  </div>
+                {% endif %}
+                <div class="min-w-0">
+                  <h3 class="font-serif font-medium truncate group-hover:text-brand transition-colors">{{ a.title }}</h3>
+                  {% if a.category %}
+                    <p class="text-xs mt-0.5" style="color: {{ a.category.color }}">{{ a.category.name }}</p>
+                  {% endif %}
+                </div>
+              </a>
+            {% endfor %}
+          </div>
+        </section>
+      {% endif %}
+
+      <section>
+        <div class="flex items-center justify-between mb-3">
+          <h2 class="text-xs uppercase tracking-wider text-text-dim">Недавно изменённые</h2>
+          {% if article_count > 6 %}
+            <a href="{{ url_for('articles.index', world_id=world.id) }}"
+               class="text-xs text-brand hover:underline">Все {{ article_count }} →</a>
+          {% endif %}
+        </div>
+        {% if recent %}
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {% for a in recent %}
+              {% set color = (a.category.color if a.category else '#64748B') %}
+              <a href="{{ url_for('articles.view', world_id=world.id, article_id=a.id) }}"
+                 class="group rounded-lg border border-border bg-bg-surface/40 hover:bg-bg-surface/70 hover:-translate-y-0.5 transition-all overflow-hidden block">
+                <div class="aspect-[3/1] relative overflow-hidden bg-bg-surface"
+                     {% if a.image_url %}
+                       style="background-image: url('{{ a.image_url }}'); background-size: cover; background-position: center;"
+                     {% else %}
+                       style="background-image: linear-gradient(135deg, {{ color }}66, {{ color }}22);"
+                     {% endif %}>
+                  {% if not a.image_url %}
+                    <div class="absolute inset-0 flex items-center justify-center">
+                      <span class="font-serif text-3xl font-bold opacity-90" style="color: {{ color }}">{{ a.title[:1]|upper }}</span>
+                    </div>
+                  {% endif %}
+                </div>
+                <div class="p-3">
+                  <h3 class="font-serif font-medium leading-tight line-clamp-1 group-hover:text-brand transition-colors">{{ a.title }}</h3>
+                  <div class="mt-1 flex items-center justify-between text-xs text-text-dim">
+                    {% if a.category %}
+                      <span style="color: {{ a.category.color }}">{{ a.category.name }}</span>
+                    {% else %}
+                      <span>без категории</span>
+                    {% endif %}
+                    <span>{{ a.updated_at.strftime('%d.%m') }}</span>
+                  </div>
+                </div>
+              </a>
+            {% endfor %}
+          </div>
+        {% else %}
+          <div class="rounded-lg border border-dashed border-border-strong p-8 text-center">
+            <p class="text-sm text-text-muted">Пока ни одной статьи в этом мире.</p>
+            <a href="{{ url_for('articles.index', world_id=world.id) }}"
+               class="inline-flex mt-3 items-center gap-2 h-9 px-4 rounded bg-brand-gradient text-white text-xs font-semibold">
+              + Создать первую
+            </a>
+          </div>
+        {% endif %}
+      </section>
+    </div>
+
+    {# ─── Правая: статистика по категориям ───────────── #}
+    <aside class="space-y-4">
+      <section class="rounded-lg border border-border bg-bg-surface/40 p-5">
+        <h2 class="text-xs uppercase tracking-wider text-text-dim mb-3">По категориям</h2>
+        <ul class="space-y-2">
+          {% for c in world.categories %}
+            {% set n = cat_counts.get(c.id, 0) %}
+            <li class="flex items-center gap-2 text-sm">
+              <span class="h-2 w-2 rounded-full shrink-0" style="background: {{ c.color }}"></span>
+              <span class="flex-1 truncate" style="color: {{ c.color }}">{{ c.name }}</span>
+              <span class="text-text-muted font-mono text-xs">{{ n }}</span>
+            </li>
+          {% endfor %}
+          {% set nocat = cat_counts.get(None, 0) %}
+          {% if nocat %}
+            <li class="flex items-center gap-2 text-sm pt-2 border-t border-border">
+              <span class="h-2 w-2 rounded-full shrink-0 bg-text-dim"></span>
+              <span class="flex-1 truncate text-text-dim">без категории</span>
+              <span class="text-text-muted font-mono text-xs">{{ nocat }}</span>
+            </li>
+          {% endif %}
+        </ul>
+      </section>
+
+      <section class="rounded-lg border border-border bg-bg-surface/40 p-5">
+        <h2 class="text-xs uppercase tracking-wider text-text-dim mb-3">Сводка</h2>
+        <dl class="space-y-2 text-sm">
+          <div class="flex justify-between"><dt class="text-text-muted">Создан</dt><dd>{{ world.created_at.strftime('%d.%m.%Y') }}</dd></div>
+          <div class="flex justify-between"><dt class="text-text-muted">Обновлён</dt><dd>{{ world.updated_at.strftime('%d.%m.%Y') }}</dd></div>
+          <div class="flex justify-between"><dt class="text-text-muted">Связей</dt><dd class="font-mono">{{ relation_count }}</dd></div>
+        </dl>
+      </section>
+    </aside>
+  </div>
+</div>
+{% include "_cropper_modal.html" %}
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/image-cropper.js') }}" defer></script>
+{% endblock %}

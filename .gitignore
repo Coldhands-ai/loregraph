@@ -1,15 +1,7 @@
-# Dependencies
-node_modules/
-
-# Env / secrets
+# Env / секреты
 .env
 .env.local
 .env.*.local
-
-# Build output
-dist/
-dist-ssr/
-build/
 
 # Editor / OS
 .vscode/*
@@ -17,18 +9,25 @@ build/
 .idea/
 .DS_Store
 Thumbs.db
+.venv/
+__pycache__/
+*.pyc
 
-# Cache / logs
+# Внутренние заметки / служебное (не для публичного репозитория)
+.claude/
+CLAUDE.md
+
+# Temp / cache
 *.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-pnpm-debug.log*
-*.tsbuildinfo
-
-# Claude Code (только локальные настройки пользователя)
-.claude/settings.local.json
-
-# Temp
 *.tmp
 *.swp
+
+# drawio backup files
+.$*.drawio.bkp
+*.drawio.bkp
+
+# OS
+.DS_Store
+
+# DB
+*.db

@@ -1,0 +1,1363 @@
+/* Точечные стили поверх Tailwind. Всё, что нельзя сделать утилитами. */
+
+/* ─── Палитра сеттингов ─────────────────────────────────────
+   Все цвета — как RGB-триплеты, чтобы Tailwind мог их использовать
+   через rgb(var(--color-x) / <alpha-value>) с opacity-модификаторами.
+
+   :root и [data-setting="default"] совпадают — это дефолтная тема.
+   Альтернативные сеттинги (fantasy/scifi/wasteland) будут добавлены
+   отдельным блоком, когда дойдём до визуальных пресетов.
+*/
+:root,
+:root[data-setting="default"] {
+  --color-bg:           11 15 26;
+  --color-bg-surface:   17 24 39;
+  --color-bg-surface2:  31 41 55;
+  --color-bg-surface3:  55 65 81;
+  --color-text:         241 245 249;
+  --color-text-muted:   148 163 184;
+  --color-text-dim:     100 116 139;
+  --color-brand:        59 130 246;
+  --color-brand-violet: 99 102 241;
+  --color-brand-deep:   30 27 75;
+  --color-border:       255 255 255;
+  --font-display: 'Newsreader', Georgia, serif;
+}
+
+/* ─── FANTASY ─── тёмный лес + золото + изумруд (не коричневый!) */
+:root[data-setting="fantasy"] {
+  --color-bg:           10 22 16;
+  --color-bg-surface:   22 38 28;
+  --color-bg-surface2:  38 56 42;
+  --color-bg-surface3:  62 84 64;
+  --color-text:         238 222 196;
+  --color-text-muted:   192 178 150;
+  --color-text-dim:     148 138 110;
+  --color-brand:        217 178 90;
+  --color-brand-violet: 100 145 80;
+  --color-brand-deep:   30 56 36;
+  --color-border:       236 220 192;
+  --font-display: 'Cinzel Decorative', 'Cinzel', 'Newsreader', Georgia, serif;
+}
+
+/* ─── DARK FANTASY ─── холодная сталь + кровавый багровый, готика */
+:root[data-setting="darkfantasy"] {
+  --color-bg:           14 14 20;
+  --color-bg-surface:   26 26 34;
+  --color-bg-surface2:  44 44 56;
+  --color-bg-surface3:  70 68 86;
+  --color-text:         224 220 226;
+  --color-text-muted:   168 162 175;
+  --color-text-dim:     122 116 132;
+  --color-brand:        168 36 48;
+  --color-brand-violet: 132 132 148;
+  --color-brand-deep:   52 12 22;
+  --color-border:       224 220 226;
+  --font-display: 'MedievalSharp', 'Cinzel', 'Newsreader', Georgia, serif;
+}
+
+/* ─── SCI-FI ─── глубокий космос + холодный cyan/emerald */
+:root[data-setting="scifi"] {
+  --color-bg:           3 10 22;
+  --color-bg-surface:   8 25 48;
+  --color-bg-surface2:  15 48 78;
+  --color-bg-surface3:  28 76 110;
+  --color-text:         220 240 255;
+  --color-text-muted:   135 175 210;
+  --color-text-dim:     85 125 165;
+  --color-brand:        56 200 235;
+  --color-brand-violet: 80 220 180;
+  --color-brand-deep:   3 25 55;
+  --color-border:       220 240 255;
+  --font-display: 'Orbitron', 'Space Grotesk', sans-serif;
+}
+
+/* ─── CYBERPUNK ─── почти-чёрный с фиолетом, горячий magenta + cyan */
+:root[data-setting="cyberpunk"] {
+  --color-bg:           8 4 22;
+  --color-bg-surface:   22 8 45;
+  --color-bg-surface2:  38 18 65;
+  --color-bg-surface3:  62 32 95;
+  --color-text:         255 226 245;
+  --color-text-muted:   210 155 215;
+  --color-text-dim:     145 95 165;
+  --color-brand:        255 50 175;
+  --color-brand-violet: 50 230 255;
+  --color-brand-deep:   45 5 70;
+  --color-border:       255 200 240;
+  --font-display: 'Audiowide', 'Orbitron', sans-serif;
+}
+
+/* ─── STEAMPUNK ─── махагон + медь + verdigris (зеленая окись) */
+:root[data-setting="steampunk"] {
+  --color-bg:           22 14 8;
+  --color-bg-surface:   42 28 18;
+  --color-bg-surface2:  68 46 30;
+  --color-bg-surface3:  95 64 42;
+  --color-text:         242 222 192;
+  --color-text-muted:   196 168 134;
+  --color-text-dim:     158 130 100;
+  --color-brand:        205 110 50;
+  --color-brand-violet: 90 135 115;
+  --color-brand-deep:   55 28 12;
+  --color-border:       240 218 188;
+  --font-display: 'IM Fell English', 'Newsreader', Georgia, serif;
+}
+
+/* ─── WASTELAND ─── олив-серая пыль + ржавчина + токсичный жёлто-зелёный */
+:root[data-setting="wasteland"] {
+  --color-bg:           20 20 14;
+  --color-bg-surface:   35 34 24;
+  --color-bg-surface2:  55 52 36;
+  --color-bg-surface3:  80 72 50;
+  --color-text:         225 218 188;
+  --color-text-muted:   170 158 128;
+  --color-text-dim:     140 128 100;
+  --color-brand:        200 90 40;
+  --color-brand-violet: 165 178 70;
+  --color-brand-deep:   42 22 8;
+  --color-border:       220 212 180;
+  --font-display: 'Rye', 'Special Elite', 'Newsreader', Georgia, serif;
+}
+
+/* Custom — те же значения, что у default. Реальные значения подмешивает
+   inline <style> из base.html (см. context-processor). */
+:root[data-setting="custom"] {
+  --color-bg:           11 15 26;
+  --color-bg-surface:   17 24 39;
+  --color-bg-surface2:  31 41 55;
+  --color-bg-surface3:  55 65 81;
+  --color-text:         241 245 249;
+  --color-text-muted:   148 163 184;
+  --color-text-dim:     100 116 139;
+  --color-brand:        59 130 246;
+  --color-brand-violet: 99 102 241;
+  --color-brand-deep:   30 27 75;
+  --color-border:       255 255 255;
+  --font-display: 'Newsreader', Georgia, serif;
+}
+
+[x-cloak] { display: none !important; }
+
+/* ─── Карточки на «тёплых» темах: подбавляем opacity, чтобы
+   текстура фона не пробивала контент ────────────────────── */
+
+[data-setting="fantasy"] .bg-bg-surface\/40,
+[data-setting="steampunk"] .bg-bg-surface\/40,
+[data-setting="wasteland"] .bg-bg-surface\/40 {
+  background-color: rgb(var(--color-bg-surface) / 0.65);
+}
+[data-setting="fantasy"] .bg-bg-surface\/60,
+[data-setting="steampunk"] .bg-bg-surface\/60,
+[data-setting="wasteland"] .bg-bg-surface\/60 {
+  background-color: rgb(var(--color-bg-surface) / 0.78);
+}
+/* Dark fantasy — карточки плотнее (паттерн кладки чёткий, полупрозрачные карточки
+   создавали ощущение «обрыва» линий). Кладка теперь видна только В ЩЕЛЯХ между карточками. */
+[data-setting="darkfantasy"] .bg-bg-surface\/40 {
+  background-color: rgb(var(--color-bg-surface) / 0.92);
+}
+[data-setting="darkfantasy"] .bg-bg-surface\/60 {
+  background-color: rgb(var(--color-bg-surface) / 0.95);
+}
+[data-setting="darkfantasy"] .bg-bg-surface\/70,
+[data-setting="darkfantasy"] .bg-bg-surface\/80 {
+  background-color: rgb(var(--color-bg-surface) / 0.97);
+}
+
+/* ─── Текстурные фоны body по сеттингу ─────────────────────
+   Узор ложится поверх bg-color, под весь контент (карточки
+   полупрозрачные → текстура частично проступает на них). */
+
+[data-setting="fantasy"] body {
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='p'><feTurbulence type='fractalNoise' baseFrequency='1.4' numOctaves='2' seed='5'/><feColorMatrix values='0 0 0 0 0.85  0 0 0 0 0.70  0 0 0 0 0.36  0 0 0 0.20 0'/></filter><rect width='240' height='240' filter='url(%23p)'/></svg>");
+  background-size: 240px 240px;
+  background-attachment: fixed;
+  background-repeat: repeat;
+}
+
+[data-setting="darkfantasy"] body {
+  background-image:
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100'><g opacity='0.20'><polygon points='50,30 64,50 50,70 36,50' fill='none' stroke='%23a82430' stroke-width='0.5'/><circle cx='50' cy='50' r='1' fill='%23a82430'/><circle cx='12' cy='12' r='0.6' fill='%2384849a' opacity='0.6'/><circle cx='88' cy='12' r='0.6' fill='%2384849a' opacity='0.6'/><circle cx='12' cy='88' r='0.6' fill='%2384849a' opacity='0.6'/><circle cx='88' cy='88' r='0.6' fill='%2384849a' opacity='0.6'/></g></svg>"),
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='320' height='320'><g stroke='%23050508' stroke-width='2' fill='none' stroke-linejoin='round' stroke-linecap='round'><path d='M 0 78 Q 45 76 90 80 T 180 78 T 270 80 T 320 78'/><path d='M 0 162 Q 50 160 100 164 T 195 162 T 285 164 T 320 162'/><path d='M 0 246 Q 55 244 110 248 T 210 246 T 295 248 T 320 246'/><path d='M 90 0 Q 88 38 90 78'/><path d='M 195 0 Q 197 38 195 78'/><path d='M 270 0 Q 272 38 270 78'/><path d='M 45 78 Q 47 120 45 162'/><path d='M 138 80 Q 136 120 138 164'/><path d='M 232 78 Q 230 120 232 162'/><path d='M 290 80 Q 288 120 290 164'/><path d='M 72 162 Q 70 205 72 246'/><path d='M 162 164 Q 164 205 162 248'/><path d='M 250 162 Q 252 205 250 246'/><path d='M 105 246 Q 103 284 105 320'/><path d='M 200 248 Q 202 284 200 320'/><path d='M 280 246 Q 278 284 280 320'/></g></svg>");
+  background-size: 100px 100px, 320px 320px;
+  background-attachment: fixed;
+  background-repeat: repeat, repeat;
+}
+
+[data-setting="scifi"] body {
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='52' height='60' viewBox='0 0 52 60'><g fill='none' stroke='%2338c8eb' stroke-width='0.4' opacity='0.13'><polygon points='26,2 50,16 50,44 26,58 2,44 2,16'/></g></svg>");
+  background-size: 52px 60px;
+  background-attachment: fixed;
+  background-repeat: repeat;
+}
+
+[data-setting="cyberpunk"] body {
+  background-image:
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='5' height='40'><rect x='2' y='0' width='1' height='40' fill='%23ff32af' opacity='0.16'/></svg>"),
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='90' height='90'><g fill='none' stroke='%2332e6ff' stroke-width='0.3' opacity='0.10'><line x1='0' y1='45' x2='90' y2='45'/><line x1='45' y1='0' x2='45' y2='90'/><circle cx='45' cy='45' r='1.2' fill='%2332e6ff'/></g></svg>");
+  background-size: 5px 40px, 90px 90px;
+  background-attachment: fixed;
+  background-repeat: repeat, repeat;
+}
+
+[data-setting="steampunk"] body {
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='280' height='280'><filter id='l'><feTurbulence type='turbulence' baseFrequency='0.55' numOctaves='2' seed='8'/><feColorMatrix values='0 0 0 0 0.65  0 0 0 0 0.40  0 0 0 0 0.18  0 0 0 0.20 0'/></filter><rect width='280' height='280' filter='url(%23l)'/></svg>");
+  background-size: 280px 280px;
+  background-attachment: fixed;
+  background-repeat: repeat;
+}
+
+[data-setting="wasteland"] body {
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='320' height='320'><filter id='c'><feTurbulence type='turbulence' baseFrequency='0.04' numOctaves='5' seed='3'/><feColorMatrix values='0 0 0 0 0.55  0 0 0 0 0.50  0 0 0 0 0.38  0 0 0 0.18 0'/></filter><rect width='320' height='320' filter='url(%23c)'/></svg>");
+  background-size: 320px 320px;
+  background-attachment: fixed;
+  background-repeat: repeat;
+}
+
+/* ─── Эффекты текста на заголовках по сеттингу ──────────── */
+
+/* FANTASY — анимированный золотой шиммер на заголовках */
+[data-setting="fantasy"] h1.font-serif,
+[data-setting="fantasy"] h2.font-serif,
+[data-setting="fantasy"] h3.font-serif,
+[data-setting="fantasy"] .text-4xl.font-serif,
+[data-setting="fantasy"] .text-5xl.font-serif {
+  background: linear-gradient(110deg,
+    #a8843d 0%,
+    #d9b25a 18%,
+    #fceca0 40%,
+    #fff4c0 50%,
+    #fceca0 60%,
+    #d9b25a 82%,
+    #a8843d 100%);
+  background-size: 280% 100%;
+  background-position: 0% 50%;
+  -webkit-background-clip: text;
+          background-clip: text;
+  color: transparent !important;
+  text-shadow: none;
+  filter: drop-shadow(0 2px 0 rgba(30, 56, 36, 0.4));
+  animation: gold-shimmer 7s ease-in-out infinite;
+}
+@keyframes gold-shimmer {
+  0%, 100% { background-position: 0% 50%;   }
+  50%      { background-position: 100% 50%; }
+}
+
+/* DARK FANTASY — кровавая багровая аура с пульсацией */
+[data-setting="darkfantasy"] h1.font-serif,
+[data-setting="darkfantasy"] h2.font-serif,
+[data-setting="darkfantasy"] h3.font-serif,
+[data-setting="darkfantasy"] .text-4xl.font-serif,
+[data-setting="darkfantasy"] .text-5xl.font-serif {
+  color: rgb(224 220 226);
+  letter-spacing: 0.04em;
+  animation: dark-bleed 6s ease-in-out infinite;
+}
+@keyframes dark-bleed {
+  0%, 100% {
+    text-shadow:
+      0 0 6px rgba(168, 36, 48, 0.35),
+      1px 1px 0 rgba(20, 10, 14, 0.85),
+      0 0 18px rgba(168, 36, 48, 0.10);
+  }
+  50% {
+    text-shadow:
+      0 0 12px rgba(168, 36, 48, 0.65),
+      0 0 24px rgba(168, 36, 48, 0.30),
+      1px 1px 0 rgba(20, 10, 14, 0.85);
+  }
+}
+
+/* SCI-FI — пульсирующее свечение */
+[data-setting="scifi"] h1.font-serif,
+[data-setting="scifi"] h2.font-serif,
+[data-setting="scifi"] h3.font-serif,
+[data-setting="scifi"] .text-4xl.font-serif,
+[data-setting="scifi"] .text-5xl.font-serif {
+  letter-spacing: 0.08em;
+  animation: scifi-pulse 4.5s ease-in-out infinite;
+}
+@keyframes scifi-pulse {
+  0%, 100% {
+    text-shadow:
+      0 0 8px  rgb(var(--color-brand) / 0.45),
+      0 0 20px rgb(var(--color-brand) / 0.18);
+  }
+  50% {
+    text-shadow:
+      0 0 16px rgb(var(--color-brand) / 0.85),
+      0 0 32px rgb(var(--color-brand) / 0.45),
+      0 0 48px rgb(var(--color-brand-violet) / 0.18);
+  }
+}
+
+/* CYBERPUNK — хроматическая аберрация с глитчем */
+[data-setting="cyberpunk"] h1.font-serif,
+[data-setting="cyberpunk"] h2.font-serif,
+[data-setting="cyberpunk"] .text-4xl.font-serif,
+[data-setting="cyberpunk"] .text-5xl.font-serif {
+  text-transform: uppercase;
+  letter-spacing: 0.10em;
+  animation: cyber-glitch 5s steps(1, end) infinite;
+}
+[data-setting="cyberpunk"] h3.font-serif {
+  letter-spacing: 0.04em;
+  animation: cyber-glitch-soft 5s steps(1, end) infinite;
+}
+@keyframes cyber-glitch {
+  0%, 9%, 11%, 19%, 21%, 100% {
+    text-shadow:
+      3px 0  rgb(var(--color-brand) / 0.75),
+      -3px 0 rgb(var(--color-brand-violet) / 0.75),
+      0 0 12px rgb(var(--color-brand) / 0.50);
+    transform: translateX(0);
+  }
+  10% {
+    text-shadow:
+      5px 0  rgb(var(--color-brand) / 0.90),
+      -2px 0 rgb(var(--color-brand-violet) / 0.65),
+      0 0 16px rgb(var(--color-brand) / 0.70);
+    transform: translateX(-1px);
+  }
+  20% {
+    text-shadow:
+      1px 0  rgb(var(--color-brand) / 0.65),
+      -5px 0 rgb(var(--color-brand-violet) / 0.90),
+      0 0 14px rgb(var(--color-brand-violet) / 0.55);
+    transform: translateX(1px);
+  }
+}
+@keyframes cyber-glitch-soft {
+  0%, 14%, 16%, 100% {
+    text-shadow:
+      1.5px 0  rgb(var(--color-brand) / 0.65),
+      -1.5px 0 rgb(var(--color-brand-violet) / 0.65),
+      0 0 8px rgb(var(--color-brand) / 0.35);
+  }
+  15% {
+    text-shadow:
+      3px 0  rgb(var(--color-brand) / 0.85),
+      -1px 0 rgb(var(--color-brand-violet) / 0.55),
+      0 0 10px rgb(var(--color-brand) / 0.60);
+  }
+}
+
+/* STEAMPUNK — embossed + лёгкая warm-glow пульсация */
+[data-setting="steampunk"] h1.font-serif,
+[data-setting="steampunk"] h2.font-serif,
+[data-setting="steampunk"] h3.font-serif,
+[data-setting="steampunk"] .text-4xl.font-serif,
+[data-setting="steampunk"] .text-5xl.font-serif {
+  animation: steam-warm 8s ease-in-out infinite;
+}
+@keyframes steam-warm {
+  0%, 100% {
+    text-shadow:
+      1px 1px 0 rgba(30, 18, 8, 0.90),
+      -1px -1px 0 rgba(245, 220, 175, 0.18),
+      3px 3px 5px rgba(0, 0, 0, 0.45);
+  }
+  50% {
+    text-shadow:
+      1px 1px 0 rgba(30, 18, 8, 0.90),
+      -1px -1px 0 rgba(245, 220, 175, 0.30),
+      3px 3px 5px rgba(0, 0, 0, 0.45),
+      0 0 14px rgba(205, 110, 50, 0.35);
+  }
+}
+
+/* WASTELAND — статичный stamp + редкий глитч-сдвиг */
+[data-setting="wasteland"] h1.font-serif,
+[data-setting="wasteland"] h2.font-serif,
+[data-setting="wasteland"] .text-4xl.font-serif,
+[data-setting="wasteland"] .text-5xl.font-serif {
+  letter-spacing: 0.08em;
+  animation: waste-glitch 7s steps(1, end) infinite;
+}
+[data-setting="wasteland"] h3.font-serif {
+  letter-spacing: 0.05em;
+  animation: waste-glitch-soft 7s steps(1, end) infinite;
+}
+@keyframes waste-glitch {
+  0%, 84%, 86%, 100% {
+    text-shadow:
+      2px 0  rgba(200, 90, 40, 0.65),
+      -2px 0 rgba(165, 178, 70, 0.55),
+      3px 3px 0 rgba(20, 16, 10, 0.90);
+    transform: translateX(0);
+  }
+  85% {
+    text-shadow:
+      4px 0  rgba(200, 90, 40, 0.85),
+      -3px 0 rgba(165, 178, 70, 0.75),
+      3px 3px 0 rgba(20, 16, 10, 0.90);
+    transform: translateX(-1px);
+  }
+}
+@keyframes waste-glitch-soft {
+  0%, 84%, 86%, 100% {
+    text-shadow:
+      1px 0  rgba(200, 90, 40, 0.55),
+      -1px 0 rgba(165, 178, 70, 0.40),
+      2px 2px 0 rgba(20, 16, 10, 0.85);
+  }
+  85% {
+    text-shadow:
+      2px 0  rgba(200, 90, 40, 0.75),
+      -2px 0 rgba(165, 178, 70, 0.60),
+      2px 2px 0 rgba(20, 16, 10, 0.85);
+  }
+}
+
+/* prefers-reduced-motion: глушим все анимации заголовков */
+@media (prefers-reduced-motion: reduce) {
+  [data-setting] h1.font-serif,
+  [data-setting] h2.font-serif,
+  [data-setting] h3.font-serif,
+  [data-setting] .text-4xl.font-serif,
+  [data-setting] .text-5xl.font-serif {
+    animation: none !important;
+  }
+}
+
+/* Скроллбары — тёмные, минимальные */
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #1f2937; border-radius: 8px; }
+::-webkit-scrollbar-thumb:hover { background: #374151; }
+
+::selection { background: #3b82f6; color: #fff; }
+
+/* ─── Подсветка совпадений в результатах поиска (ts_headline) ─── */
+mark {
+  background: rgba(59, 130, 246, 0.25);
+  color: #F1F5F9;
+  padding: 0 2px;
+  border-radius: 2px;
+  font-weight: 500;
+}
+
+/* ─── Toast UI Editor: тёмная тема ─── */
+.toastui-editor-defaultUI {
+  border-color: rgba(255, 255, 255, 0.12) !important;
+  border-radius: 12px !important;
+  overflow: hidden;
+  background: rgba(17, 24, 39, 0.4) !important;
+}
+.toastui-editor-toolbar {
+  background: #111827 !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+.toastui-editor-defaultUI-toolbar {
+  background: #111827 !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+  padding: 4px 8px !important;
+}
+.toastui-editor-toolbar-icons {
+  background-color: transparent !important;
+  border: none !important;
+  color: #94A3B8 !important;
+  border-radius: 6px !important;
+}
+.toastui-editor-toolbar-icons:hover:not(:disabled) {
+  background: #1F2937 !important;
+  color: #F1F5F9 !important;
+}
+.toastui-editor-toolbar-icons.active,
+.toastui-editor-toolbar-icons[aria-pressed="true"] {
+  background: linear-gradient(135deg, #3B82F6, #6366F1) !important;
+  color: #fff !important;
+}
+.toastui-editor-toolbar-divider {
+  background-color: rgba(255, 255, 255, 0.08) !important;
+}
+.toastui-editor-mode-switch {
+  background: #111827 !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+.toastui-editor-mode-switch .tab-item {
+  color: #64748B !important;
+  background: transparent !important;
+}
+.toastui-editor-mode-switch .tab-item.active {
+  color: #F1F5F9 !important;
+  background: rgba(59, 130, 246, 0.15) !important;
+  border-color: #3B82F6 !important;
+}
+
+/* WYSIWYG-режим */
+.toastui-editor-ww-container {
+  background: rgba(17, 24, 39, 0.4) !important;
+}
+.toastui-editor-contents {
+  font-family: 'Space Grotesk', system-ui, sans-serif !important;
+  color: #F1F5F9 !important;
+  font-size: 15px;
+  line-height: 1.7;
+}
+.toastui-editor-contents h1, .toastui-editor-contents h2, .toastui-editor-contents h3,
+.toastui-editor-contents h4, .toastui-editor-contents h5, .toastui-editor-contents h6 {
+  font-family: 'Newsreader', Georgia, serif !important;
+  color: #F1F5F9 !important;
+  border: none !important;
+}
+.toastui-editor-contents h1 { font-size: 1.875rem; margin: 1.5rem 0 0.75rem; }
+.toastui-editor-contents h2 { font-size: 1.5rem; margin: 1.25rem 0 0.5rem; }
+.toastui-editor-contents h3 { font-size: 1.25rem; margin: 1rem 0 0.5rem; }
+.toastui-editor-contents p { margin: 0.75rem 0; }
+.toastui-editor-contents a { color: #3B82F6 !important; }
+.toastui-editor-contents code {
+  background: #1F2937 !important;
+  color: #C7D2FE !important;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-family: 'JetBrains Mono', ui-monospace, monospace !important;
+}
+.toastui-editor-contents pre {
+  background: #1F2937 !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  border-radius: 8px !important;
+}
+.toastui-editor-contents blockquote {
+  border-left: 3px solid #3B82F6 !important;
+  background: transparent !important;
+  color: #94A3B8 !important;
+  padding: 0.25rem 1rem;
+  margin: 1rem 0;
+}
+.toastui-editor-contents hr {
+  border-color: rgba(255, 255, 255, 0.08) !important;
+}
+.toastui-editor-contents table {
+  border-color: rgba(255, 255, 255, 0.12) !important;
+}
+.toastui-editor-contents th {
+  background: #1F2937 !important;
+  color: #F1F5F9 !important;
+  border-color: rgba(255, 255, 255, 0.12) !important;
+}
+.toastui-editor-contents td {
+  border-color: rgba(255, 255, 255, 0.08) !important;
+  color: #F1F5F9 !important;
+}
+/* Markdown-режим (CodeMirror внутри Toast UI) */
+.toastui-editor-md-container .toastui-editor {
+  background: rgba(17, 24, 39, 0.4) !important;
+}
+.ProseMirror {
+  caret-color: #3B82F6;
+}
+.toastui-editor-md-container .CodeMirror,
+.toastui-editor-md-container .CodeMirror-scroll {
+  background: rgba(17, 24, 39, 0.4) !important;
+  color: #F1F5F9 !important;
+  font-family: 'JetBrains Mono', ui-monospace, monospace !important;
+}
+.toastui-editor-md-preview {
+  background: #111827 !important;
+  border-left: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+.toastui-editor-md-splitter {
+  background: rgba(255, 255, 255, 0.08) !important;
+}
+.toastui-editor-popup,
+.toastui-editor-context-menu,
+.toastui-editor-dropdown-toolbar {
+  background: #111827 !important;
+  border-color: rgba(255, 255, 255, 0.12) !important;
+  color: #F1F5F9 !important;
+}
+.toastui-editor-popup input,
+.toastui-editor-popup select,
+.toastui-editor-popup textarea {
+  background: #1F2937 !important;
+  border-color: rgba(255, 255, 255, 0.12) !important;
+  color: #F1F5F9 !important;
+}
+.toastui-editor-popup-add-link button.toastui-editor-ok-button,
+.toastui-editor-popup-add-image button.toastui-editor-ok-button {
+  background: linear-gradient(135deg, #3B82F6, #6366F1) !important;
+  border: none !important;
+  color: #fff !important;
+}
+
+/* ─── Граф: «арена» ─────────────────────────────────────
+   Завязана на CSS-переменные сеттинга — арена автоматически перекрашивается. */
+.graph-arena {
+  background:
+    radial-gradient(ellipse at center, rgb(var(--color-brand-violet) / 0.10) 0%, transparent 60%),
+    radial-gradient(circle at top right, rgb(var(--color-brand) / 0.06) 0%, transparent 50%),
+    radial-gradient(circle at bottom left, rgb(var(--color-brand-violet) / 0.05) 0%, transparent 50%),
+    linear-gradient(rgb(var(--color-bg-surface2) / 0.4), rgb(var(--color-bg) / 0.6));
+  border: 1px solid rgb(var(--color-border) / 0.08);
+  box-shadow:
+    inset 0 0 60px rgb(var(--color-brand) / 0.08),
+    0 24px 60px -24px rgba(0, 0, 0, 0.6);
+}
+.graph-arena::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgb(var(--color-border) / 0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(var(--color-border) / 0.025) 1px, transparent 1px);
+  background-size: 32px 32px;
+  pointer-events: none;
+}
+.graph-arena::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border-radius: inherit;
+  box-shadow: inset 0 0 80px rgb(var(--color-bg) / 0.7);
+}
+
+/* Graph article cards */
+.graph-tooltip-card,
+.graph-preview-card {
+  background:
+    radial-gradient(circle at top right, rgb(var(--color-brand) / 0.18), transparent 58%),
+    linear-gradient(180deg, rgb(var(--color-bg-surface) / 0.99), rgb(var(--color-bg-surface2) / 0.94));
+  border-color: rgb(var(--color-brand) / 0.42);
+  color: rgb(var(--color-text));
+  box-shadow:
+    0 18px 44px rgba(0, 0, 0, 0.48),
+    0 0 0 1px rgb(var(--color-text) / 0.05),
+    0 0 26px rgb(var(--color-brand) / 0.16);
+}
+.graph-tooltip-card {
+  min-width: 240px;
+}
+.graph-tooltip-card .graph-card-cover,
+.graph-preview-card .graph-card-cover {
+  filter: saturate(1.16) contrast(1.08) brightness(1.04);
+}
+.graph-tooltip-card .graph-card-meta,
+.graph-preview-card .graph-card-meta {
+  text-shadow: 0 0 10px rgb(var(--color-bg) / 0.75);
+}
+.graph-tooltip-card .graph-card-title,
+.graph-preview-card .graph-card-title {
+  color: rgb(var(--color-text));
+  text-shadow: 0 1px 0 rgb(var(--color-bg) / 0.65);
+}
+.graph-tooltip-card .graph-card-summary,
+.graph-preview-card .graph-card-summary {
+  color: rgb(var(--color-text-muted));
+}
+.graph-preview-card .graph-card-placeholder {
+  box-shadow: inset 0 0 40px rgb(var(--color-bg) / 0.22);
+}
+.graph-preview-card .graph-card-placeholder span {
+  opacity: 0.98;
+  text-shadow:
+    0 0 20px currentColor,
+    0 2px 0 rgb(var(--color-bg) / 0.45);
+}
+.graph-preview-empty {
+  background:
+    linear-gradient(180deg, rgb(var(--color-bg-surface) / 0.82), rgb(var(--color-bg-surface2) / 0.68));
+  border-color: rgb(var(--color-brand) / 0.30);
+  color: rgb(var(--color-text-muted));
+}
+
+/* ─── Атмосфера body::before / body::after ─────────────────
+   Лёгкие фоновые слои: текстура, виньетка, нежный градиент в углах.
+   z-index 29/30 (ниже navbar z-40 и модалок z-50). pointer-events: none. */
+
+/* FANTASY — мягкий warm vignette + тонкая paper texture */
+[data-setting="fantasy"] body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 30;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='2' seed='3'/></filter><rect width='200' height='200' filter='url(%23n)' opacity='0.7'/></svg>");
+  opacity: 0.10;
+  mix-blend-mode: overlay;
+}
+[data-setting="fantasy"] body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 29;
+  background:
+    radial-gradient(ellipse at top, rgb(var(--color-brand) / 0.06), transparent 60%),
+    radial-gradient(ellipse at bottom, transparent 50%, rgb(var(--color-bg) / 0.5) 100%);
+}
+
+/* DARK FANTASY — холодный туман + плотный нижний viewport-vignette */
+[data-setting="darkfantasy"] body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 30;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='320' height='320'><filter id='df'><feTurbulence type='fractalNoise' baseFrequency='0.5' numOctaves='2' seed='13'/><feColorMatrix values='0 0 0 0 0.55  0 0 0 0 0.55  0 0 0 0 0.65  0 0 0 0.5 0'/></filter><rect width='320' height='320' filter='url(%23df)'/></svg>");
+  opacity: 0.10;
+  mix-blend-mode: screen;
+}
+[data-setting="darkfantasy"] body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 29;
+  background:
+    radial-gradient(ellipse at top, rgb(var(--color-brand) / 0.08), transparent 50%),
+    radial-gradient(ellipse at bottom, rgb(var(--color-bg) / 0.7) 0%, transparent 65%);
+}
+
+/* SCI-FI — звёздное поле + нежные nebula-углы. */
+[data-setting="scifi"] body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 30;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1000 800'><g fill='white'><circle cx='42' cy='90' r='1' opacity='0.7'/><circle cx='180' cy='40' r='0.6' opacity='0.4'/><circle cx='260' cy='150' r='1.2' opacity='0.6'/><circle cx='370' cy='60' r='0.5' opacity='0.5'/><circle cx='480' cy='200' r='0.8' opacity='0.7'/><circle cx='600' cy='80' r='1.4' opacity='0.4'/><circle cx='720' cy='180' r='0.7' opacity='0.6'/><circle cx='840' cy='100' r='0.5' opacity='0.5'/><circle cx='930' cy='220' r='1' opacity='0.7'/><circle cx='90' cy='280' r='0.9' opacity='0.5'/><circle cx='220' cy='350' r='0.5' opacity='0.4'/><circle cx='340' cy='280' r='1' opacity='0.6'/><circle cx='460' cy='400' r='0.7' opacity='0.7'/><circle cx='580' cy='330' r='0.5' opacity='0.4'/><circle cx='700' cy='420' r='1.2' opacity='0.6'/><circle cx='820' cy='360' r='0.6' opacity='0.5'/><circle cx='940' cy='440' r='0.8' opacity='0.7'/><circle cx='50' cy='480' r='1' opacity='0.5'/><circle cx='170' cy='540' r='0.6' opacity='0.6'/><circle cx='290' cy='610' r='1.3' opacity='0.7'/><circle cx='400' cy='540' r='0.5' opacity='0.4'/><circle cx='520' cy='660' r='0.8' opacity='0.6'/><circle cx='630' cy='580' r='1' opacity='0.5'/><circle cx='760' cy='640' r='0.6' opacity='0.5'/><circle cx='880' cy='590' r='0.9' opacity='0.7'/><circle cx='130' cy='710' r='0.7' opacity='0.4'/><circle cx='250' cy='760' r='1.1' opacity='0.6'/><circle cx='420' cy='730' r='0.5' opacity='0.5'/><circle cx='560' cy='780' r='0.8' opacity='0.7'/><circle cx='680' cy='720' r='0.6' opacity='0.4'/><circle cx='800' cy='770' r='1' opacity='0.6'/><circle cx='920' cy='720' r='0.5' opacity='0.5'/></g></svg>");
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  opacity: 0.5;
+}
+[data-setting="scifi"] body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 29;
+  background:
+    radial-gradient(circle at 18% 12%, rgb(var(--color-brand) / 0.10), transparent 32%),
+    radial-gradient(circle at 82% 88%, rgb(var(--color-brand-violet) / 0.10), transparent 32%);
+}
+
+/* CYBERPUNK — БЕЗ сканлайнов поверх всего. Только тёплый неон в углах. */
+[data-setting="cyberpunk"] body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 30;
+  background:
+    radial-gradient(ellipse 60% 50% at 0% 0%, rgb(var(--color-brand) / 0.14), transparent 60%),
+    radial-gradient(ellipse 60% 50% at 100% 100%, rgb(var(--color-brand-violet) / 0.14), transparent 60%);
+}
+[data-setting="cyberpunk"] body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 29;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='60' height='52' viewBox='0 0 60 52'><g fill='none' stroke='%23ff32af' stroke-width='0.5' opacity='0.10'><polygon points='30,2 58,18 58,34 30,50 2,34 2,18'/></g></svg>");
+  background-size: 80px 70px;
+  opacity: 0.6;
+}
+
+/* STEAMPUNK — тёплая виньетка + sepia grain */
+[data-setting="steampunk"] body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 30;
+  background: radial-gradient(ellipse at center, transparent 30%, rgb(var(--color-brand-deep) / 0.55) 100%);
+}
+[data-setting="steampunk"] body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 29;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='p'><feTurbulence type='fractalNoise' baseFrequency='0.55' numOctaves='3' seed='7'/></filter><rect width='240' height='240' filter='url(%23p)' opacity='0.65'/></svg>");
+  opacity: 0.14;
+  mix-blend-mode: multiply;
+}
+
+/* WASTELAND — сильная виньетка + крупное зерно */
+[data-setting="wasteland"] body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 30;
+  background: radial-gradient(ellipse at center, transparent 25%, rgb(var(--color-bg) / 0.75) 100%);
+}
+[data-setting="wasteland"] body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 29;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='280' height='280'><filter id='g'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' seed='11'/></filter><rect width='280' height='280' filter='url(%23g)' opacity='0.75'/></svg>");
+  opacity: 0.22;
+  mix-blend-mode: overlay;
+}
+
+/* ─── Тематические декорации (.theme-decor) ────────────────
+   Слой ниже атмосферы (z-28). В углах — узнаваемые элементы сеттинга:
+   шестерни, звёзды/планета, свечения, символы. */
+
+.theme-decor {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 31;
+  overflow: hidden;
+}
+.theme-decor::before,
+.theme-decor::after {
+  content: '';
+  position: absolute;
+  background-repeat: no-repeat;
+  background-size: contain;
+}
+
+/* FANTASY — рунный круг с halo, заметный, чуть меньше cut-off */
+.theme-decor-fantasy::before,
+.theme-decor-fantasy::after {
+  width: 460px; height: 460px;
+  background-image:
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><g fill='none' stroke='%23d9b25a'><circle cx='50' cy='50' r='46' stroke-width='0.8'/><circle cx='50' cy='50' r='38' stroke-width='0.6'/><circle cx='50' cy='50' r='17' stroke-width='1.1'/></g><g stroke='%23d9b25a' stroke-width='1' fill='none' stroke-linecap='round'><path d='M 50 4 L 50 11 M 50 4 L 47 7 M 50 4 L 53 7'/><path d='M 79 21 L 82 18 L 79 15 L 76 18 Z'/><path d='M 93 47 L 97 47 M 93 50 L 97 50 M 93 53 L 97 53'/><path d='M 76 76 L 82 82 M 82 76 L 76 82'/><path d='M 50 89 L 50 96 M 50 96 L 47 93 M 50 96 L 53 93'/><rect x='15' y='75' width='7' height='7'/><path d='M 3 50 L 11 50 M 7 46 L 7 54'/><path d='M 18 22 L 14 18 L 22 18 Z'/></g><g fill='%23d9b25a'><circle cx='50' cy='25' r='1.1'/><circle cx='71' cy='37' r='1.1'/><circle cx='71' cy='63' r='1.1'/><circle cx='50' cy='75' r='1.1'/><circle cx='29' cy='63' r='1.1'/><circle cx='29' cy='37' r='1.1'/></g><circle cx='50' cy='50' r='10' fill='%23d9b25a' opacity='0.22'/><circle cx='50' cy='50' r='6' fill='%23d9b25a' opacity='0.55'/><circle cx='50' cy='50' r='2.5' fill='%23ecdcc0'/></svg>"),
+    radial-gradient(circle, rgba(217, 178, 90, 0.10) 28%, transparent 62%);
+  background-size: contain, contain;
+  background-position: center, center;
+  background-repeat: no-repeat, no-repeat;
+  opacity: 0.32;
+}
+.theme-decor-fantasy::before {
+  top: -110px; left: -110px;
+  animation: sigil-drift 18s ease-in-out infinite;
+}
+.theme-decor-fantasy::after {
+  bottom: -110px; right: -110px;
+  width: 380px; height: 380px;
+  animation: sigil-drift 22s ease-in-out infinite 6s;
+}
+
+/* Fantasy: золотые искры (магическая пыль), плавают вверх */
+.magic-spark {
+  position: absolute;
+  width: 4px; height: 4px;
+  background: #d9b25a;
+  border-radius: 50%;
+  box-shadow:
+    0 0 6px rgba(217, 178, 90, 0.85),
+    0 0 12px rgba(217, 178, 90, 0.5),
+    0 0 24px rgba(217, 178, 90, 0.25);
+  opacity: 0;
+  animation: spark-float 12s ease-in-out infinite;
+}
+@keyframes spark-float {
+  0%   { opacity: 0;   transform: translateY(0)     scale(0.6); }
+  20%  { opacity: 0.7; transform: translateY(-15px) scale(1);   }
+  50%  { opacity: 1;   transform: translateY(-50px) scale(1.15); }
+  80%  { opacity: 0.4; transform: translateY(-90px) scale(0.85); }
+  100% { opacity: 0;   transform: translateY(-110px) scale(0.5); }
+}
+
+/* DARK FANTASY — готическое колесо-роза (top-right) + канделябр с огнями (bottom-left) */
+.theme-decor-darkfantasy::before {
+  width: 280px; height: 280px;
+  top: 80px; right: 40px;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><g fill='none' stroke='%23a82430' stroke-width='0.8'><circle cx='50' cy='50' r='46'/><circle cx='50' cy='50' r='36'/><circle cx='50' cy='50' r='12'/></g><g stroke='%23a82430' stroke-width='0.7'><line x1='50' y1='14' x2='50' y2='38'/><line x1='50' y1='62' x2='50' y2='86'/><line x1='14' y1='50' x2='38' y2='50'/><line x1='62' y1='50' x2='86' y2='50'/><line x1='25' y1='25' x2='42' y2='42'/><line x1='58' y1='58' x2='75' y2='75'/><line x1='75' y1='25' x2='58' y2='42'/><line x1='42' y1='58' x2='25' y2='75'/></g><g fill='%23a82430'><circle cx='50' cy='24' r='2.5'/><circle cx='50' cy='76' r='2.5'/><circle cx='24' cy='50' r='2.5'/><circle cx='76' cy='50' r='2.5'/><circle cx='32' cy='32' r='2'/><circle cx='68' cy='32' r='2'/><circle cx='32' cy='68' r='2'/><circle cx='68' cy='68' r='2'/></g><circle cx='50' cy='50' r='5' fill='%23a82430' fill-opacity='0.85'/><circle cx='50' cy='50' r='2' fill='%23e0dce2'/></svg>");
+  background-size: contain;
+  background-repeat: no-repeat;
+  opacity: 0.42;
+  animation: rose-spin 120s linear infinite;
+}
+.theme-decor-darkfantasy::after {
+  width: 200px; height: 360px;
+  bottom: 0; left: 50px;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 -14 100 214'><g fill='%233a3a48' stroke='%2384849a' stroke-width='0.6'><ellipse cx='50' cy='178' rx='28' ry='4'/><rect x='25' y='168' width='50' height='10' rx='2'/><rect x='47' y='115' width='6' height='53'/><ellipse cx='50' cy='115' rx='10' ry='3'/><rect x='47' y='80' width='6' height='35'/><ellipse cx='50' cy='80' rx='8' ry='3'/><rect x='47' y='52' width='6' height='28'/><rect x='14' y='50' width='72' height='4' rx='1'/><rect x='13' y='38' width='6' height='14'/><rect x='81' y='38' width='6' height='14'/><rect x='39' y='28' width='6' height='24'/><rect x='55' y='28' width='6' height='24'/></g><g fill='%23e0dce2'><rect x='14' y='22' width='4' height='16'/><rect x='82' y='22' width='4' height='16'/><rect x='40' y='12' width='4' height='16'/><rect x='56' y='12' width='4' height='16'/></g><g fill='%23c83a48'><path d='M 16 22 C 12 22 12 14 16 6 C 20 14 20 22 16 22 Z'/><path d='M 84 22 C 80 22 80 14 84 6 C 88 14 88 22 84 22 Z'/><path d='M 42 12 C 38 12 38 4 42 -4 C 46 4 46 12 42 12 Z'/><path d='M 58 12 C 54 12 54 4 58 -4 C 62 4 62 12 58 12 Z'/></g><g fill='%23ffd070' fill-opacity='0.75'><path d='M 16 20 C 14 20 14 15 16 11 C 18 15 18 20 16 20 Z'/><path d='M 84 20 C 82 20 82 15 84 11 C 86 15 86 20 84 20 Z'/><path d='M 42 10 C 40 10 40 5 42 1 C 44 5 44 10 42 10 Z'/><path d='M 58 10 C 56 10 56 5 58 1 C 60 5 60 10 58 10 Z'/></g></svg>");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: bottom center;
+  opacity: 0.55;
+  filter: drop-shadow(0 0 14px rgba(168, 36, 48, 0.25));
+  animation: candle-flicker 3s ease-in-out infinite;
+}
+@keyframes rose-spin {
+  from { transform: rotate(0deg);   }
+  to   { transform: rotate(360deg); }
+}
+@keyframes candle-flicker {
+  0%, 100% { filter: drop-shadow(0 0 14px rgba(168, 36, 48, 0.25)); }
+  35%      { filter: drop-shadow(0 0 22px rgba(168, 36, 48, 0.45)); }
+  55%      { filter: drop-shadow(0 0 10px rgba(168, 36, 48, 0.20)); }
+  75%      { filter: drop-shadow(0 0 18px rgba(168, 36, 48, 0.40)); }
+}
+
+/* Dark fantasy: холодная мгла, плывёт вверх (медленнее и плотнее, чем magic-spark) */
+.mist-drift {
+  position: absolute;
+  width: 6px; height: 6px;
+  background: rgb(190 188 200);
+  border-radius: 50%;
+  filter: blur(3px);
+  opacity: 0;
+  animation: mist-rise 18s ease-in-out infinite;
+}
+@keyframes mist-rise {
+  0%   { opacity: 0;   transform: translateY(0)    scale(0.5); }
+  20%  { opacity: 0.4; transform: translateY(-12px) scale(1);   }
+  50%  { opacity: 0.65; transform: translateY(-50px) scale(1.4); }
+  80%  { opacity: 0.3; transform: translateY(-90px) scale(1.2); }
+  100% { opacity: 0;   transform: translateY(-115px) scale(0.7); }
+}
+
+/* SCI-FI — планета с орбитой в правом нижнем + орбитальная дуга в левом верхнем */
+.theme-decor-scifi::before {
+  width: 480px; height: 480px;
+  bottom: -200px; right: -180px;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'><defs><radialGradient id='p' cx='40%25' cy='40%25'><stop offset='0%25' stop-color='%2338c8eb' stop-opacity='0.6'/><stop offset='70%25' stop-color='%23153060' stop-opacity='0.4'/><stop offset='100%25' stop-color='%23030a16' stop-opacity='0'/></radialGradient></defs><circle cx='100' cy='100' r='75' fill='url(%23p)'/><ellipse cx='100' cy='100' rx='110' ry='28' fill='none' stroke='%2350dcb4' stroke-width='1' opacity='0.5'/><ellipse cx='100' cy='100' rx='110' ry='28' fill='none' stroke='%2338c8eb' stroke-width='0.5' opacity='0.7' transform='rotate(-20 100 100)'/></svg>");
+  opacity: 0.6;
+}
+.theme-decor-scifi::after {
+  width: 280px; height: 280px;
+  top: -100px; left: -80px;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'><circle cx='100' cy='100' r='90' fill='none' stroke='%2338c8eb' stroke-width='0.6' opacity='0.4'/><circle cx='100' cy='100' r='70' fill='none' stroke='%2350dcb4' stroke-width='0.4' opacity='0.5'/><circle cx='100' cy='100' r='3' fill='%2338c8eb'/></svg>");
+  opacity: 0.7;
+  animation: rotate-very-slow 90s linear infinite;
+}
+
+/* CYBERPUNK — два неоновых акцента в углах с лёгкой пульсацией */
+.theme-decor-cyberpunk::before,
+.theme-decor-cyberpunk::after {
+  width: 420px; height: 420px;
+}
+.theme-decor-cyberpunk::before {
+  top: -160px; right: -160px;
+  background: radial-gradient(circle, rgb(var(--color-brand) / 0.35), transparent 60%);
+  animation: pulse-soft 9s ease-in-out infinite;
+}
+.theme-decor-cyberpunk::after {
+  bottom: -160px; left: -160px;
+  background: radial-gradient(circle, rgb(var(--color-brand-violet) / 0.32), transparent 60%);
+  animation: pulse-soft 9s ease-in-out infinite 4.5s;
+}
+
+/* STEAMPUNK — правильные шестерни с зубьями, вращаются */
+.theme-decor-steampunk::before,
+.theme-decor-steampunk::after {
+  width: 380px; height: 380px;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><g fill='%23cd6e32'><path d='M 46 2 L 54 2 L 56 14 L 44 14 Z'/><path d='M 46 98 L 44 86 L 56 86 L 54 98 Z'/><path d='M 2 46 L 14 44 L 14 56 L 2 54 Z'/><path d='M 98 46 L 86 44 L 86 56 L 98 54 Z'/><g transform='rotate(45 50 50)'><path d='M 46 2 L 54 2 L 56 14 L 44 14 Z'/><path d='M 46 98 L 44 86 L 56 86 L 54 98 Z'/><path d='M 2 46 L 14 44 L 14 56 L 2 54 Z'/><path d='M 98 46 L 86 44 L 86 56 L 98 54 Z'/></g><circle cx='50' cy='50' r='38'/></g><circle cx='50' cy='50' r='22' fill='%23160e08'/><circle cx='50' cy='50' r='12' fill='%23cd6e32'/><circle cx='50' cy='50' r='5' fill='%23160e08'/><g fill='%23160e08'><circle cx='50' cy='30' r='2.5'/><circle cx='50' cy='70' r='2.5'/><circle cx='30' cy='50' r='2.5'/><circle cx='70' cy='50' r='2.5'/></g></svg>");
+  opacity: 0.13;
+}
+.theme-decor-steampunk::before {
+  top: -110px; left: -110px;
+  animation: rotate-slow 50s linear infinite;
+}
+.theme-decor-steampunk::after {
+  bottom: -110px; right: -110px;
+  width: 280px; height: 280px;
+  animation: rotate-slow 70s linear infinite reverse;
+}
+
+/* Steampunk: клубы пара, медленно поднимаются и растворяются */
+.steam-puff {
+  position: absolute;
+  bottom: -60px;
+  width: 90px; height: 90px;
+  background: radial-gradient(circle,
+    rgba(248, 240, 222, 0.18) 0%,
+    rgba(248, 240, 222, 0.10) 35%,
+    transparent 75%);
+  border-radius: 50%;
+  filter: blur(10px);
+  opacity: 0;
+  animation: steam-up 10s ease-out infinite;
+}
+@keyframes steam-up {
+  0%   { transform: translateY(0)   scale(0.5); opacity: 0; }
+  15%  { opacity: 0.65; }
+  60%  { opacity: 0.5;  transform: translateY(-60vh) scale(1.6); }
+  100% { transform: translateY(-110vh) scale(2.4); opacity: 0; }
+}
+
+/* WASTELAND — символ радиации (виден целиком под навбаром) + кислотная лужа + Гейгер-шкала */
+.theme-decor-wasteland::before {
+  width: 200px; height: 200px;
+  top: 90px; right: 30px;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><g><circle cx='50' cy='50' r='44' fill='none' stroke='%23a5b246' stroke-width='2'/><circle cx='50' cy='50' r='10' fill='%23a5b246'/><g fill='%23a5b246'><path d='M 35 38 L 65 38 L 50 12 Z'/><path d='M 35 38 L 65 38 L 50 12 Z' transform='rotate(120 50 50)'/><path d='M 35 38 L 65 38 L 50 12 Z' transform='rotate(240 50 50)'/></g></g></svg>");
+  opacity: 0.20;
+  animation: rad-flicker 7s ease-in-out infinite;
+}
+.theme-decor-wasteland::after {
+  width: 520px; height: 220px;
+  bottom: 50px; left: 40px;
+  background: radial-gradient(ellipse,
+    rgba(200, 240, 70, 0.42) 0%,
+    rgba(160, 210, 55, 0.28) 28%,
+    rgba(100, 140, 35, 0.12) 58%,
+    transparent 80%);
+  filter: blur(4px);
+  animation: acid-pulse 6s ease-in-out infinite;
+}
+@keyframes rad-flicker {
+  0%, 100% { opacity: 0.20; }
+  40%      { opacity: 0.30; }
+  70%      { opacity: 0.22; }
+}
+@keyframes acid-pulse {
+  0%, 100% { opacity: 0.75; transform: scale(1); }
+  50%      { opacity: 0.95; transform: scale(1.05); }
+}
+
+/* Wasteland: Гейгер-счётчик (inline SVG) — стрелка дёргается */
+.rad-gauge {
+  position: absolute;
+  bottom: 30px; right: 28px;
+  width: 200px; height: 130px;
+  opacity: 0.55;
+  animation: gauge-flicker 6s ease-in-out infinite;
+}
+@keyframes gauge-flicker {
+  0%, 100% { opacity: 0.55; }
+  40%      { opacity: 0.72; }
+  70%      { opacity: 0.58; }
+}
+.rad-needle {
+  transform-box: fill-box;
+  transform-origin: 0% 100%;
+  animation: needle-jitter 2.5s ease-in-out infinite;
+}
+@keyframes needle-jitter {
+  0%   { transform: rotate(0deg);  }
+  6%   { transform: rotate(-5deg); }
+  10%  { transform: rotate(2deg);  }
+  16%  { transform: rotate(-2deg); }
+  24%  { transform: rotate(4deg);  }
+  32%  { transform: rotate(-3deg); }
+  42%  { transform: rotate(1deg);  }
+  54%  { transform: rotate(-4deg); }
+  62%  { transform: rotate(3deg);  }
+  72%  { transform: rotate(-1deg); }
+  82%  { transform: rotate(5deg);  }
+  90%  { transform: rotate(-2deg); }
+  100% { transform: rotate(0deg);  }
+}
+
+/* ─── Keyframes ─── */
+@keyframes pulse-soft {
+  0%, 100% { opacity: 0.55; transform: scale(1); }
+  50%      { opacity: 0.85; transform: scale(1.04); }
+}
+@keyframes float-pulse {
+  0%, 100% { opacity: 0.06; transform: translateY(0); }
+  50%      { opacity: 0.14; transform: translateY(-6px); }
+}
+@keyframes sigil-drift {
+  0%, 100% { transform: translateY(0)    rotate(0deg); }
+  50%      { transform: translateY(-10px) rotate(2deg); }
+}
+@keyframes rotate-slow {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+@keyframes rotate-very-slow {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .theme-decor::before,
+  .theme-decor::after {
+    animation: none !important;
+  }
+}
+
+/* ─── Тематические оверрайды компонентов ─────────────────
+   Изменяем форму карточек, кнопок, заголовков под эстетику сеттинга. */
+
+/* FANTASY: толстые серифные заголовки в капители, slim gold underline */
+[data-setting="fantasy"] .font-serif {
+  letter-spacing: 0.04em;
+}
+[data-setting="fantasy"] h1.font-serif {
+  text-shadow: 0 2px 0 rgb(var(--color-brand-deep) / 0.7);
+}
+[data-setting="fantasy"] .bg-brand-gradient:not(.bg-clip-text) {
+  background: linear-gradient(180deg, rgb(var(--color-brand)) 0%, rgb(var(--color-brand) / 0.85) 100%);
+  border: 1px solid rgb(var(--color-text) / 0.25);
+  box-shadow: 0 4px 12px rgb(var(--color-brand) / 0.25), inset 0 1px 0 rgb(var(--color-text) / 0.18);
+  color: rgb(var(--color-bg));
+}
+[data-setting="fantasy"] .rounded-lg.border,
+[data-setting="fantasy"] .rounded-xl.border {
+  border-color: rgb(var(--color-brand) / 0.20);
+}
+
+/* DARK FANTASY: кровавая кнопка + стале-серые/тёмно-красные обводки */
+[data-setting="darkfantasy"] .bg-brand-gradient:not(.bg-clip-text) {
+  background: linear-gradient(180deg, rgb(var(--color-brand)) 0%, rgb(var(--color-brand-deep)) 100%);
+  border: 1px solid rgb(var(--color-brand) / 0.8);
+  box-shadow: 0 4px 14px rgb(var(--color-brand) / 0.35), inset 0 1px 0 rgb(var(--color-text) / 0.12);
+}
+/* Стандартные border-border / border-border-strong — стале-серым */
+[data-setting="darkfantasy"] .border-border {
+  border-color: rgb(var(--color-brand-violet) / 0.30);
+}
+[data-setting="darkfantasy"] .border-border-strong {
+  border-color: rgb(var(--color-brand-violet) / 0.48);
+}
+/* Карточки с rounded-углами — тёмно-красная окантовка */
+[data-setting="darkfantasy"] .rounded-lg.border,
+[data-setting="darkfantasy"] .rounded-xl.border {
+  border-color: rgb(var(--color-brand) / 0.32);
+}
+/* Hover на интерактивных карточках — кровавое свечение */
+[data-setting="darkfantasy"] .hover\:border-brand\/40:hover,
+[data-setting="darkfantasy"] .hover\:border-brand\/50:hover {
+  border-color: rgb(var(--color-brand) / 0.72) !important;
+  box-shadow: 0 0 16px rgb(var(--color-brand) / 0.25);
+}
+/* Графовая арена — красная двойная окантовка */
+[data-setting="darkfantasy"] .graph-arena {
+  border: 1.5px solid rgb(var(--color-brand) / 0.42);
+  box-shadow:
+    inset 0 0 60px rgb(var(--color-brand) / 0.12),
+    inset 0 0 0 1px rgb(var(--color-bg) / 0.5),
+    0 0 24px rgb(var(--color-brand) / 0.18);
+}
+
+/* SCI-FI: острые углы, тонкие линии, лёгкий glow */
+[data-setting="scifi"] .rounded,
+[data-setting="scifi"] .rounded-lg,
+[data-setting="scifi"] .rounded-xl {
+  border-radius: 2px !important;
+}
+[data-setting="scifi"] .rounded-full {
+  border-radius: 9999px;
+}
+[data-setting="scifi"] .bg-brand-gradient:not(.bg-clip-text) {
+  background: rgb(var(--color-brand));
+  box-shadow: 0 0 16px rgb(var(--color-brand) / 0.45), inset 0 0 0 1px rgb(var(--color-brand-violet) / 0.6);
+}
+[data-setting="scifi"] h1.font-serif,
+[data-setting="scifi"] h2.font-serif {
+  letter-spacing: 0.06em;
+  text-shadow: 0 0 12px rgb(var(--color-brand) / 0.35);
+}
+
+/* CYBERPUNK: zero radius, неон-glow повсюду, uppercase headings */
+[data-setting="cyberpunk"] .rounded,
+[data-setting="cyberpunk"] .rounded-lg,
+[data-setting="cyberpunk"] .rounded-xl {
+  border-radius: 0 !important;
+}
+[data-setting="cyberpunk"] .rounded-full {
+  border-radius: 9999px;
+}
+[data-setting="cyberpunk"] .bg-brand-gradient:not(.bg-clip-text) {
+  background: linear-gradient(135deg, rgb(var(--color-brand)) 0%, rgb(var(--color-brand-violet)) 100%);
+  box-shadow:
+    0 0 12px rgb(var(--color-brand) / 0.7),
+    0 0 28px rgb(var(--color-brand) / 0.35),
+    inset 0 0 0 1px rgb(var(--color-text) / 0.35);
+}
+[data-setting="cyberpunk"] h1.font-serif,
+[data-setting="cyberpunk"] h2.font-serif {
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  text-shadow:
+    0 0 6px rgb(var(--color-brand) / 0.7),
+    0 0 14px rgb(var(--color-brand) / 0.4);
+}
+[data-setting="cyberpunk"] .border-brand\/30,
+[data-setting="cyberpunk"] .border-brand\/40,
+[data-setting="cyberpunk"] .border-brand\/50,
+[data-setting="cyberpunk"] .border-brand {
+  box-shadow: 0 0 8px rgb(var(--color-brand) / 0.35);
+}
+[data-setting="cyberpunk"] .text-brand {
+  text-shadow: 0 0 6px rgb(var(--color-brand) / 0.55);
+}
+
+/* STEAMPUNK: плотные рамки латуни, embossed-заголовки */
+[data-setting="steampunk"] .rounded-lg.border,
+[data-setting="steampunk"] .rounded-xl.border,
+[data-setting="steampunk"] .rounded.border {
+  border-width: 2px !important;
+  border-radius: 3px !important;
+  border-color: rgb(var(--color-brand) / 0.35);
+}
+[data-setting="steampunk"] .bg-brand-gradient:not(.bg-clip-text) {
+  background: linear-gradient(180deg, rgb(var(--color-brand)) 0%, rgb(var(--color-brand-deep)) 100%);
+  border: 1.5px solid rgb(var(--color-brand) / 0.8);
+  border-radius: 3px !important;
+  box-shadow: inset 0 1px 0 rgb(var(--color-text) / 0.25), inset 0 -2px 0 rgb(var(--color-brand-deep) / 0.6);
+}
+[data-setting="steampunk"] h1.font-serif,
+[data-setting="steampunk"] h2.font-serif {
+  text-shadow: 1px 1px 0 rgb(var(--color-brand-deep) / 0.6);
+}
+
+/* WASTELAND: ломаные пунктирные рамки, печатно-стимповые заголовки */
+[data-setting="wasteland"] .rounded-lg.border,
+[data-setting="wasteland"] .rounded-xl.border,
+[data-setting="wasteland"] .rounded.border {
+  border-radius: 0 !important;
+  border-style: dashed !important;
+  border-color: rgb(var(--color-brand) / 0.45) !important;
+}
+[data-setting="wasteland"] .rounded {
+  border-radius: 0 !important;
+}
+[data-setting="wasteland"] .bg-brand-gradient:not(.bg-clip-text) {
+  background: rgb(var(--color-brand));
+  border: 1.5px dashed rgb(var(--color-brand-violet) / 0.8);
+  border-radius: 0 !important;
+  color: rgb(var(--color-bg));
+  text-shadow: 1px 1px 0 rgb(var(--color-brand-deep) / 0.6);
+}
+[data-setting="wasteland"] h1.font-serif,
+[data-setting="wasteland"] h2.font-serif {
+  letter-spacing: 0.07em;
+  text-shadow: 2px 2px 0 rgb(var(--color-bg-surface) / 0.7);
+}
+
+/* Графовая арена под сеттинг — добавляем сильное свечение по краям */
+[data-setting="cyberpunk"] .graph-arena {
+  box-shadow:
+    inset 0 0 60px rgb(var(--color-brand) / 0.20),
+    inset 0 0 12px rgb(var(--color-brand-violet) / 0.15),
+    0 0 24px rgb(var(--color-brand) / 0.3);
+  border: 1px solid rgb(var(--color-brand) / 0.5);
+}
+[data-setting="scifi"] .graph-arena {
+  border: 1px solid rgb(var(--color-brand) / 0.4);
+  box-shadow:
+    inset 0 0 80px rgb(var(--color-brand) / 0.12),
+    0 0 32px rgb(var(--color-brand) / 0.18);
+  border-radius: 2px !important;
+}
+[data-setting="fantasy"] .graph-arena {
+  border: 1.5px solid rgb(var(--color-brand) / 0.4);
+  box-shadow:
+    inset 0 0 60px rgb(var(--color-brand) / 0.10),
+    inset 0 0 0 2px rgb(var(--color-bg) / 0.5);
+}
+[data-setting="steampunk"] .graph-arena {
+  border: 3px double rgb(var(--color-brand) / 0.55);
+  border-radius: 3px !important;
+}
+[data-setting="wasteland"] .graph-arena {
+  border: 1.5px dashed rgb(var(--color-brand) / 0.55);
+  border-radius: 0 !important;
+}
+
+[data-setting] .graph-tooltip-card,
+[data-setting] .graph-preview-card {
+  border-color: rgb(var(--color-brand) / 0.48);
+}
+[data-setting="fantasy"] .graph-tooltip-card,
+[data-setting="fantasy"] .graph-preview-card,
+[data-setting="steampunk"] .graph-tooltip-card,
+[data-setting="steampunk"] .graph-preview-card,
+[data-setting="wasteland"] .graph-tooltip-card,
+[data-setting="wasteland"] .graph-preview-card {
+  background:
+    radial-gradient(circle at top right, rgb(var(--color-brand) / 0.22), transparent 56%),
+    linear-gradient(180deg, rgb(var(--color-bg-surface) / 0.995), rgb(var(--color-bg-surface2) / 0.96));
+  box-shadow:
+    0 18px 46px rgba(0, 0, 0, 0.52),
+    0 0 0 1px rgb(var(--color-text) / 0.07),
+    0 0 30px rgb(var(--color-brand) / 0.18);
+}
+[data-setting="cyberpunk"] .graph-tooltip-card,
+[data-setting="cyberpunk"] .graph-preview-card,
+[data-setting="scifi"] .graph-tooltip-card,
+[data-setting="scifi"] .graph-preview-card {
+  box-shadow:
+    0 18px 46px rgba(0, 0, 0, 0.54),
+    0 0 0 1px rgb(var(--color-brand) / 0.35),
+    0 0 28px rgb(var(--color-brand) / 0.28),
+    0 0 44px rgb(var(--color-brand-violet) / 0.14);
+}
+[data-setting="darkfantasy"] .graph-tooltip-card,
+[data-setting="darkfantasy"] .graph-preview-card {
+  border-color: rgb(var(--color-brand) / 0.56);
+  box-shadow:
+    0 18px 46px rgba(0, 0, 0, 0.58),
+    0 0 0 1px rgb(var(--color-brand-violet) / 0.20),
+    0 0 30px rgb(var(--color-brand) / 0.24);
+}
+
+/* ─── Relations search dropdown ─── */
+#rel-matches { background: #111827; }
+#rel-matches li button {
+  width: 100%; text-align: left; padding: 8px 12px; font-size: 14px; color: #F1F5F9;
+  transition: background 0.15s;
+}
+#rel-matches li button:hover { background: #1F2937; }
+
+/* ─── color input — убрать рамку браузера ─── */
+input[type="color"] {
+  -webkit-appearance: none;
+  appearance: none;
+  padding: 0;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  cursor: pointer;
+}
+input[type="color"]::-webkit-color-swatch-wrapper { padding: 4px; }
+input[type="color"]::-webkit-color-swatch { border: none; border-radius: 4px; }
+
+/* ─── range — стилизация ─── */
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+  height: 24px;
+}
+input[type="range"]::-webkit-slider-runnable-track {
+  background: rgba(255, 255, 255, 0.12);
+  height: 4px;
+  border-radius: 4px;
+}
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 16px; height: 16px;
+  background: linear-gradient(135deg, #3B82F6, #6366F1);
+  border-radius: 50%;
+  margin-top: -6px;
+  cursor: pointer;
+  border: 2px solid #0B0F1A;
+  box-shadow: 0 0 8px rgba(59, 130, 246, 0.5);
+}
+
+/* ─── Cropper.js ─── */
+#cropper-modal .cropper-container {
+  background: rgb(var(--color-bg));
+}
+#cropper-modal .cropper-bg {
+  background-image:
+    linear-gradient(45deg, rgba(255, 255, 255, 0.05) 25%, transparent 25%),
+    linear-gradient(-45deg, rgba(255, 255, 255, 0.05) 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, rgba(255, 255, 255, 0.05) 75%),
+    linear-gradient(-45deg, transparent 75%, rgba(255, 255, 255, 0.05) 75%);
+  background-size: 18px 18px;
+  background-position: 0 0, 0 9px, 9px -9px, -9px 0;
+}
+#cropper-modal .cropper-view-box {
+  outline: 1px solid rgb(var(--color-brand) / 0.85);
+  outline-color: rgb(var(--color-brand) / 0.85);
+}
+#cropper-modal .cropper-face {
+  background-color: transparent;
+}
+#cropper-modal .cropper-line,
+#cropper-modal .cropper-point {
+  background-color: rgb(var(--color-brand));
+}
+#cropper-modal .cropper-point {
+  width: 8px;
+  height: 8px;
+  opacity: 0.95;
+}
+#cropper-modal .cropper-modal {
+  background-color: rgba(11, 15, 26, 0.65);
+}

@@ -1,45 +1,58 @@
 // ============================================================
 // LoreGraph — ERD (Entity Relationship Diagram)
 // Конструктор интерактивных вики с графом связей
-// Database: PostgreSQL (Supabase)
-// Format: DBML (dbdiagram.io)
+// Database: PostgreSQL 17 (в Docker)
+// Стек: Flask + SQLAlchemy 2.0 + Flask-Login
+// Format: DBML (https://dbdiagram.io)
+// ============================================================
+// Доступ к данным контролируется в Flask-слое:
+//   @login_required + проверка владения миром
+//   (world.user_id == current_user.id).
+// RLS-политик в Postgres нет — это сознательное решение,
+// обусловленное стеком (Flask-приложение само управляет правами).
 // ============================================================
 
 // ─────────────────────────────────────────────
 // 1. ПОЛЬЗОВАТЕЛИ
 // ─────────────────────────────────────────────
 
-Table profiles {
-  id uuid [pk, note: 'FK → auth.users.id, создаётся триггером при регистрации']
-  email text [not null, unique, note: 'Email пользователя (копия из auth.users)']
-  display_name text [note: 'Отображаемое имя']
-  avatar_url text [note: 'URL аватара в Supabase Storage']
-  role text [not null, default: 'user', note: 'Роль: user | admin']
-  is_blocked boolean [not null, default: false, note: 'Флаг блокировки (управляется админом)']
+Table users {
+  id uuid [pk, default: `gen_random_uuid()`, note: 'Первичный ключ']
+  email text [not null, unique, note: 'Email пользователя — для входа']
+  password_hash text [note: 'bcrypt-хэш пароля. NULL у юзеров, зарегистрированных только через Google OAuth']
+  display_name text [note: 'Отображаемое имя (мин 1, макс 100 символов)']
+  avatar_url text [note: 'URL аватара. /static/uploads/avatars/<user_id>/... если загружен локально, либо https://lh3...googleusercontent.com/... после входа через Google']
+  role text [not null, default: 'user', note: 'Роль: user | admin (CHECK constraint)']
+  is_blocked boolean [not null, default: false, note: 'Флаг блокировки. Управляется админом из /admin/users']
+  google_sub text [unique, note: 'Google subject (id) — заполняется при первом OAuth-входе. NULL у email-only юзеров']
   created_at timestamptz [not null, default: `now()`, note: 'Дата регистрации']
-  last_sign_in timestamptz [note: 'Последний вход в систему']
+  last_sign_in timestamptz [note: 'Последний успешный вход']
 
-  note: 'Профили пользователей. Создаются автоматически через database trigger при регистрации в Supabase Auth. RLS: пользователь видит только свой профиль, админ — все.'
+  note: 'Пользователи системы. Создаются: (а) через POST /auth/register с email+паролем, (б) через POST /auth/google/callback после успешного OAuth. Flask-Login хранит сессию в подписанной cookie.'
+
+  indexes {
+    email [name: 'idx_users_email']
+    google_sub [name: 'idx_users_google_sub']
+  }
 }
 
 // ─────────────────────────────────────────────
-// 2. ПРОЕКТЫ (МИРЫ)
+// 2. МИРЫ (Worlds — то же что projects в исходном ТЗ)
 // ─────────────────────────────────────────────
 
-Table projects {
-  id uuid [pk, default: `gen_random_uuid()`]
-  user_id uuid [not null, ref: > profiles.id, note: 'Владелец мира']
-  title text [not null, note: 'Название мира (макс. 100 символов)']
-  description text [note: 'Краткое описание мира']
-  cover_url text [note: 'URL обложки в Supabase Storage']
+Table worlds {
+  id uuid [pk, default: `gen_random_uuid()`, note: 'Первичный ключ']
+  user_id uuid [not null, ref: > users.id, note: 'Владелец мира. ON DELETE CASCADE — при удалении юзера его миры удаляются']
+  title text [not null, note: 'Название (мин 1, макс 100 символов)']
+  description text [note: 'Краткое описание (макс 500 символов в форме, в БД без лимита)']
+  cover_url text [note: 'URL обложки мира (на v1 не используется — задел на будущее)']
   created_at timestamptz [not null, default: `now()`]
-  updated_at timestamptz [not null, default: `now()`, note: 'Обновляется триггером при изменении']
+  updated_at timestamptz [not null, default: `now()`, note: 'Обновляется приложением (SQLAlchemy onupdate=now())']
 
-  note: 'Миры (проекты). Каждый пользователь может создать несколько миров. При создании мира автоматически создаются 5 предустановленных категорий. RLS: user_id = auth.uid().'
+  note: 'Мир (раньше — project). У каждого пользователя их может быть много. При создании мира приложение сразу сидит 5 предустановленных категорий через World.seed_default_categories().'
 
   indexes {
-    user_id [name: 'idx_projects_user_id']
-    created_at [name: 'idx_projects_created_at']
+    user_id [name: 'idx_worlds_user_id']
   }
 }
 
@@ -49,18 +62,20 @@ Table projects {
 
 Table categories {
   id uuid [pk, default: `gen_random_uuid()`]
-  project_id uuid [not null, ref: > projects.id, note: 'Мир, к которому относится']
-  name text [not null, note: 'Название категории (Персонаж, Локация, Событие...)']
-  color text [not null, default: '#3B82F6', note: 'HEX-цвет для отображения на графе и в UI']
-  icon text [note: 'Имя иконки из набора Lucide (например, "sword", "map-pin")']
+  world_id uuid [not null, ref: > worlds.id, note: 'Мир-родитель. ON DELETE CASCADE']
+  name text [not null, note: 'Название (Персонаж, Локация, Монстр…)']
+  color text [not null, default: '#3B82F6', note: 'HEX-цвет в формате #RRGGBB. Влияет на цвет узла в графе и бейдж статьи']
+  icon text [note: 'Имя иконки (не используется в v1 — задел)']
+  weight int [not null, default: 3, note: 'Вес 1-5. Влияет на размер узла в графе: size = 14 + weight*5 px (CHECK constraint)']
+  template_fields jsonb [not null, default: `'[]'`, note: 'Список полей шаблона: [{key, label, type: text|textarea|date}]. Появляются над текстом статьи как подсказки для автора']
   sort_order int [not null, default: 0, note: 'Порядок отображения в списке']
   created_at timestamptz [not null, default: `now()`]
 
-  note: 'Категории сущностей внутри мира. Предустановленные при создании мира: Персонаж (#3B82F6), Локация (#10B981), Событие (#F59E0B), Предмет (#EF4444), Фракция (#8B5CF6). Пользователь может добавлять свои.'
+  note: 'Категории сущностей внутри мира. 5 предустановленных при создании мира: Персонаж (#3B82F6, weight=4), Локация (#10B981, weight=4), Событие (#F59E0B, weight=2), Предмет (#EF4444, weight=2), Фракция (#8B5CF6, weight=5). Пользователь может добавлять свои через /worlds/<id>/categories.'
 
   indexes {
-    project_id [name: 'idx_categories_project_id']
-    (project_id, name) [unique, name: 'uq_categories_project_name']
+    world_id [name: 'idx_categories_world_id']
+    (world_id, name) [unique, name: 'uq_categories_world_name']
   }
 }
 
@@ -70,23 +85,23 @@ Table categories {
 
 Table articles {
   id uuid [pk, default: `gen_random_uuid()`]
-  project_id uuid [not null, ref: > projects.id, note: 'Мир']
-  category_id uuid [ref: > categories.id, note: 'Категория статьи (может быть NULL — без категории)']
-  title text [not null, note: 'Название статьи (макс. 200 символов)']
-  content jsonb [default: '{}', note: 'Контент статьи в формате TipTap JSON']
-  summary text [note: 'Краткое описание (первые 200 символов текста, для превью)']
-  image_url text [note: 'URL обложки статьи в Supabase Storage']
-  is_pinned boolean [not null, default: false, note: 'Закреплённая статья (отображается первой)']
+  world_id uuid [not null, ref: > worlds.id, note: 'Мир. ON DELETE CASCADE']
+  category_id uuid [ref: > categories.id, note: 'Категория. NULL разрешён (статья без категории). ON DELETE SET NULL — при удалении категории статья остаётся, но без неё']
+  title text [not null, note: 'Название (мин 1, макс 200 символов)']
+  content_md text [not null, default: '', note: 'Контент в формате Markdown. Редактируется через Toast UI Editor (WYSIWYG ↔ Markdown)']
+  field_values jsonb [not null, default: `'{}'`, note: 'Значения полей шаблона из категории: { key: value }. На сервере фильтруется по category.template_fields — чужие ключи отбрасываются']
+  summary text [note: 'Автогенерируемое превью: первые 200 символов plain-текста (markdown → HTML → strip)']
+  image_url text [note: 'URL обложки. /static/uploads/articles/<article_id>/<random>.ext. Загружается через POST /worlds/<id>/articles/<aid>/cover']
+  is_pinned boolean [not null, default: false, note: 'Закреплённая статья (отображается первой в списке)']
   created_at timestamptz [not null, default: `now()`]
-  updated_at timestamptz [not null, default: `now()`, note: 'Обновляется при каждом автосохранении']
+  updated_at timestamptz [not null, default: `now()`, note: 'Обновляется при каждом autosave']
 
-  note: 'Статьи (сущности мира). Хранят контент в формате TipTap JSON, что позволяет рендерить форматирование на клиенте. Автосохранение с debounce 2 секунды. RLS: доступ через project → user_id.'
+  note: 'Статьи (сущности мира). Автосейв с debounce 2 секунды на клиенте. Поля шаблона (field_values) сохраняются параллельно с content_md тем же эндпоинтом /autosave.'
 
   indexes {
-    project_id [name: 'idx_articles_project_id']
+    world_id [name: 'idx_articles_world_id']
     category_id [name: 'idx_articles_category_id']
-    updated_at [name: 'idx_articles_updated_at']
-    (project_id, title) [name: 'idx_articles_project_title']
+    (world_id, updated_at) [name: 'ix_articles_world_updated']
   }
 }
 
@@ -96,17 +111,17 @@ Table articles {
 
 Table relations {
   id uuid [pk, default: `gen_random_uuid()`]
-  project_id uuid [not null, ref: > projects.id, note: 'Мир (для RLS и фильтрации)']
-  source_article_id uuid [not null, ref: > articles.id, note: 'Статья-источник']
-  target_article_id uuid [not null, ref: > articles.id, note: 'Статья-цель']
-  label text [not null, note: 'Тип связи: "друг", "владеет", "находится в", "участвовал в"...']
+  world_id uuid [not null, ref: > worlds.id, note: 'Мир (для быстрых выборок графа без джойна через articles). ON DELETE CASCADE']
+  source_article_id uuid [not null, ref: > articles.id, note: 'Источник связи. ON DELETE CASCADE']
+  target_article_id uuid [not null, ref: > articles.id, note: 'Цель связи. ON DELETE CASCADE']
+  label text [not null, note: 'Тип связи: «друг», «владеет», «находится в», «отец», «участвовал в»…']
   description text [note: 'Дополнительное описание связи (опционально)']
   created_at timestamptz [not null, default: `now()`]
 
-  note: 'Именованные связи между статьями. Отображаются как рёбра на графе. Связь является направленной (source → target), но на графе показывается двусторонне. Запрещено создавать связь статьи с самой собой.'
+  note: 'Именованные связи между статьями. Отображаются как рёбра на графе с градиентом source_color → target_color. Связь направленная (source → target), на графе видна стрелка. Запрещена связь статьи с самой собой (CHECK source_article_id <> target_article_id). Уникальна тройка (source, target, label) — нельзя дважды добавить ту же связь с тем же лейблом.'
 
   indexes {
-    project_id [name: 'idx_relations_project_id']
+    world_id [name: 'idx_relations_world_id']
     source_article_id [name: 'idx_relations_source']
     target_article_id [name: 'idx_relations_target']
     (source_article_id, target_article_id, label) [unique, name: 'uq_relations_source_target_label']
@@ -114,92 +129,19 @@ Table relations {
 }
 
 // ─────────────────────────────────────────────
-// 6. ТЕГИ
-// ─────────────────────────────────────────────
-
-Table tags {
-  id uuid [pk, default: `gen_random_uuid()`]
-  project_id uuid [not null, ref: > projects.id, note: 'Мир']
-  name text [not null, note: 'Название тега (напр. "ключевой персонаж", "столица", "главный квест")']
-  created_at timestamptz [not null, default: `now()`]
-
-  note: 'Теги для статей. Создаются пользователем и привязываются к конкретному миру. Один тег может быть назначен нескольким статьям.'
-
-  indexes {
-    project_id [name: 'idx_tags_project_id']
-    (project_id, name) [unique, name: 'uq_tags_project_name']
-  }
-}
-
-// ─────────────────────────────────────────────
-// 7. СВЯЗЬ СТАТЕЙ И ТЕГОВ (M2M)
-// ─────────────────────────────────────────────
-
-Table article_tags {
-  article_id uuid [not null, ref: > articles.id, note: 'Статья']
-  tag_id uuid [not null, ref: > tags.id, note: 'Тег']
-
-  note: 'Связующая таблица многие-ко-многим между статьями и тегами.'
-
-  indexes {
-    (article_id, tag_id) [pk, name: 'pk_article_tags']
-    tag_id [name: 'idx_article_tags_tag_id']
-  }
-}
-
-// ─────────────────────────────────────────────
-// 8. ТИПЫ СВЯЗЕЙ (ПРЕДУСТАНОВЛЕННЫЕ)
-// ─────────────────────────────────────────────
-
-Table relation_types {
-  id uuid [pk, default: `gen_random_uuid()`]
-  project_id uuid [not null, ref: > projects.id, note: 'Мир']
-  name text [not null, note: 'Название типа связи: "друг", "враг", "владеет", "находится в"...']
-  color text [note: 'Цвет рёбра на графе (HEX)']
-  is_directional boolean [not null, default: true, note: 'Направленная связь (A → B) или ненаправленная (A ↔ B)']
-
-  note: 'Справочник типов связей. Предустановленные при создании мира + пользователь может добавлять свои. Используется для подсказки при создании связи.'
-
-  indexes {
-    project_id [name: 'idx_relation_types_project_id']
-    (project_id, name) [unique, name: 'uq_relation_types_project_name']
-  }
-}
-
-// ─────────────────────────────────────────────
-// 9. ИСТОРИЯ ИЗМЕНЕНИЙ СТАТЕЙ (ВЕРСИОНИРОВАНИЕ)
-// ─────────────────────────────────────────────
-
-Table article_versions {
-  id uuid [pk, default: `gen_random_uuid()`]
-  article_id uuid [not null, ref: > articles.id, note: 'Статья']
-  version_number int [not null, note: 'Номер версии (1, 2, 3...)']
-  title text [not null, note: 'Название на момент сохранения']
-  content jsonb [not null, note: 'Контент на момент сохранения (TipTap JSON)']
-  created_at timestamptz [not null, default: `now()`, note: 'Дата создания версии']
-
-  note: 'История изменений статей. Новая версия создаётся при каждом значительном сохранении (не при каждом автосохранении, а например раз в 10 минут или при ручном сохранении). Позволяет откатиться к предыдущей версии.'
-
-  indexes {
-    article_id [name: 'idx_article_versions_article_id']
-    (article_id, version_number) [unique, name: 'uq_article_versions_number']
-  }
-}
-
-// ─────────────────────────────────────────────
-// 10. ЛОГ ДЕЙСТВИЙ АДМИНИСТРАТОРА
+// 6. ЛОГ ДЕЙСТВИЙ АДМИНИСТРАТОРА
 // ─────────────────────────────────────────────
 
 Table admin_logs {
   id uuid [pk, default: `gen_random_uuid()`]
-  admin_id uuid [not null, ref: > profiles.id, note: 'Админ, совершивший действие']
-  action text [not null, note: 'Тип действия: block_user, unblock_user, delete_project, change_role...']
-  target_user_id uuid [ref: > profiles.id, note: 'Целевой пользователь (если применимо)']
-  target_project_id uuid [ref: > projects.id, note: 'Целевой проект (если применимо)']
-  details jsonb [note: 'Дополнительные данные (причина блокировки, старое/новое значение)']
+  admin_id uuid [not null, ref: > users.id, note: 'Админ, совершивший действие. ON DELETE CASCADE']
+  action text [not null, note: 'block_user | unblock_user | promote_admin | demote_admin | delete_world']
+  target_user_id uuid [ref: > users.id, note: 'Целевой пользователь (если применимо). ON DELETE SET NULL — лог переживает удаление пользователя']
+  target_world_id uuid [ref: > worlds.id, note: 'Целевой мир (если применимо). ON DELETE SET NULL']
+  details jsonb [note: 'Доп. данные (например, при delete_world: { title, owner_email })']
   created_at timestamptz [not null, default: `now()`]
 
-  note: 'Журнал действий администратора. Записывает все административные операции для аудита. Только для чтения (записи не удаляются).'
+  note: 'Append-only журнал админ-действий. Записи никогда не редактируются и не удаляются (через приложение). Доступен только пользователям с role = admin (защита через @before_request в blueprint admin).'
 
   indexes {
     admin_id [name: 'idx_admin_logs_admin_id']
@@ -208,20 +150,16 @@ Table admin_logs {
   }
 }
 
-// ─────────────────────────────────────────────
-// 11. ИЗБРАННЫЕ СТАТЬИ (ЗАКЛАДКИ)
-// ─────────────────────────────────────────────
-
-Table bookmarks {
-  id uuid [pk, default: `gen_random_uuid()`]
-  user_id uuid [not null, ref: > profiles.id, note: 'Пользователь']
-  article_id uuid [not null, ref: > articles.id, note: 'Статья']
-  created_at timestamptz [not null, default: `now()`]
-
-  note: 'Закладки пользователя на статьи. Быстрый доступ к часто используемым статьям.'
-
-  indexes {
-    (user_id, article_id) [unique, name: 'uq_bookmarks_user_article']
-    user_id [name: 'idx_bookmarks_user_id']
-  }
-}
+// ============================================================
+// ОТЛОЖЕННЫЕ СУЩНОСТИ (см. loregraph-flask/ROADMAP.md)
+// ============================================================
+// На v1 не реализованы. Здесь только как заметка о будущем —
+// в актуальной БД этих таблиц нет.
+//
+// • tags                — свободные метки на статьи (M2M через article_tags)
+// • article_tags        — связка статья ↔ тег
+// • article_versions    — история редактирования статей с возможностью отката
+// • bookmarks           — личные закладки пользователя на статьи
+// • search_vector       — generated column для полнотекстового поиска (PG FTS)
+//
+// Подробности по каждой — в файле ROADMAP.md (раздел про каждую фичу).

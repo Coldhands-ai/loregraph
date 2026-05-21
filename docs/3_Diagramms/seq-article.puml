@@ -28,48 +28,66 @@ skinparam sequence {
 }
 
 participant "Пользователь" as U
-participant "Frontend\n(React + TipTap)" as FE
-participant "PostgreSQL\n(Supabase)" as DB
-participant "Supabase\nStorage" as ST
+participant "Браузер\n(Toast UI Editor)" as FE
+participant "Flask\nblueprint articles" as APP
+participant "PostgreSQL" as DB
+participant "static/uploads/\n(локальный диск)" as DISK
 
 == Создание статьи ==
 
-U -> FE : Нажимает «+ New Article»
-FE -> DB : SELECT * FROM categories\nWHERE project_id = ?
-DB --> FE : { categories[] }
-FE --> U : Форма: название, категория, редактор
+U -> FE : Кнопка «+ Новая статья» в /worlds/<id>/articles
+FE --> U : Модалка (Alpine.js): название + категория
+U -> FE : Заполняет, отправляет
+FE -> APP : POST /worlds/<id>/articles/create\n(title, category_id, csrf_token)
+APP -> APP : @login_required + проверка владения миром
+APP -> DB : INSERT INTO articles\n(world_id, title, category_id, content_md='')
+DB --> APP : { article_id }
+APP --> FE : 302 → /worlds/<id>/articles/<aid>
+FE -> APP : GET /worlds/<id>/articles/<aid>
+APP -> DB : SELECT article, categories\n+ список связей
+DB --> APP : данные
+APP --> FE : render_template('articles/edit.html')
+note right of FE
+  В шаблоне:
+  - Toast UI Editor (CDN, dark theme)
+  - блок template_fields из категории
+  - сайдбар связей
+end note
+FE --> U : Редактор открыт
 
-U -> FE : Вводит название «Geralt of Rivia»,\nвыбирает категорию «Персонаж»
-FE -> DB : INSERT INTO articles\n{ project_id, category_id, title, content: {} }
-DB --> FE : { article_id }
-FE --> U : Статья создана, открыт редактор
+== Автосейв при наборе ==
 
-== Редактирование с автосохранением ==
+U -> FE : Печатает в Toast UI Editor (WYSIWYG-режим)
+FE -> FE : event 'change' → debounce(2с)\n→ editor.getMarkdown()
+FE -> APP : POST /worlds/<id>/articles/<aid>/autosave\n(JSON: { content_md, csrf })
+APP -> APP : Проверка владения, валидация
+APP -> APP : autosummary = bleach.strip(markdown.markdown(...))[:200]
+APP -> DB : UPDATE articles SET content_md, summary, updated_at = now()
+DB --> APP : OK
+APP --> FE : 200 OK { ok: true, updated_at }
+FE --> U : Индикатор «Сохранено»
 
-U -> FE : Набирает текст в TipTap-редакторе
-FE -> FE : Debounce 2 секунды
-FE -> DB : UPDATE articles SET content = {json}\nWHERE id = article_id
-DB --> FE : OK
-FE --> U : ✅ «Saved 2s ago»
+== Заполнение полей шаблона (template_fields) ==
+
+U -> FE : Печатает в поле «Раса» категории «Персонаж»
+FE -> FE : input event → debounce(2с)\n→ собирает все поля в { key: value }
+FE -> APP : POST .../autosave\n(JSON: { field_values: {...} })
+APP -> APP : Принимает только ключи из текущей category.template_fields
+APP -> DB : UPDATE articles SET field_values = ?
+DB --> APP : OK
+APP --> FE : 200 OK
 
 == Загрузка обложки ==
 
-U -> FE : Выбирает изображение для обложки
-FE -> ST : upload('articles/article_id/cover.jpg', file)
-ST --> FE : { publicUrl }
-FE -> DB : UPDATE articles SET image_url = publicUrl
-DB --> FE : OK
-FE --> U : Обложка отображается
-
-== Добавление тегов ==
-
-U -> FE : Добавляет тег «witcher»
-FE -> DB : SELECT FROM tags WHERE name = 'witcher'
-DB --> FE : Тег не найден
-FE -> DB : INSERT INTO tags { project_id, name: 'witcher' }
-DB --> FE : { tag_id }
-FE -> DB : INSERT INTO article_tags { article_id, tag_id }
-DB --> FE : OK
-FE --> U : Тег добавлен
+U -> FE : Hover на блок обложки → «Загрузить обложку» (input type=file)
+FE -> APP : POST .../cover (multipart/form-data, csrf)
+APP -> APP : CoverUploadForm: FileAllowed, FileSize ≤5МБ
+APP -> APP : storage.save_image():\n- расширение в whitelist\n- Pillow.verify() — реально картинка
+APP -> DISK : Сохранить в static/uploads/articles/<aid>/<random>.ext
+DISK --> APP : OK
+APP -> APP : Старая обложка → storage.delete_image() с диска
+APP -> DB : UPDATE articles SET image_url = '/static/uploads/...'
+DB --> APP : OK
+APP --> FE : 302 → редактор статьи (с обновлённой обложкой)
 
 @enduml

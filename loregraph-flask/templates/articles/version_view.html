@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+{% block title %}Версия · {{ version.title }} — LoreGraph{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+
+  {# ─── Banner: это снапшот, а не текущее состояние ────── #}
+  {% set accent = '#3B82F6' if version.kind == 'auto' else '#8B5CF6' %}
+  <div class="rounded-lg border bg-bg-surface/40 p-4 sm:p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3"
+       style="border-color: {{ accent }}55;">
+    <div class="min-w-0">
+      <div class="text-xs uppercase tracking-wider mb-1" style="color: {{ accent }};">
+        {% if version.kind == 'auto' %}⏱ Авто-снапшот{% else %}📌 Ручная версия{% endif %}
+        · {{ version.created_at.strftime('%d.%m.%Y %H:%M') }}
+        {% if version.name %}· «{{ version.name }}»{% endif %}
+      </div>
+      <p class="text-sm text-text-muted">
+        Это снимок статьи на момент создания версии. Текущее состояние может отличаться.
+      </p>
+    </div>
+    <div class="flex items-center gap-2 shrink-0">
+      <a href="{{ url_for('articles.versions', world_id=world.id, article_id=article.id) }}"
+         class="text-sm text-text-muted hover:text-text">← К истории</a>
+      <form method="post" action="{{ url_for('articles.restore_version', world_id=world.id, article_id=article.id, version_id=version.id) }}"
+            onsubmit="return confirm('Откатиться к этой версии? Текущее состояние сохранится в авто-слот.');">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <button type="submit"
+                class="h-9 px-4 rounded bg-brand-gradient text-white text-sm font-semibold hover:-translate-y-px transition-transform">
+          ⟲ Откатиться
+        </button>
+      </form>
+    </div>
+  </div>
+
+  {# ─── Title + category ──────────────────────────────── #}
+  <header class="space-y-3">
+    {% if version_category %}
+      <span class="inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-medium"
+            style="color: {{ version_category.color }}; background-color: {{ version_category.color }}1A; border-color: {{ version_category.color }}55;">
+        <span class="h-1.5 w-1.5 rounded-full" style="background-color: {{ version_category.color }}"></span>
+        {{ version_category.name }}
+      </span>
+    {% elif version.category_id %}
+      <span class="inline-flex items-center gap-1.5 rounded-full border border-border-strong px-3 py-1 text-xs text-text-dim">
+        категория удалена
+      </span>
+    {% endif %}
+    <h1 class="font-serif text-4xl leading-tight">{{ version.title }}</h1>
+  </header>
+
+  {# ─── Content + sidebar ──────────────────────────────── #}
+  <div class="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-8 pt-2">
+    <article class="min-w-0">
+      {% if html_content %}
+        <div class="prose prose-invert max-w-none
+                    prose-headings:font-serif prose-headings:text-text
+                    prose-a:text-brand prose-a:no-underline hover:prose-a:underline
+                    prose-strong:text-text
+                    prose-blockquote:border-l-brand prose-blockquote:text-text-muted
+                    prose-code:text-brand-violet prose-code:bg-bg-surface2 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:before:content-none prose-code:after:content-none
+                    prose-pre:bg-bg-surface2 prose-pre:border prose-pre:border-border
+                    prose-hr:border-border
+                    prose-img:rounded-lg prose-img:border prose-img:border-border">
+          {{ html_content | safe }}
+        </div>
+      {% else %}
+        <p class="text-text-muted text-sm italic">На момент версии контент был пустым.</p>
+      {% endif %}
+    </article>
+
+    <aside class="space-y-4">
+      {# Snapshot полей шаблона #}
+      {% if version_category and version_category.template_fields %}
+        {% set visible_fields = [] %}
+        {% for f in version_category.template_fields %}
+          {% set val = (version.field_values or {}).get(f.key, '') %}
+          {% if val %}{% set _ = visible_fields.append((f, val)) %}{% endif %}
+        {% endfor %}
+        {% if visible_fields %}
+          <section class="rounded-lg border border-border bg-bg-surface/40 p-5">
+            <h2 class="text-xs uppercase tracking-wider text-text-dim mb-3">Свойства на момент версии</h2>
+            <dl class="space-y-2.5 text-sm">
+              {% for f, val in visible_fields %}
+                <div>
+                  <dt class="text-xs text-text-dim mb-0.5">{{ f.label }}</dt>
+                  <dd class="text-text leading-relaxed break-words">{{ val }}</dd>
+                </div>
+              {% endfor %}
+            </dl>
+          </section>
+        {% endif %}
+      {% endif %}
+    </aside>
+  </div>
+</div>
+{% endblock %}

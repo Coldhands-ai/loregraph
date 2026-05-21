@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+{% block title %}Пользователи — Админ — LoreGraph{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+  <header class="flex items-end justify-between gap-4">
+    <div>
+      <p class="text-xs uppercase tracking-[0.3em] text-amber-400 mb-2">⚙ Администрирование</p>
+      <h1 class="font-serif text-3xl">Пользователи</h1>
+    </div>
+    <a href="{{ url_for('admin.dashboard') }}" class="text-sm text-text-muted hover:text-text">← Дашборд</a>
+  </header>
+
+  <form method="get" class="max-w-md relative">
+    <span class="absolute left-3 top-1/2 -translate-y-1/2 text-text-dim">🔍</span>
+    <input type="search" name="q" value="{{ q }}" placeholder="Поиск по email или имени"
+           class="h-10 w-full pl-9 pr-3 rounded border border-border-strong bg-bg-surface text-sm placeholder:text-text-dim focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand">
+  </form>
+
+  <div class="overflow-x-auto rounded-lg border border-border bg-bg-surface/40">
+    <table class="w-full text-sm">
+      <thead class="text-xs uppercase tracking-wider text-text-dim bg-bg-surface2/50">
+        <tr>
+          <th class="text-left px-4 py-3">Пользователь</th>
+          <th class="text-left px-4 py-3">Роль</th>
+          <th class="text-left px-4 py-3">Статус</th>
+          <th class="text-left px-4 py-3">Регистрация</th>
+          <th class="text-left px-4 py-3">Последний вход</th>
+          <th class="text-center px-4 py-3">Миров</th>
+          <th class="text-right px-4 py-3">Действия</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-border">
+        {% for u in users %}
+          <tr class="hover:bg-bg-surface/60 transition-colors {% if u.is_blocked %}opacity-60{% endif %}">
+            <td class="px-4 py-3">
+              <div class="flex items-center gap-3">
+                {% if u.avatar_url %}
+                  <img src="{{ u.avatar_url }}" alt="" class="h-8 w-8 rounded-full object-cover bg-bg-surface2">
+                {% else %}
+                  <span class="h-8 w-8 rounded-full bg-brand-gradient text-white text-xs font-semibold inline-flex items-center justify-center">
+                    {{ (u.display_name or u.email)[:2]|upper }}
+                  </span>
+                {% endif %}
+                <div class="min-w-0">
+                  <div class="font-medium text-text truncate">{{ u.display_name or '—' }}</div>
+                  <div class="text-xs text-text-dim truncate">{{ u.email }}</div>
+                </div>
+              </div>
+            </td>
+            <td class="px-4 py-3">
+              {% if u.role == 'admin' %}
+                <span class="text-xs px-2 py-0.5 rounded bg-amber-400/15 text-amber-300 border border-amber-400/30">admin</span>
+              {% else %}
+                <span class="text-xs text-text-dim">user</span>
+              {% endif %}
+            </td>
+            <td class="px-4 py-3">
+              {% if u.is_blocked %}
+                <span class="text-xs px-2 py-0.5 rounded bg-red-500/15 text-red-300 border border-red-500/30">заблокирован</span>
+              {% else %}
+                <span class="text-xs text-emerald-400">активен</span>
+              {% endif %}
+            </td>
+            <td class="px-4 py-3 text-text-muted text-xs">{{ u.created_at.strftime('%d.%m.%Y') }}</td>
+            <td class="px-4 py-3 text-text-muted text-xs">
+              {% if u.last_sign_in %}{{ u.last_sign_in.strftime('%d.%m.%Y') }}{% else %}—{% endif %}
+            </td>
+            <td class="px-4 py-3 text-center text-text-muted">{{ world_counts.get(u.id, 0) }}</td>
+            <td class="px-4 py-3">
+              <div class="flex items-center justify-end gap-1">
+                {% if u.id != current_user.id %}
+                  {% if u.is_blocked %}
+                    <form method="post" action="{{ url_for('admin.unblock_user', user_id=u.id) }}" class="inline">
+                      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                      <button type="submit" class="text-xs px-2 py-1 rounded border border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/10 transition-colors">
+                        разблок.
+                      </button>
+                    </form>
+                  {% else %}
+                    <form method="post" action="{{ url_for('admin.block_user', user_id=u.id) }}" class="inline">
+                      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                      <button type="submit" class="text-xs px-2 py-1 rounded border border-red-500/30 text-red-400 hover:bg-red-500/10 transition-colors">
+                        блок.
+                      </button>
+                    </form>
+                  {% endif %}
+                  {% if u.role == 'admin' %}
+                    <form method="post" action="{{ url_for('admin.demote_user', user_id=u.id) }}" class="inline"
+                          onsubmit="return confirm('Снять права админа у {{ u.email|e }}?');">
+                      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                      <button type="submit" class="text-xs px-2 py-1 rounded border border-text-dim/30 text-text-muted hover:bg-bg-surface2 transition-colors">
+                        снять admin
+                      </button>
+                    </form>
+                  {% else %}
+                    <form method="post" action="{{ url_for('admin.promote_user', user_id=u.id) }}" class="inline"
+                          onsubmit="return confirm('Сделать {{ u.email|e }} администратором?');">
+                      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                      <button type="submit" class="text-xs px-2 py-1 rounded border border-amber-400/30 text-amber-400 hover:bg-amber-400/10 transition-colors">
+                        в admin
+                      </button>
+                    </form>
+                  {% endif %}
+                {% else %}
+                  <span class="text-xs text-text-dim italic">это ты</span>
+                {% endif %}
+              </div>
+            </td>
+          </tr>
+        {% else %}
+          <tr><td colspan="7" class="px-4 py-8 text-center text-text-dim">Никого не найдено.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  {% include "admin/_pagination.html" %}
+</div>
+{% endblock %}

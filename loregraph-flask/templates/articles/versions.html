@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% block title %}История · {{ article.title }} — LoreGraph{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+
+  {# ─── Header ─────────────────────────────────────────── #}
+  <div class="flex items-end justify-between gap-4">
+    <div>
+      <p class="text-xs uppercase tracking-[0.3em] text-text-dim mb-2">История версий</p>
+      <h1 class="font-serif text-3xl">{{ article.title }}</h1>
+      <p class="mt-1 text-sm text-text-muted max-w-2xl">
+        Авто-снапшоты создаются каждые 30 минут активной правки (всего {{ max_auto }} слота, ротируются).
+        Ручные — нажимаешь «Сохранить версию», всего {{ max_manual }} слота, перезаписываются только тобой.
+      </p>
+    </div>
+    <a href="{{ url_for('articles.view', world_id=world.id, article_id=article.id) }}"
+       class="text-sm text-text-muted hover:text-text shrink-0">← К статье</a>
+  </div>
+
+  {# ─── Сохранить ручную версию ────────────────────────── #}
+  <form method="post" action="{{ url_for('articles.create_version', world_id=world.id, article_id=article.id) }}"
+        class="flex flex-col sm:flex-row gap-2 rounded-lg border border-border bg-bg-surface/40 p-3">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <input type="text" name="name" maxlength="100"
+           placeholder="Имя версии (необязательно, напр. «До переписи арки»)"
+           class="flex-1 h-10 rounded border border-border-strong bg-bg-surface px-3 text-sm placeholder:text-text-dim focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand">
+    <button type="submit"
+            class="h-10 px-5 rounded bg-brand-gradient text-white text-sm font-semibold tracking-wider hover:-translate-y-px transition-transform shrink-0">
+      + Сохранить версию
+    </button>
+  </form>
+
+  {# ─── Слоты ──────────────────────────────────────────── #}
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+    {# Авто #}
+    <section>
+      <div class="flex items-center justify-between mb-3">
+        <h2 class="text-xs uppercase tracking-wider text-text-dim">⏱ Авто-слоты</h2>
+        <span class="text-xs text-text-dim font-mono">{{ auto_versions|length }} / {{ max_auto }}</span>
+      </div>
+      <div class="space-y-3">
+        {% for v in auto_versions %}
+          {% include 'articles/_version_card.html' %}
+        {% endfor %}
+        {% for _ in range(max_auto - auto_versions|length) %}
+          <div class="rounded-lg border border-dashed border-border p-5 text-center text-xs text-text-dim italic">
+            Свободный авто-слот
+          </div>
+        {% endfor %}
+      </div>
+    </section>
+
+    {# Manual #}
+    <section>
+      <div class="flex items-center justify-between mb-3">
+        <h2 class="text-xs uppercase tracking-wider text-text-dim">📌 Ручные слоты</h2>
+        <span class="text-xs text-text-dim font-mono">{{ manual_versions|length }} / {{ max_manual }}</span>
+      </div>
+      <div class="space-y-3">
+        {% for v in manual_versions %}
+          {% include 'articles/_version_card.html' %}
+        {% endfor %}
+        {% for _ in range(max_manual - manual_versions|length) %}
+          <div class="rounded-lg border border-dashed border-border p-5 text-center text-xs text-text-dim italic">
+            Свободный слот — сохрани момент перед большой правкой.
+          </div>
+        {% endfor %}
+      </div>
+    </section>
+  </div>
+</div>
+{% endblock %}

@@ -1,5 +1,5 @@
 @startuml seq-auth
-title Авторизация и защита маршрутов
+title Авторизация и защита маршрутов (Flask edition)
 
 skinparam backgroundColor #FFFFFF
 skinparam sequenceArrowThickness 2
@@ -28,41 +28,60 @@ skinparam sequence {
 }
 
 participant "Пользователь" as U
-participant "Frontend\n(React)" as FE
-participant "Supabase Auth" as AUTH
-participant "PostgreSQL\n(Supabase)" as DB
+participant "Браузер" as FE
+participant "Flask\nblueprint auth" as AUTH
+participant "Flask-Login\n(session cookie)" as LOGIN
+participant "PostgreSQL" as DB
 
 == Вход ==
 
-U -> FE : Вводит email и пароль
-FE -> AUTH : supabase.auth.signInWithPassword({ email, password })
-AUTH -> DB : SELECT FROM auth.users WHERE email = ?
-DB --> AUTH : { user_id, password_hash }
-AUTH -> AUTH : Проверить пароль (bcrypt)
-AUTH -> AUTH : Создать access_token + refresh_token (JWT)
-AUTH --> FE : 200 OK { session: { access_token, refresh_token } }
-FE -> FE : Сохранить сессию в памяти
-FE --> U : ✅ Вход выполнен,\nперенаправление на «Мои миры»
+U -> FE : POST /auth/login\n(email, password, csrf_token)
+FE -> AUTH : Запрос
+AUTH -> AUTH : LoginForm.validate_on_submit()
+AUTH -> DB : SELECT * FROM users WHERE email = ?
+DB --> AUTH : { user, password_hash }
+AUTH -> AUTH : bcrypt.checkpw(password, hash)
+AUTH -> AUTH : Проверка is_blocked
+AUTH -> LOGIN : login_user(user, remember=?)
+LOGIN -> AUTH : Set-Cookie: session=<signed>
+AUTH -> DB : UPDATE last_sign_in
+AUTH --> FE : 302 → /worlds
+FE --> U : Перенаправление, ✅ flash «С возвращением»
 
 == Запрос к защищённым данным ==
 
-U -> FE : Открывает «Мои миры»
-FE -> DB : SELECT * FROM projects\nWHERE user_id = auth.uid()\n(Authorization: Bearer <token>)
-DB -> DB : Проверить JWT через RLS-политику
-DB --> FE : { projects[] }
-FE --> U : Показывает список миров
-
-== Обновление токена ==
-
-FE -> AUTH : supabase.auth.refreshSession()
-AUTH -> AUTH : Проверить refresh_token
-AUTH --> FE : { новый access_token }
-FE --> U : Сессия продолжена
+U -> FE : Открывает /worlds (cookie session=...)
+FE -> AUTH : GET /worlds (с cookie)
+AUTH -> LOGIN : @login_required → load_user(session.user_id)
+LOGIN -> DB : SELECT * FROM users WHERE id = ?
+DB --> LOGIN : { user }
+LOGIN --> AUTH : current_user заполнен
+AUTH -> DB : SELECT * FROM worlds WHERE user_id = current_user.id
+DB --> AUTH : { worlds[] }
+AUTH --> FE : render_template('worlds/list.html', worlds=...)
+FE --> U : HTML со списком миров
 
 == Защита маршрутов (незалогиненный) ==
 
-U -> FE : Открывает /dashboard (без сессии)
-FE -> FE : ProtectedRoute: нет сессии
-FE --> U : Редирект на /login
+U -> FE : GET /worlds  (cookie отсутствует)
+FE -> AUTH : Запрос
+AUTH -> LOGIN : @login_required → нет сессии
+LOGIN --> AUTH : flash «Войди, чтобы продолжить»
+AUTH --> FE : 302 → /auth/login?next=/worlds
+FE --> U : Открывается страница входа
+
+== Защита админ-маршрутов ==
+
+U -> FE : GET /admin (cookie есть, но role = 'user')
+FE -> AUTH : Запрос
+AUTH -> LOGIN : @login_required → ОК, current_user заполнен
+note right of AUTH
+  blueprint admin имеет
+  before_request:
+  if not current_user.is_admin:
+      abort(403)
+end note
+AUTH --> FE : 403 errors/403.html
+FE --> U : «Сюда нельзя» + ссылка на /worlds
 
 @enduml

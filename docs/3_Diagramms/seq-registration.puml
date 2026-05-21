@@ -28,35 +28,45 @@ skinparam sequence {
 }
 
 participant "Пользователь" as U
-participant "Frontend\n(React)" as FE
-participant "Supabase Auth" as AUTH
-participant "PostgreSQL\n(Supabase)" as DB
+participant "Браузер\n(Jinja-страница)" as FE
+participant "Flask\nblueprint auth" as APP
+participant "PostgreSQL\n(Docker)" as DB
+participant "Google OAuth" as GOOG
 
-== Регистрация по email ==
+== Регистрация по email/паролю ==
 
-U -> FE : Заполняет форму (email, пароль, имя)
-FE -> FE : Валидация на клиенте\n(формат email, длина пароля)
-FE -> AUTH : supabase.auth.signUp({ email, password })
-AUTH -> AUTH : Проверить, существует ли email
-AUTH -> AUTH : Хешировать пароль (bcrypt)
-AUTH -> DB : INSERT INTO auth.users
-DB --> AUTH : user_id = uuid
-AUTH -> AUTH : Создать JWT (access_token + refresh_token)
-AUTH --> FE : 201 Created { session, user }
-FE -> DB : INSERT INTO profiles\n{ id, email, display_name, role: 'user' }
-DB --> FE : OK
-FE -> FE : Сохранить сессию
-FE --> U : ✅ Регистрация успешна,\nперенаправление на «Мои миры»
+U -> FE : Открывает /auth/register, заполняет форму\n(имя, email, пароль x2)
+FE -> APP : POST /auth/register\n+ csrf_token, RegisterForm
+APP -> APP : WTForms.validate_on_submit()\n(email-формат, пароль ≥6, пароли совпадают)
+APP -> DB : SELECT * FROM users WHERE email = ?
+DB --> APP : null (email свободен)
+APP -> APP : bcrypt.hashpw(password)
+APP -> DB : INSERT INTO users (id, email, display_name, password_hash, role)\nVALUES (uuid(), ?, ?, ?, 'user')
+DB --> APP : OK
+APP -> APP : Flask-Login: login_user(user)\n(сессионная cookie)
+APP --> FE : 302 Redirect → /worlds
+FE --> U : Открывается страница «Мои миры»\n(пустое состояние с CTA)
 
 == OAuth через Google ==
 
-U -> FE : Нажимает «Continue with Google»
-FE -> AUTH : supabase.auth.signInWithOAuth({ provider: 'google' })
-AUTH --> U : Редирект на Google OAuth
-U -> AUTH : Подтверждает доступ
-AUTH -> DB : INSERT / SELECT auth.users
-AUTH --> FE : Callback с session
-FE -> DB : UPSERT profiles
-FE --> U : ✅ Вход выполнен
+U -> FE : Кнопка «Войти через Google» (GET /auth/google)
+FE -> APP : GET /auth/google
+APP -> APP : Authlib: oauth.google.authorize_redirect(callback_url)
+APP --> U : 302 Redirect → accounts.google.com
+U -> GOOG : Подтверждает доступ
+GOOG --> APP : 302 Redirect → /auth/google/callback?code=...
+APP -> GOOG : Authlib: authorize_access_token() → userinfo
+GOOG --> APP : { sub, email, name, picture }
+APP -> DB : SELECT * FROM users WHERE google_sub = ? OR email = ?
+alt пользователь существует
+    DB --> APP : { user }
+    APP -> DB : UPDATE last_sign_in
+else новый пользователь
+    DB --> APP : null
+    APP -> DB : INSERT INTO users\n(google_sub, email, display_name, avatar_url)
+end
+APP -> APP : Flask-Login: login_user(user, remember=true)
+APP --> FE : 302 Redirect → /worlds
+FE --> U : Вход выполнен
 
 @enduml

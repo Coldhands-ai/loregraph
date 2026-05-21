@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% block title %}Граф — {{ world.title }} — LoreGraph{% endblock %}
+
+{% block head_extra %}
+  <script src="https://cdn.jsdelivr.net/npm/cytoscape@3.30.2/dist/cytoscape.min.js" defer></script>
+{% endblock %}
+
+{% block content %}
+<div class="grid grid-cols-1 xl:grid-cols-[1fr_380px] gap-6"
+     data-world-id="{{ world.id }}"
+     data-data-url="{{ url_for('graph.data', world_id=world.id) }}"
+     data-article-base="{{ url_for('articles.index', world_id=world.id) }}/">
+
+  <!-- Левая колонка -->
+  <div class="space-y-4">
+    <header class="flex items-end justify-between gap-4">
+      <div>
+        <p class="text-xs uppercase tracking-[0.3em] text-text-dim mb-1">Граф связей</p>
+        <h1 class="font-serif text-3xl">{{ world.title }}</h1>
+      </div>
+      <div class="text-xs text-text-dim space-y-0.5 text-right">
+        <div>наведи — превью · клик — выбрать</div>
+        <div>2× клик — открыть статью</div>
+      </div>
+    </header>
+
+    <!-- Поиск -->
+    <div class="flex flex-col sm:flex-row gap-2 sm:items-center">
+      <div class="relative max-w-md flex-1">
+        <span class="absolute left-3 top-1/2 -translate-y-1/2 text-text-dim">🔍</span>
+        <input type="search" id="graph-search" placeholder="Найти узел и сфокусироваться"
+               class="h-10 w-full pl-9 pr-3 rounded border border-border-strong bg-bg-surface text-sm placeholder:text-text-dim focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand">
+      </div>
+      <button type="button" id="graph-reset-layout"
+              class="h-10 px-3 rounded border border-border-strong bg-bg-surface text-xs font-medium text-text-muted hover:text-text hover:bg-bg-surface2 transition-colors">
+        Сбросить расположение
+      </button>
+    </div>
+
+    <!-- Фильтры по категориям -->
+    <div class="flex flex-wrap gap-2" id="graph-filters">
+      <button type="button" data-cat-id="none" data-color="#94A3B8" data-active="true"
+              class="cat-pill inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-medium transition-all">
+        <span class="h-1.5 w-1.5 rounded-full"></span>без категории
+      </button>
+      {% for c in categories %}
+        <button type="button" data-cat-id="{{ c.id }}" data-color="{{ c.color }}" data-active="true"
+                class="cat-pill inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-medium transition-all">
+          <span class="h-1.5 w-1.5 rounded-full"></span>{{ c.name }}
+        </button>
+      {% endfor %}
+    </div>
+
+    <!-- Контейнер графа: рамка, радиальный градиент, тонкая решётка -->
+    <div class="graph-arena relative w-full h-[calc(100vh-300px)] min-h-[480px] rounded-lg overflow-hidden">
+      <div id="cy" class="absolute inset-0"></div>
+
+      <!-- Hover-tooltip -->
+      <div id="cy-tooltip"
+           class="graph-tooltip-card pointer-events-none absolute z-20 hidden max-w-xs rounded-lg border border-border-strong bg-bg-surface/95 backdrop-blur-md p-3 shadow-2xl text-sm">
+      </div>
+    </div>
+  </div>
+
+  <!-- Правая колонка: подробная карточка выбранного узла -->
+  <aside>
+    <div id="node-preview"
+         class="graph-preview-empty rounded-lg border border-dashed border-border-strong p-6 text-sm text-text-muted text-center sticky top-20">
+      Кликни на узел, чтобы увидеть его карточку.
+    </div>
+  </aside>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/graph.js') }}" defer></script>
+{% endblock %}

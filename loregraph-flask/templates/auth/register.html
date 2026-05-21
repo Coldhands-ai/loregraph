@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block title %}Регистрация — LoreGraph{% endblock %}
+{% block main_class %}flex-1 flex items-center justify-center p-8{% endblock %}
+
+{% block content %}
+<div class="w-full max-w-md animate-fade-in space-y-6">
+  <header class="space-y-2 text-center">
+    <div class="inline-flex items-center gap-2 text-2xl font-bold mb-2">
+      <span class="bg-brand-gradient bg-clip-text text-transparent">Lore</span>Graph
+    </div>
+    <h1 class="font-serif text-3xl">Создание аккаунта</h1>
+    <p class="text-sm text-text-muted">Бесплатно. Без обязательств. Без рекламы.</p>
+  </header>
+
+  {% if config['GOOGLE_OAUTH_ENABLED'] %}
+  <a href="{{ url_for('auth.google_login') }}"
+     class="w-full inline-flex items-center justify-center gap-2.5 rounded border border-border-strong bg-bg-surface hover:bg-bg-surface2 hover:border-brand/60 px-4 h-12 text-sm font-medium transition-all">
+    Продолжить с Google
+  </a>
+
+  <div class="flex items-center gap-4">
+    <div class="flex-1 h-px bg-border"></div>
+    <span class="text-[11px] uppercase tracking-widest text-text-dim">или email</span>
+    <div class="flex-1 h-px bg-border"></div>
+  </div>
+  {% endif %}
+
+  <form method="post" class="space-y-4">
+    {{ form.hidden_tag() }}
+    <div>
+      {{ form.display_name.label(class="block text-xs font-medium uppercase tracking-wider text-text-muted mb-1.5") }}
+      {{ form.display_name(class="h-10 w-full rounded border border-border-strong bg-bg-surface px-3.5 text-sm placeholder:text-text-dim focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand", placeholder="Как тебя называть") }}
+    </div>
+    <div>
+      {{ form.email.label(class="block text-xs font-medium uppercase tracking-wider text-text-muted mb-1.5") }}
+      {{ form.email(class="h-10 w-full rounded border border-border-strong bg-bg-surface px-3.5 text-sm placeholder:text-text-dim focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand", placeholder="you@example.com", autocomplete="email") }}
+    </div>
+    <div>
+      {{ form.password.label(class="block text-xs font-medium uppercase tracking-wider text-text-muted mb-1.5") }}
+      {{ form.password(class="h-10 w-full rounded border border-border-strong bg-bg-surface px-3.5 text-sm placeholder:text-text-dim focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand", placeholder="мин. 8 символов, хотя бы одна цифра", autocomplete="new-password") }}
+      {% for err in form.password.errors %}<p class="text-xs text-red-400 mt-1">{{ err }}</p>{% endfor %}
+    </div>
+    <div>
+      {{ form.confirm.label(class="block text-xs font-medium uppercase tracking-wider text-text-muted mb-1.5") }}
+      {{ form.confirm(class="h-10 w-full rounded border border-border-strong bg-bg-surface px-3.5 text-sm placeholder:text-text-dim focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand", autocomplete="new-password") }}
+      {% for err in form.confirm.errors %}<p class="text-xs text-red-400 mt-1">{{ err }}</p>{% endfor %}
+    </div>
+
+    <button type="submit"
+            class="w-full h-12 rounded bg-brand-gradient text-white text-sm font-semibold tracking-wider hover:-translate-y-px transition-transform shadow-[0_4px_16px_-4px_rgba(59,130,246,0.5)]">
+      Создать аккаунт
+    </button>
+  </form>
+
+  <p class="text-sm text-center text-text-muted">
+    Уже есть аккаунт?
+    <a href="{{ url_for('auth.login') }}" class="text-brand hover:underline">Войти</a>
+  </p>
+</div>
+{% endblock %}

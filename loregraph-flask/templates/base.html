@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="ru" class="dark" data-setting="{{ current_setting }}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}LoreGraph{% endblock %}</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='6' cy='6' r='3' fill='%233B82F6'/><circle cx='26' cy='10' r='3' fill='%236366F1'/><circle cx='16' cy='22' r='3' fill='%236366F1'/></svg>">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Newsreader:ital,wght@0,300;0,400;0,600;1,400&family=JetBrains+Mono:wght@400;500&family=Cinzel:wght@400;500;600;700&family=Cinzel+Decorative:wght@400;700;900&family=MedievalSharp&family=Orbitron:wght@400;500;700&family=Audiowide&family=IM+Fell+English:ital@0;1&family=Special+Elite&family=Rye&display=swap" rel="stylesheet">
+
+  {# Tailwind собран локально через standalone-бинарь (см. README). Конфиг в tailwind.config.js. #}
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/tailwind.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+  {% if custom_css_overrides %}
+    <style>{{ custom_css_overrides|safe }}</style>
+  {% endif %}
+
+  {# head_extra идёт РАНЬШЕ Alpine, чтобы скрипты страницы успели зарегистрировать
+     слушатели alpine:init до его инициализации. #}
+  {% block head_extra %}{% endblock %}
+
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.8/dist/cdn.min.js"></script>
+</head>
+<body class="bg-bg text-text font-sans antialiased min-h-screen flex flex-col">
+
+  {# Тематические декорации (углы): только когда внутри мира с не-default сеттингом #}
+  {% if current_setting and current_setting != 'default' %}
+    <div class="theme-decor theme-decor-{{ current_setting }}" aria-hidden="true">
+      {% if current_setting == 'steampunk' %}
+        <span class="steam-puff" style="left: 7%;  animation-delay: 0s;"></span>
+        <span class="steam-puff" style="left: 13%; animation-delay: 3s;"></span>
+        <span class="steam-puff" style="right: 9%; animation-delay: 1.5s;"></span>
+        <span class="steam-puff" style="right: 16%; animation-delay: 4.5s;"></span>
+      {% elif current_setting == 'fantasy' %}
+        <span class="magic-spark" style="left: 18%; top: 35%; animation-delay: 0s;"></span>
+        <span class="magic-spark" style="right: 22%; top: 55%; animation-delay: 2s;"></span>
+        <span class="magic-spark" style="left: 60%; top: 75%; animation-delay: 4s;"></span>
+        <span class="magic-spark" style="right: 12%; top: 25%; animation-delay: 6s;"></span>
+        <span class="magic-spark" style="left: 30%; top: 65%; animation-delay: 1s;"></span>
+      {% elif current_setting == 'darkfantasy' %}
+        <span class="mist-drift" style="left: 20%; top: 38%; animation-delay: 0s;"></span>
+        <span class="mist-drift" style="right: 26%; top: 58%; animation-delay: 4s;"></span>
+        <span class="mist-drift" style="left: 52%; top: 72%; animation-delay: 8s;"></span>
+        <span class="mist-drift" style="right: 18%; top: 28%; animation-delay: 12s;"></span>
+        <span class="mist-drift" style="left: 38%; top: 50%; animation-delay: 16s;"></span>
+      {% elif current_setting == 'wasteland' %}
+        <svg class="rad-gauge" viewBox="0 0 140 92" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <rect x="3" y="3" width="134" height="86" rx="6" fill="#1f1c14" stroke="#c85a28" stroke-width="1.5" opacity="0.85"/>
+          <path d="M 25 68 A 45 45 0 0 1 115 68" fill="none" stroke="#433d28" stroke-width="5"/>
+          <path d="M 25 68 A 45 45 0 0 1 70 22" fill="none" stroke="#7a7050" stroke-width="5"/>
+          <path d="M 70 22 A 45 45 0 0 1 95 28" fill="none" stroke="#a5b246" stroke-width="5"/>
+          <path d="M 95 28 A 45 45 0 0 1 115 68" fill="none" stroke="#c85a28" stroke-width="5"/>
+          <g stroke="#dcd4b4" stroke-width="1">
+            <line x1="25" y1="68" x2="21" y2="72"/>
+            <line x1="40" y1="40" x2="37" y2="37"/>
+            <line x1="70" y1="22" x2="70" y2="17"/>
+            <line x1="100" y1="40" x2="103" y2="37"/>
+            <line x1="115" y1="68" x2="119" y2="72"/>
+          </g>
+          <g class="rad-needle">
+            <line x1="70" y1="68" x2="102" y2="32" stroke="#ff4a30" stroke-width="2.5" stroke-linecap="round"/>
+          </g>
+          <circle cx="70" cy="68" r="5" fill="#c85a28"/>
+          <circle cx="70" cy="68" r="2.5" fill="#1f1c14"/>
+          <text x="70" y="84" font-family="monospace" font-size="9" font-weight="bold" fill="#a5b246" text-anchor="middle">RAD μSv/h</text>
+        </svg>
+      {% endif %}
+    </div>
+  {% endif %}
+
+  {% if current_user.is_authenticated %}
+    {% include "_navbar.html" %}
+  {% endif %}
+
+  <!-- Flash-сообщения -->
+  <div class="fixed top-4 right-4 z-50 flex flex-col gap-2 max-w-sm pointer-events-none" x-data="{ visible: true }">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% for category, msg in messages %}
+        <div
+          x-data="{ show: true }"
+          x-init="setTimeout(() => show = false, 4500)"
+          x-show="show"
+          x-transition.opacity.duration.300ms
+          class="pointer-events-auto rounded border bg-bg-surface px-4 py-3 text-sm shadow-xl backdrop-blur
+                 {% if category == 'success' %}border-emerald-500/40 text-emerald-300
+                 {% elif category == 'error' %}border-red-500/40 text-red-300
+                 {% elif category == 'info' %}border-brand/40 text-brand
+                 {% else %}border-border text-text{% endif %}">
+          {{ msg }}
+        </div>
+      {% endfor %}
+    {% endwith %}
+  </div>
+
+  <main class="flex-1 {% block main_class %}mx-auto w-full max-w-[1400px] px-6 py-8 animate-fade-in{% endblock %}">
+    {% block content %}{% endblock %}
+  </main>
+
+  {% if current_user.is_authenticated %}
+    <footer class="border-t border-border py-4 text-center text-xs text-text-dim">
+      LoreGraph · v0.2
+    </footer>
+  {% endif %}
+
+  {% block scripts %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% block title %}Закладки — LoreGraph{% endblock %}
+
+{% block content %}
+<div class="space-y-8">
+  <header>
+    <p class="text-xs uppercase tracking-[0.3em] text-text-dim mb-2">★ Закладки</p>
+    <h1 class="font-serif text-3xl">Личные заметки на полях</h1>
+    <p class="mt-2 text-sm text-text-muted max-w-2xl">
+      Статьи, которые ты пометил звёздочкой — собраны здесь, сгруппированы по миру.
+    </p>
+  </header>
+
+  {% if grouped %}
+    {% for g in grouped %}
+      <section>
+        <div class="flex items-center justify-between mb-3">
+          <h2 class="font-serif text-xl">
+            <a href="{{ url_for('worlds.detail', world_id=g.world.id) }}"
+               class="hover:text-brand transition-colors">{{ g.world.title }}</a>
+          </h2>
+          <span class="text-xs text-text-dim font-mono">{{ g['items']|length }}</span>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {% for a in g['items'] %}
+            {% set color = (a.category.color if a.category else '#64748B') %}
+            <a href="{{ url_for('articles.view', world_id=g.world.id, article_id=a.id) }}"
+               class="group rounded-lg border border-border bg-bg-surface/40 hover:bg-bg-surface/70 hover:-translate-y-0.5 transition-all overflow-hidden block">
+              <div class="aspect-[3/1] relative overflow-hidden bg-bg-surface"
+                   {% if a.image_url %}
+                     style="background-image: url('{{ a.image_url }}'); background-size: cover; background-position: center;"
+                   {% else %}
+                     style="background-image: linear-gradient(135deg, {{ color }}66, {{ color }}22);"
+                   {% endif %}>
+                {% if not a.image_url %}
+                  <div class="absolute inset-0 flex items-center justify-center">
+                    <span class="font-serif text-3xl font-bold opacity-90" style="color: {{ color }}">{{ a.title[:1]|upper }}</span>
+                  </div>
+                {% endif %}
+              </div>
+              <div class="p-3">
+                <h3 class="font-serif font-medium leading-tight line-clamp-1 group-hover:text-brand transition-colors">{{ a.title }}</h3>
+                <div class="mt-1 flex items-center justify-between text-xs text-text-dim">
+                  {% if a.category %}
+                    <span style="color: {{ a.category.color }}">{{ a.category.name }}</span>
+                  {% else %}
+                    <span>без категории</span>
+                  {% endif %}
+                  <span>{{ a.updated_at.strftime('%d.%m') }}</span>
+                </div>
+              </div>
+            </a>
+          {% endfor %}
+        </div>
+      </section>
+    {% endfor %}
+  {% else %}
+    <div class="rounded-lg border border-dashed border-border-strong p-12 text-center">
+      <div class="rounded-full bg-bg-surface p-4 text-text-dim border border-border inline-flex">⭐</div>
+      <h3 class="font-serif text-xl mt-4">Пусто</h3>
+      <p class="text-sm text-text-muted mt-2 max-w-md mx-auto">
+        Открой любую статью и жми ☆ в правом верхнем углу — она появится здесь.
+      </p>
+    </div>
+  {% endif %}
+</div>
+{% endblock %}

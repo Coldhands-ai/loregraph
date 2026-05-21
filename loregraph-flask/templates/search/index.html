@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+{% block title %}Поиск — LoreGraph{% endblock %}
+
+{% block content %}
+<div class="space-y-8">
+  <header>
+    <p class="text-xs uppercase tracking-[0.3em] text-text-dim mb-2">🔍 Поиск</p>
+    <h1 class="font-serif text-3xl">По всем твоим мирам</h1>
+  </header>
+
+  <form method="get" action="{{ url_for('search.index') }}" class="flex gap-2">
+    <div class="relative flex-1 max-w-2xl">
+      <span class="absolute left-3 top-1/2 -translate-y-1/2 text-text-dim">🔍</span>
+      <input type="search" name="q" value="{{ q }}" autofocus
+             placeholder="Имя, событие, цитата — хоть полслова"
+             class="h-11 w-full pl-10 pr-3 rounded border border-border-strong bg-bg-surface text-base placeholder:text-text-dim focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand">
+    </div>
+    <button type="submit"
+            class="h-11 px-5 rounded bg-brand-gradient text-white text-sm font-semibold hover:-translate-y-px transition-transform shrink-0">
+      Найти
+    </button>
+  </form>
+
+  {% if q %}
+    {% if groups %}
+      <p class="text-sm text-text-muted">
+        Найдено: <span class="font-mono">{{ total }}</span>
+        {% if total >= 50 %}<span class="text-text-dim">(показаны первые 50)</span>{% endif %}
+      </p>
+      {% for g in groups %}
+        <section>
+          <div class="flex items-center justify-between mb-3">
+            <h2 class="font-serif text-xl">
+              <a href="{{ url_for('worlds.detail', world_id=g.world.id) }}"
+                 class="hover:text-brand transition-colors">{{ g.world.title }}</a>
+            </h2>
+            <span class="text-xs text-text-dim font-mono">{{ g['items']|length }}</span>
+          </div>
+          <ul class="space-y-2">
+            {% for item in g['items'] %}
+              {% set a = item.article %}
+              {% set color = (a.category.color if a.category else '#64748B') %}
+              <li class="rounded-lg border border-border bg-bg-surface/40 hover:bg-bg-surface/70 transition-colors">
+                <a href="{{ url_for('articles.view', world_id=g.world.id, article_id=a.id) }}"
+                   class="block p-4">
+                  <div class="flex items-start gap-3">
+                    {% if a.image_url %}
+                      <div class="h-12 w-12 rounded shrink-0 overflow-hidden bg-bg-surface2"
+                           style="background: url('{{ a.image_url }}') center/cover;"></div>
+                    {% else %}
+                      <div class="h-12 w-12 rounded shrink-0 flex items-center justify-center font-bold text-white"
+                           style="background: linear-gradient(135deg, {{ color }}, {{ color }}cc);">
+                        {{ a.title[:1]|upper }}
+                      </div>
+                    {% endif %}
+                    <div class="min-w-0 flex-1">
+                      <div class="flex items-center gap-2 mb-0.5">
+                        <h3 class="font-serif font-medium truncate">{{ a.title }}</h3>
+                        {% if a.category %}
+                          <span class="text-[10px] px-1.5 py-0.5 rounded shrink-0"
+                                style="color: {{ a.category.color }}; background-color: {{ a.category.color }}1A;">{{ a.category.name }}</span>
+                        {% endif %}
+                      </div>
+                      {% if item.snippet %}
+                        <p class="text-sm text-text-muted leading-relaxed line-clamp-2">{{ item.snippet|safe }}</p>
+                      {% endif %}
+                    </div>
+                  </div>
+                </a>
+              </li>
+            {% endfor %}
+          </ul>
+        </section>
+      {% endfor %}
+    {% else %}
+      <div class="rounded-lg border border-dashed border-border-strong p-12 text-center">
+        <p class="text-text-muted">По запросу «{{ q }}» ничего не нашлось.</p>
+        <p class="text-xs text-text-dim mt-2">
+          Попробуй короче — поиск использует словоформы (например, «эльфы» найдёт «эльфом», «эльфийский»).
+        </p>
+      </div>
+    {% endif %}
+  {% else %}
+    <p class="text-sm text-text-dim">
+      Введи запрос — найду по заголовкам и контенту. Можно слово, фразу, что угодно.
+    </p>
+  {% endif %}
+</div>
+{% endblock %}

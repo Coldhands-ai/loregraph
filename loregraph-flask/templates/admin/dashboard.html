@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+{% block title %}Админ-панель — LoreGraph{% endblock %}
+
+{% block content %}
+<div class="space-y-8">
+  <header class="flex items-end justify-between gap-4">
+    <div>
+      <p class="text-xs uppercase tracking-[0.3em] text-amber-400 mb-2">⚙ Администрирование</p>
+      <h1 class="font-serif text-3xl">Дашборд</h1>
+      <p class="mt-2 text-text-muted max-w-xl">
+        Общая картина системы: пользователи, миры, активность.
+      </p>
+    </div>
+    <nav class="flex items-center gap-2 text-sm">
+      <a href="{{ url_for('admin.users') }}" class="px-3 py-1.5 rounded border border-border-strong text-text-muted hover:text-text hover:bg-bg-surface transition-colors">
+        Пользователи
+      </a>
+      <a href="{{ url_for('admin.worlds') }}" class="px-3 py-1.5 rounded border border-border-strong text-text-muted hover:text-text hover:bg-bg-surface transition-colors">
+        Миры
+      </a>
+      <a href="{{ url_for('admin.logs') }}" class="px-3 py-1.5 rounded border border-border-strong text-text-muted hover:text-text hover:bg-bg-surface transition-colors">
+        Лог
+      </a>
+    </nav>
+  </header>
+
+  <!-- Статистика по пользователям -->
+  <section>
+    <h2 class="text-xs uppercase tracking-wider text-text-dim mb-3">Пользователи</h2>
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+      {% set u_cards = [
+        ('Всего',          stats.users_total,    '#3B82F6'),
+        ('Админов',        stats.users_admins,   '#8B5CF6'),
+        ('Заблокировано',  stats.users_blocked,  '#EF4444'),
+        ('Новых за неделю',stats.users_new_week, '#10B981'),
+      ] %}
+      {% for label, value, color in u_cards %}
+        <div class="rounded-lg border bg-bg-surface/60 p-5"
+             style="border-color: {{ color }}33;">
+          <div class="text-xs uppercase tracking-wider" style="color: {{ color }}">{{ label }}</div>
+          <div class="mt-2 font-serif text-3xl font-medium">{{ value }}</div>
+        </div>
+      {% endfor %}
+    </div>
+  </section>
+
+  <!-- Статистика по контенту -->
+  <section>
+    <h2 class="text-xs uppercase tracking-wider text-text-dim mb-3">Контент</h2>
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+      {% set c_cards = [
+        ('Миров',           stats.worlds_total,        '#3B82F6'),
+        ('Статей всего',    stats.articles_total,      '#10B981'),
+        ('Связей',          stats.relations_total,     '#F59E0B'),
+        ('Статей за неделю',stats.articles_new_week,   '#6366F1'),
+      ] %}
+      {% for label, value, color in c_cards %}
+        <div class="rounded-lg border bg-bg-surface/60 p-5"
+             style="border-color: {{ color }}33;">
+          <div class="text-xs uppercase tracking-wider" style="color: {{ color }}">{{ label }}</div>
+          <div class="mt-2 font-serif text-3xl font-medium">{{ value }}</div>
+        </div>
+      {% endfor %}
+    </div>
+  </section>
+
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <!-- Топ-5 миров -->
+    <section class="rounded-lg border border-border bg-bg-surface/40 p-5">
+      <h2 class="text-xs uppercase tracking-wider text-text-dim mb-4">Топ миров по числу статей</h2>
+      {% if top_worlds %}
+        <ol class="space-y-2">
+          {% for world, n in top_worlds %}
+            <li class="flex items-center gap-3 text-sm">
+              <span class="text-text-dim w-5 font-mono">{{ loop.index }}.</span>
+              <span class="flex-1 truncate font-medium">{{ world.title }}</span>
+              <span class="text-text-muted text-xs">{{ world.owner.email }}</span>
+              <span class="font-mono text-brand">{{ n }}</span>
+            </li>
+          {% endfor %}
+        </ol>
+      {% else %}
+        <p class="text-text-dim text-sm italic">Миров пока нет.</p>
+      {% endif %}
+    </section>
+
+    <!-- Свежие действия -->
+    <section class="rounded-lg border border-border bg-bg-surface/40 p-5">
+      <h2 class="text-xs uppercase tracking-wider text-text-dim mb-4">Свежие действия админов</h2>
+      {% if recent_logs %}
+        <ul class="space-y-2 text-sm">
+          {% for l in recent_logs %}
+            <li class="flex items-start gap-3">
+              <span class="text-text-dim text-xs whitespace-nowrap pt-0.5">{{ l.created_at.strftime('%d.%m %H:%M') }}</span>
+              <span class="flex-1">
+                <span class="text-text-muted">{{ l.admin.email if l.admin else '?' }}</span>
+                <span class="text-text-dim mx-1">→</span>
+                <span class="text-amber-400 text-xs px-2 py-0.5 rounded bg-amber-400/10 border border-amber-400/30">{{ l.action }}</span>
+                {% if l.target_user %}<span class="text-text-muted text-xs">{{ l.target_user.email }}</span>{% endif %}
+                {% if l.target_world %}<span class="text-text-muted text-xs italic">«{{ l.target_world.title }}»</span>
+                {% elif l.details and l.details.title %}<span class="text-text-muted text-xs italic">«{{ l.details.title }}»</span>{% endif %}
+              </span>
+            </li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <p class="text-text-dim text-sm italic">Действий пока не было.</p>
+      {% endif %}
+    </section>
+  </div>
+</div>
+{% endblock %}

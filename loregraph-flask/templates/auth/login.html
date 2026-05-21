@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+{% block title %}Вход — LoreGraph{% endblock %}
+{% block main_class %}flex-1 flex{% endblock %}
+
+{% block content %}
+<div class="flex-1 flex">
+  <!-- Левая часть: hero -->
+  <aside class="hidden lg:flex flex-1 relative overflow-hidden bg-auth-gradient items-center justify-center p-16">
+    <div class="absolute top-0 right-0 h-[500px] w-[500px] rounded-full bg-brand/15 blur-3xl"></div>
+    <div class="absolute bottom-0 left-0 h-[400px] w-[400px] rounded-full bg-brand-violet/15 blur-3xl"></div>
+    <svg class="absolute inset-0 w-full h-full opacity-40" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid slice">
+      <defs>
+        <linearGradient id="bg-grad" x1="0" y1="0" x2="100" y2="100">
+          <stop stop-color="#3B82F6"/><stop offset="1" stop-color="#6366F1"/>
+        </linearGradient>
+      </defs>
+      <g opacity="0.6" stroke="url(#bg-grad)" stroke-width="0.15">
+        <line x1="20" y1="30" x2="55" y2="40"/>
+        <line x1="55" y1="40" x2="80" y2="20"/>
+        <line x1="55" y1="40" x2="50" y2="70"/>
+        <line x1="50" y1="70" x2="25" y2="80"/>
+        <line x1="50" y1="70" x2="80" y2="75"/>
+      </g>
+      <g fill="url(#bg-grad)">
+        <circle cx="20" cy="30" r="1.2" class="animate-pulse-glow" style="transform-origin: 20px 30px"/>
+        <circle cx="55" cy="40" r="1.5" class="animate-pulse-glow" style="animation-delay: 1s; transform-origin: 55px 40px"/>
+        <circle cx="80" cy="20" r="1" class="animate-pulse-glow" style="animation-delay: 2s; transform-origin: 80px 20px"/>
+        <circle cx="50" cy="70" r="1.4" class="animate-pulse-glow" style="animation-delay: 0.5s; transform-origin: 50px 70px"/>
+        <circle cx="25" cy="80" r="1" class="animate-pulse-glow" style="animation-delay: 1.5s; transform-origin: 25px 80px"/>
+        <circle cx="80" cy="75" r="1.2" class="animate-pulse-glow" style="animation-delay: 2.5s; transform-origin: 80px 75px"/>
+      </g>
+    </svg>
+
+    <div class="relative z-10 max-w-md text-center space-y-6 animate-fade-in">
+      <div class="inline-flex items-center gap-2 text-3xl font-bold">
+        <span class="bg-brand-gradient bg-clip-text text-transparent">Lore</span>Graph
+      </div>
+      <p class="text-sm tracking-[0.3em] uppercase text-text-muted">Конструктор миров</p>
+      <h1 class="font-serif text-4xl leading-tight">Сплети свою вселенную в&nbsp;живой граф связей</h1>
+      <p class="text-text-muted leading-relaxed">
+        Персонажи, локации, события и фракции — превращаются в&nbsp;интерактивную карту,
+        где видно каждую нить сюжета.
+      </p>
+    </div>
+  </aside>
+
+  <!-- Правая часть: форма -->
+  <main class="flex-1 flex items-center justify-center p-8">
+    <div class="w-full max-w-md animate-fade-in space-y-6">
+      <header class="space-y-2">
+        <h1 class="font-serif text-3xl">С возвращением</h1>
+        <p class="text-sm text-text-muted">Войди, чтобы продолжить работу над мирами.</p>
+      </header>
+
+      {% if config['GOOGLE_OAUTH_ENABLED'] %}
+      <a href="{{ url_for('auth.google_login') }}"
+         class="w-full inline-flex items-center justify-center gap-2.5 rounded border border-border-strong bg-bg-surface hover:bg-bg-surface2 hover:border-brand/60 px-4 h-12 text-sm font-medium transition-all">
+        <svg width="16" height="16" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.1c-.22-.66-.35-1.36-.35-2.1s.13-1.44.35-2.1V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.83z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.83C6.71 7.31 9.14 5.38 12 5.38z"/></svg>
+        Войти через Google
+      </a>
+
+      <div class="flex items-center gap-4">
+        <div class="flex-1 h-px bg-border"></div>
+        <span class="text-[11px] uppercase tracking-widest text-text-dim">или email</span>
+        <div class="flex-1 h-px bg-border"></div>
+      </div>
+      {% endif %}
+
+      <form method="post" class="space-y-4">
+        {{ form.hidden_tag() }}
+        <div>
+          {{ form.email.label(class="block text-xs font-medium uppercase tracking-wider text-text-muted mb-1.5") }}
+          {{ form.email(class="h-10 w-full rounded border border-border-strong bg-bg-surface px-3.5 text-sm placeholder:text-text-dim focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand", placeholder="you@example.com", autocomplete="email") }}
+        </div>
+        <div>
+          {{ form.password.label(class="block text-xs font-medium uppercase tracking-wider text-text-muted mb-1.5") }}
+          {{ form.password(class="h-10 w-full rounded border border-border-strong bg-bg-surface px-3.5 text-sm placeholder:text-text-dim focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand", placeholder="••••••••", autocomplete="current-password") }}
+        </div>
+        <label class="inline-flex items-center gap-2 text-sm text-text-muted">
+          {{ form.remember(class="rounded border-border-strong bg-bg-surface text-brand focus:ring-brand") }}
+          <span>Запомнить меня</span>
+        </label>
+
+        <button type="submit"
+                class="w-full h-12 rounded bg-brand-gradient text-white text-sm font-semibold tracking-wider hover:-translate-y-px transition-transform shadow-[0_4px_16px_-4px_rgba(59,130,246,0.5)]">
+          Войти
+        </button>
+      </form>
+
+      <p class="text-sm text-center text-text-muted">
+        Ещё нет аккаунта?
+        <a href="{{ url_for('auth.register') }}" class="text-brand hover:underline">Создать</a>
+      </p>
+    </div>
+  </main>
+</div>
+{% endblock %}
