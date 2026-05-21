@@ -12,7 +12,7 @@
   const titleInput = document.getElementById('title-input');
   const editorEl = document.getElementById('md-editor');
 
-  function setIndicator(state) {
+  function setIndicator(state, customText) {
     if (!indicator) return;
     const map = {
       saving: { text: 'Сохраняем…', cls: 'text-text-dim' },
@@ -21,16 +21,10 @@
       error:  { text: 'Ошибка сохранения', cls: 'text-red-400' },
     };
     const s = map[state] || map.saved;
-    indicator.textContent = s.text;
+    indicator.textContent = customText || s.text;
     indicator.className = 'text-xs ' + s.cls;
-  }
-
-  function debounce(fn, ms) {
-    let t;
-    return function (...args) {
-      clearTimeout(t);
-      t = setTimeout(() => fn.apply(this, args), ms);
-    };
+    // Тултип: полный текст ошибки доступен по hover, если в индикаторе обрезался.
+    indicator.title = customText || '';
   }
 
   async function persist(patch) {
@@ -41,14 +35,40 @@
         headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrf },
         body: JSON.stringify(patch),
       });
-      if (!res.ok) throw new Error(await res.text());
+      if (!res.ok) {
+        const data = await res.json().catch(() => null);
+        const msg = (data && data.error) || `Ошибка сохранения (${res.status})`;
+        console.error('autosave failed:', msg);
+        setIndicator('error', msg);
+        return;
+      }
       setIndicator('saved');
     } catch (err) {
       console.error('autosave failed', err);
       setIndicator('error');
     }
   }
-  const persistDebounced = debounce(persist, 2000);
+
+  // Буферизованный дебаунс: пока таймер тикает, накапливаем все патчи в
+  // один объект и отправляем их одним запросом. Обычный debounce
+  // сохранял бы только args последнего вызова — и при быстром
+  // переключении (поле → редактор) поля терялись.
+  // Плюс сериализация через цепочку промисов, чтобы два запроса не ушли
+  // одновременно при долгой сети.
+  let _pendingPatch = {};
+  let _pendingTimer = null;
+  let _inflight = Promise.resolve();
+
+  function persistDebounced(patch) {
+    Object.assign(_pendingPatch, patch);
+    if (_pendingTimer) clearTimeout(_pendingTimer);
+    _pendingTimer = setTimeout(() => {
+      const toSend = _pendingPatch;
+      _pendingPatch = {};
+      _pendingTimer = null;
+      _inflight = _inflight.then(() => persist(toSend));
+    }, 2000);
+  }
 
   // ─── Toast UI Editor ─────────────────────────────────────
   const initialEl = document.getElementById('md-initial');
@@ -112,7 +132,13 @@
         const label = trigger.querySelector('#cat-label');
         if (label) label.textContent = name;
       }
-      await persist({ category_id: id });
+      // Прокидываем title и content одним патчем — иначе несохранённые
+      // изменения в редакторе потерялись бы при reload.
+      await persist({
+        category_id: id,
+        title: titleInput ? titleInput.value : undefined,
+        content_md: editor.getMarkdown(),
+      });
       // Перезагружаем страницу, чтобы появились/исчезли поля шаблона новой категории
       setTimeout(() => window.location.reload(), 250);
     });
@@ -133,6 +159,13 @@
     });
   });
 
+  // ─── Теги ────────────────────────────────────────────────
+  // tags.js шлёт CustomEvent с актуальным списком имён — отправляем в autosave.
+  document.addEventListener('tags:change', (e) => {
+    setIndicator('dirty');
+    persistDebounced({ tags: e.detail.tags });
+  });
+
   // ─── Закрепление ─────────────────────────────────────────
   const pinBtn = document.getElementById('pin-btn');
   if (pinBtn) {
@@ -150,6 +183,28 @@
           : 'h-9 w-9 inline-flex items-center justify-center rounded transition-colors text-text-muted hover:bg-bg-surface2 hover:text-text';
       } catch (err) {
         console.error('pin failed', err);
+      }
+    });
+  }
+
+  // ─── Закладка ────────────────────────────────────────────
+  const bmBtn = document.getElementById('bookmark-btn');
+  if (bmBtn) {
+    bmBtn.addEventListener('click', async () => {
+      try {
+        const res = await fetch(`/worlds/${worldId}/articles/${articleId}/bookmark`, {
+          method: 'POST',
+          headers: { 'X-CSRFToken': csrf },
+        });
+        const data = await res.json();
+        const on = data.bookmarked;
+        bmBtn.dataset.bookmarked = String(on);
+        bmBtn.textContent = on ? '★' : '☆';
+        bmBtn.className = on
+          ? 'h-9 w-9 inline-flex items-center justify-center rounded transition-colors text-lg text-amber-400'
+          : 'h-9 w-9 inline-flex items-center justify-center rounded transition-colors text-lg text-text-muted hover:bg-bg-surface2 hover:text-amber-400';
+      } catch (err) {
+        console.error('bookmark failed', err);
       }
     });
   }

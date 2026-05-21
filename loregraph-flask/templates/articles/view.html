@@ -1,0 +1,203 @@
+{% extends "base.html" %}
+{% block title %}{{ article.title }} — {{ world.title }} — LoreGraph{% endblock %}
+
+{% block content %}
+<div class="space-y-6"
+     data-world-id="{{ world.id }}"
+     data-article-id="{{ article.id }}"
+     data-csrf="{{ csrf_token() }}">
+
+  {# ─── Action bar ─────────────────────────────────────── #}
+  <div class="flex items-center justify-between gap-4">
+    <a href="{{ url_for('articles.index', world_id=world.id) }}"
+       class="inline-flex items-center gap-1 text-sm text-text-muted hover:text-text">
+      ← Все статьи
+    </a>
+    <div class="flex items-center gap-2">
+      <button type="button" id="bookmark-btn" data-bookmarked="{{ 'true' if is_bookmarked else 'false' }}"
+              class="h-9 w-9 inline-flex items-center justify-center rounded transition-colors text-lg
+                     {% if is_bookmarked %}text-amber-400{% else %}text-text-muted hover:bg-bg-surface2 hover:text-amber-400{% endif %}"
+              aria-label="В закладки" title="В закладки">{% if is_bookmarked %}★{% else %}☆{% endif %}</button>
+      <button type="button" id="pin-btn" data-pinned="{{ 'true' if article.is_pinned else 'false' }}"
+              class="h-9 w-9 inline-flex items-center justify-center rounded transition-colors
+                     {% if article.is_pinned %}bg-brand-gradient text-white{% else %}text-text-muted hover:bg-bg-surface2 hover:text-text{% endif %}"
+              aria-label="Закрепить">📌</button>
+      <a href="{{ url_for('articles.versions', world_id=world.id, article_id=article.id) }}"
+         class="h-9 w-9 inline-flex items-center justify-center rounded text-text-muted hover:bg-bg-surface2 hover:text-text transition-colors"
+         aria-label="История версий" title="История версий">📜</a>
+      <a href="{{ url_for('articles.edit', world_id=world.id, article_id=article.id) }}"
+         class="inline-flex items-center gap-2 h-9 px-4 rounded bg-brand-gradient text-white text-sm font-semibold hover:-translate-y-px transition-transform">
+        ✎ Редактировать
+      </a>
+      <form method="post" action="{{ url_for('articles.delete', world_id=world.id, article_id=article.id) }}"
+            onsubmit="return confirm('Удалить статью «{{ article.title|e }}»?');">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <button type="submit" aria-label="Удалить"
+                class="h-9 w-9 inline-flex items-center justify-center rounded text-text-muted hover:bg-bg-surface2 hover:text-red-400 transition-colors">🗑</button>
+      </form>
+    </div>
+  </div>
+
+  {# ─── Cover hero ─────────────────────────────────────── #}
+  {% if article.image_url %}
+    <div class="relative rounded-xl overflow-hidden aspect-[16/9] sm:aspect-[3/1] border border-border">
+      <img src="{{ article.image_url }}" alt="" class="absolute inset-0 h-full w-full object-cover">
+      <div class="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-bg/95 to-transparent"></div>
+    </div>
+  {% endif %}
+
+  {# ─── Title / category / tags ────────────────────────── #}
+  <header class="space-y-3">
+    <div class="flex flex-wrap items-center gap-1.5">
+      {% if article.category %}
+        <a href="{{ url_for('articles.index', world_id=world.id, category=article.category.id) }}"
+           class="inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-medium transition-all hover:opacity-80"
+           style="color: {{ article.category.color }}; background-color: {{ article.category.color }}1A; border-color: {{ article.category.color }}55;">
+          <span class="h-1.5 w-1.5 rounded-full" style="background-color: {{ article.category.color }}"></span>
+          {{ article.category.name }}
+        </a>
+      {% endif %}
+      {% for tag in article.tags %}
+        <span class="inline-flex items-center rounded-full bg-brand/10 border border-brand/30 text-brand px-2.5 py-0.5 text-xs">
+          {{ tag.name }}
+        </span>
+      {% endfor %}
+    </div>
+    <h1 class="font-serif text-4xl leading-tight">{{ article.title }}</h1>
+  </header>
+
+  {# ─── 2-col main content ─────────────────────────────── #}
+  <div class="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-8 pt-2">
+
+    {# Main article body #}
+    <article class="min-w-0">
+      {% if html_content %}
+        <div class="prose prose-invert max-w-none
+                    prose-headings:font-serif prose-headings:text-text
+                    prose-a:text-brand prose-a:no-underline hover:prose-a:underline
+                    prose-strong:text-text
+                    prose-blockquote:border-l-brand prose-blockquote:text-text-muted
+                    prose-code:text-brand-violet prose-code:bg-bg-surface2 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:before:content-none prose-code:after:content-none
+                    prose-pre:bg-bg-surface2 prose-pre:border prose-pre:border-border
+                    prose-hr:border-border
+                    prose-img:rounded-lg prose-img:border prose-img:border-border">
+          {{ html_content | safe }}
+        </div>
+      {% else %}
+        <div class="rounded-lg border border-dashed border-border-strong p-12 text-center">
+          <p class="text-text-muted mb-4">Содержимое пока пустое.</p>
+          <a href="{{ url_for('articles.edit', world_id=world.id, article_id=article.id) }}"
+             class="inline-flex items-center gap-2 h-9 px-4 rounded bg-brand-gradient text-white text-sm font-semibold hover:-translate-y-px transition-transform">
+            ✎ Начать писать
+          </a>
+        </div>
+      {% endif %}
+    </article>
+
+    {# Sidebar #}
+    <aside class="space-y-4">
+
+      {# Свойства (template_fields) — только непустые #}
+      {% set visible_fields = [] %}
+      {% if article.category and article.category.template_fields %}
+        {% for f in article.category.template_fields %}
+          {% set v = (article.field_values or {}).get(f.key, '') %}
+          {% if v %}{% set _ = visible_fields.append((f, v)) %}{% endif %}
+        {% endfor %}
+      {% endif %}
+      {% if visible_fields %}
+        <section class="rounded-lg border border-border bg-bg-surface/40 p-5">
+          <h2 class="text-xs uppercase tracking-wider text-text-dim mb-3">Свойства</h2>
+          <dl class="space-y-2.5 text-sm">
+            {% for f, v in visible_fields %}
+              <div>
+                <dt class="text-xs text-text-dim mb-0.5">{{ f.label }}</dt>
+                <dd class="text-text leading-relaxed break-words">{{ v }}</dd>
+              </div>
+            {% endfor %}
+          </dl>
+        </section>
+      {% endif %}
+
+      {# Связи #}
+      {% if relations %}
+        <section class="rounded-lg border border-border bg-bg-surface/40 p-5">
+          <div class="flex items-center gap-2 mb-3">
+            <span class="text-brand">🔗</span>
+            <h2 class="text-xs uppercase tracking-wider text-text-dim">Связано</h2>
+            <span class="ml-auto text-xs text-text-dim">{{ relations|length }}</span>
+          </div>
+          <ul class="space-y-1.5">
+            {% for r in relations %}
+              <li class="flex items-center gap-2">
+                <span class="{% if r.outgoing %}text-brand{% else %}text-brand-violet{% endif %} shrink-0 text-xs">{{ '→' if r.outgoing else '←' }}</span>
+                <a href="{{ url_for('articles.view', world_id=world.id, article_id=r.other.id) }}"
+                   class="text-sm font-medium text-text hover:text-brand transition-colors line-clamp-1 flex-1">{{ r.other.title }}</a>
+                <span class="text-xs text-text-dim italic shrink-0">{{ r.rel.label }}</span>
+              </li>
+            {% endfor %}
+          </ul>
+        </section>
+      {% endif %}
+
+      {# Метаданные #}
+      <section class="rounded-lg border border-border bg-bg-surface/40 p-5">
+        <h2 class="text-xs uppercase tracking-wider text-text-dim mb-3">Метаданные</h2>
+        <dl class="space-y-2 text-sm">
+          <div class="flex justify-between"><dt class="text-text-muted">Создано</dt><dd>{{ article.created_at.strftime('%d.%m.%Y') }}</dd></div>
+          <div class="flex justify-between"><dt class="text-text-muted">Обновлено</dt><dd>{{ article.updated_at.strftime('%d.%m.%Y') }}</dd></div>
+        </dl>
+      </section>
+    </aside>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  (function () {
+    const root = document.querySelector('[data-article-id]');
+    if (!root) return;
+    const worldId = root.dataset.worldId;
+    const articleId = root.dataset.articleId;
+    const csrf = root.dataset.csrf;
+
+    // ─── Pin ─────────────────────────────────────────
+    const pinBtn = document.getElementById('pin-btn');
+    if (pinBtn) {
+      pinBtn.addEventListener('click', async () => {
+        try {
+          const res = await fetch(`/worlds/${worldId}/articles/${articleId}/pin`, {
+            method: 'POST', headers: { 'X-CSRFToken': csrf },
+          });
+          const data = await res.json();
+          const pinned = data.is_pinned;
+          pinBtn.dataset.pinned = String(pinned);
+          pinBtn.className = pinned
+            ? 'h-9 w-9 inline-flex items-center justify-center rounded transition-colors bg-brand-gradient text-white'
+            : 'h-9 w-9 inline-flex items-center justify-center rounded transition-colors text-text-muted hover:bg-bg-surface2 hover:text-text';
+        } catch (err) { console.error('pin failed', err); }
+      });
+    }
+
+    // ─── Bookmark ────────────────────────────────────
+    const bmBtn = document.getElementById('bookmark-btn');
+    if (bmBtn) {
+      bmBtn.addEventListener('click', async () => {
+        try {
+          const res = await fetch(`/worlds/${worldId}/articles/${articleId}/bookmark`, {
+            method: 'POST', headers: { 'X-CSRFToken': csrf },
+          });
+          const data = await res.json();
+          const on = data.bookmarked;
+          bmBtn.dataset.bookmarked = String(on);
+          bmBtn.textContent = on ? '★' : '☆';
+          bmBtn.className = on
+            ? 'h-9 w-9 inline-flex items-center justify-center rounded transition-colors text-lg text-amber-400'
+            : 'h-9 w-9 inline-flex items-center justify-center rounded transition-colors text-lg text-text-muted hover:bg-bg-surface2 hover:text-amber-400';
+        } catch (err) { console.error('bookmark failed', err); }
+      });
+    }
+  })();
+</script>
+{% endblock %}

@@ -14,19 +14,68 @@ class LoginForm(FlaskForm):
     remember = BooleanField("Запомнить меня")
 
 
+PASSWORD_RULES = [
+    DataRequired(),
+    Length(min=8, max=128, message="Минимум 8 символов."),
+    Regexp(r".*\d.*", message="Хотя бы одна цифра."),
+]
+
+
 class RegisterForm(FlaskForm):
     display_name = StringField("Имя", validators=[DataRequired(), Length(min=1, max=100)])
     email = StringField("Email", validators=[DataRequired(), Email(), Length(max=255)])
-    password = PasswordField("Пароль", validators=[DataRequired(), Length(min=6, max=128)])
+    password = PasswordField("Пароль", validators=PASSWORD_RULES)
     confirm = PasswordField(
         "Повтори пароль",
         validators=[DataRequired(), EqualTo("password", message="Пароли не совпадают")],
     )
 
 
+SETTING_CHOICES = [
+    ("default",     "По умолчанию"),
+    ("fantasy",     "Фэнтези"),
+    ("darkfantasy", "Тёмное фэнтези"),
+    ("scifi",       "Научная фантастика"),
+    ("cyberpunk",   "Киберпанк"),
+    ("steampunk",   "Стимпанк"),
+    ("wasteland",   "Постапокалипсис"),
+    ("custom",      "Кастом"),
+]
+
+CUSTOM_FONT_CHOICES = [
+    ("Newsreader",           "Newsreader (классический серифный)"),
+    ("Cinzel",               "Cinzel (капители)"),
+    ("Cinzel Decorative",    "Cinzel Decorative (орнаментальные капители)"),
+    ("MedievalSharp",        "MedievalSharp (готика, темное фэнтези)"),
+    ("Orbitron",             "Orbitron (геометрический sans)"),
+    ("Audiowide",            "Audiowide (футуристический неон)"),
+    ("IM Fell English",      "IM Fell English (старая печать)"),
+    ("Special Elite",        "Special Elite (печатная машинка)"),
+    ("Rye",                  "Rye (потрёпанный вестерн)"),
+]
+
+
 class WorldForm(FlaskForm):
     title = StringField("Название", validators=[DataRequired(), Length(min=1, max=100)])
     description = TextAreaField("Описание", validators=[Optional(), Length(max=500)])
+    setting = SelectField(
+        "Сеттинг",
+        validators=[DataRequired()],
+        choices=SETTING_CHOICES,
+        default="default",
+    )
+    # Кастомные параметры — применяются только если setting == 'custom'.
+    custom_brand = StringField(
+        "Brand-цвет",
+        validators=[Optional(), Regexp(r"^#[0-9a-fA-F]{6}$", message="Формат: #RRGGBB")],
+        default="#3B82F6",
+    )
+    custom_font = SelectField(
+        "Display-шрифт",
+        validators=[Optional()],
+        choices=CUSTOM_FONT_CHOICES,
+        default="Newsreader",
+    )
 
 
 class ArticleCreateForm(FlaskForm):
@@ -68,7 +117,7 @@ class ProfileForm(FlaskForm):
 
 class PasswordChangeForm(FlaskForm):
     current_password = PasswordField("Текущий пароль", validators=[Optional()])
-    new_password = PasswordField("Новый пароль", validators=[DataRequired(), Length(min=6, max=128)])
+    new_password = PasswordField("Новый пароль", validators=PASSWORD_RULES)
     confirm = PasswordField(
         "Повтори новый пароль",
         validators=[DataRequired(), EqualTo("new_password", message="Пароли не совпадают")],

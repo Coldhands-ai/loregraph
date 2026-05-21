@@ -2,6 +2,8 @@
 {% block title %}{{ article.title }} — LoreGraph{% endblock %}
 
 {% block head_extra %}
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/cropperjs@1.6.2/dist/cropper.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/cropperjs@1.6.2/dist/cropper.min.js" defer></script>
   <link rel="stylesheet" href="https://uicdn.toast.com/editor/3.2.2/toastui-editor.min.css">
   <link rel="stylesheet" href="https://uicdn.toast.com/editor/3.2.2/theme/toastui-editor-dark.min.css">
   <script src="https://uicdn.toast.com/editor/3.2.2/toastui-editor-all.min.js" defer></script>
@@ -25,10 +27,19 @@
       <div class="flex items-center gap-2">
         <span id="save-indicator" class="text-xs text-text-dim">Сохранено</span>
 
+        <button type="button" id="bookmark-btn" data-bookmarked="{{ 'true' if is_bookmarked else 'false' }}"
+                class="h-9 w-9 inline-flex items-center justify-center rounded transition-colors text-lg
+                       {% if is_bookmarked %}text-amber-400{% else %}text-text-muted hover:bg-bg-surface2 hover:text-amber-400{% endif %}"
+                aria-label="В закладки" title="В закладки">{% if is_bookmarked %}★{% else %}☆{% endif %}</button>
+
         <button type="button" id="pin-btn" data-pinned="{{ 'true' if article.is_pinned else 'false' }}"
                 class="h-9 w-9 inline-flex items-center justify-center rounded transition-colors
                        {% if article.is_pinned %}bg-brand-gradient text-white{% else %}text-text-muted hover:bg-bg-surface2 hover:text-text{% endif %}"
                 aria-label="Закрепить">📌</button>
+
+        <a href="{{ url_for('articles.versions', world_id=world.id, article_id=article.id) }}"
+           class="h-9 w-9 inline-flex items-center justify-center rounded text-text-muted hover:bg-bg-surface2 hover:text-text transition-colors"
+           aria-label="История версий" title="История версий">📜</a>
 
         <form method="post" action="{{ url_for('articles.delete', world_id=world.id, article_id=article.id) }}"
               onsubmit="return confirm('Удалить статью «{{ article.title|e }}»?');">
@@ -54,7 +65,12 @@
         <form method="post" action="{{ url_for('articles.upload_cover', world_id=world.id, article_id=article.id) }}" enctype="multipart/form-data" class="inline">
           {{ cover_form.hidden_tag() }}
           <label class="cursor-pointer inline-flex items-center gap-1 px-3 py-1.5 rounded bg-bg-surface/90 border border-border-strong text-xs text-text hover:bg-bg-surface2 backdrop-blur-sm">
-            <input type="file" name="cover" accept="image/*" class="sr-only" onchange="this.form.submit()">
+            <input type="file" name="cover" accept="image/*" class="sr-only"
+                   data-cropper-input
+                   data-cropper-title="Обрезка обложки"
+                   data-cropper-aspect="16/9"
+                   data-cropper-max-width="1280"
+                   data-cropper-max-height="720">
             {% if article.image_url %}Заменить{% else %}Загрузить обложку{% endif %}
           </label>
         </form>
@@ -106,6 +122,30 @@
       </div>
     </div>
 
+    <!-- Теги -->
+    <div id="tags-block"
+         data-search-url="{{ url_for('articles.tags_json', world_id=world.id) }}"
+         data-max-tags="20"
+         class="rounded-lg border border-border bg-bg-surface/40 p-3">
+      <div class="text-[11px] uppercase tracking-wider text-text-dim mb-2">Теги</div>
+      <div data-tag-list class="flex flex-wrap items-center gap-1.5">
+        {% for tag in article.tags %}
+          <span class="tag-chip inline-flex items-center gap-1 rounded-full bg-brand/10 border border-brand/30 text-brand px-2.5 py-0.5 text-xs"
+                data-tag-name="{{ tag.name }}">
+            <span>{{ tag.name }}</span>
+            <button type="button" class="tag-remove ml-0.5 text-brand/70 hover:text-red-400 transition-colors" aria-label="Убрать">×</button>
+          </span>
+        {% endfor %}
+        <div data-tag-input-wrapper class="relative inline-block">
+          <input type="text" data-tag-input maxlength="50"
+                 placeholder="+ тег"
+                 class="h-6 w-24 bg-transparent text-xs px-1 placeholder:text-text-dim focus:outline-none">
+          <ul data-tag-suggestions
+              class="hidden absolute top-full left-0 z-30 mt-1 min-w-[160px] max-h-48 overflow-auto rounded border border-border-strong bg-bg-surface shadow-xl"></ul>
+        </div>
+      </div>
+    </div>
+
     <!-- Поля шаблона (template_fields) -->
     {% if article.category and article.category.template_fields %}
       <div class="rounded-lg border border-border bg-bg-surface/40 p-4" id="fields-block">
@@ -140,9 +180,12 @@
     {% include "articles/_relations_panel.html" %}
   </aside>
 </div>
+{% include "_cropper_modal.html" %}
 {% endblock %}
 
 {% block scripts %}
+<script src="{{ url_for('static', filename='js/image-cropper.js') }}" defer></script>
 <script src="{{ url_for('static', filename='js/editor.js') }}" defer></script>
 <script src="{{ url_for('static', filename='js/relations.js') }}" defer></script>
+<script src="{{ url_for('static', filename='js/tags.js') }}" defer></script>
 {% endblock %}

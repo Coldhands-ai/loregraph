@@ -66,6 +66,7 @@ def upload_avatar():
             form.avatar.data,
             subdir=f"avatars/{current_user.id}",
             base_dir=current_app.root_path,
+            max_size=(512, 512),
         )
     except UploadError as e:
         flash(str(e), "error")

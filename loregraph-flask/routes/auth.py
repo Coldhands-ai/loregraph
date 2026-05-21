@@ -23,16 +23,19 @@ def login():
         ).scalar_one_or_none()
 
         if user is None or not user.check_password(form.password.data):
+            current_app.logger.warning("login failed for %s", form.email.data)
             flash("Неверный email или пароль.", "error")
             return render_template("auth/login.html", form=form)
 
         if user.is_blocked:
+            current_app.logger.warning("login blocked for %s (account blocked)", user.email)
             flash("Этот аккаунт заблокирован.", "error")
             return render_template("auth/login.html", form=form)
 
         login_user(user, remember=form.remember.data)
         user.last_sign_in = datetime.now(timezone.utc)
         db.session.commit()
+        current_app.logger.info("login ok: %s", user.email)
         flash("С возвращением.", "success")
         return _safe_redirect_after_login()
 
@@ -58,6 +61,7 @@ def register():
         user.set_password(form.password.data)
         db.session.add(user)
         db.session.commit()
+        current_app.logger.info("registered: %s", user.email)
 
         login_user(user)
         flash("Аккаунт создан. Поехали строить миры.", "success")
@@ -69,6 +73,7 @@ def register():
 @bp.route("/logout", methods=["POST"])
 @login_required
 def logout():
+    current_app.logger.info("logout: %s", current_user.email)
     logout_user()
     flash("Сессия завершена.", "info")
     return redirect(url_for("auth.login"))
@@ -93,6 +98,7 @@ def google_callback():
     try:
         token = oauth.google.authorize_access_token()
     except Exception as e:
+        current_app.logger.warning("google oauth token failed: %s", e)
         flash(f"Не удалось войти через Google: {e}", "error")
         return redirect(url_for("auth.login"))
 
@@ -123,12 +129,15 @@ def google_callback():
             db.session.add(user)
 
     if user.is_blocked:
+        current_app.logger.warning("google login blocked for %s (account blocked)", user.email)
         flash("Этот аккаунт заблокирован.", "error")
         return redirect(url_for("auth.login"))
 
+    is_new = user.id is None
     user.last_sign_in = datetime.now(timezone.utc)
     db.session.commit()
     login_user(user, remember=True)
+    current_app.logger.info("google %s: %s", "registered" if is_new else "login", user.email)
     flash("Добро пожаловать.", "success")
     return _safe_redirect_after_login()
 

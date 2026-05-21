@@ -12,7 +12,7 @@
           <span class="{% if r.outgoing %}text-brand{% else %}text-brand-violet{% endif %} shrink-0 text-xs">
             {{ '→' if r.outgoing else '←' }}
           </span>
-          <a href="{{ url_for('articles.edit', world_id=world.id, article_id=r.other.id) }}"
+          <a href="{{ url_for('articles.view', world_id=world.id, article_id=r.other.id) }}"
              class="text-sm font-medium text-text hover:text-brand transition-colors line-clamp-1 flex-1">
             {{ r.other.title }}
           </a>

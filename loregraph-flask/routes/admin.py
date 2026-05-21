@@ -12,6 +12,50 @@ from storage import delete_image
 
 bp = Blueprint("admin", __name__, url_prefix="/admin")
 
+# Размер страницы для всех списков админки. 25 — компромисс между плотностью
+# таблицы и количеством скроллов.
+PAGE_SIZE = 25
+
+
+class Pagination:
+    """Минимальная пагинация: считает количество страниц и помогает рендерить навигацию.
+    Не используем Flask-SQLAlchemy.paginate, чтобы не зависеть от его API и
+    одинаково работать с db.select() для items и для count."""
+
+    def __init__(self, items, page: int, per_page: int, total: int):
+        self.items = items
+        self.page = page
+        self.per_page = per_page
+        self.total = total
+        self.pages = (total + per_page - 1) // per_page if total else 0
+        self.has_prev = page > 1
+        self.has_next = page < self.pages
+        self.prev_num = page - 1 if self.has_prev else None
+        self.next_num = page + 1 if self.has_next else None
+
+    def iter_pages(self, edge: int = 1, window: int = 2):
+        """Номера страниц для навигации с «…» вместо длинного диапазона.
+        Возвращает None в местах разрывов. Пример (16 страниц, текущая 8):
+        1, None, 6, 7, 8, 9, 10, None, 16."""
+        last = 0
+        for num in range(1, self.pages + 1):
+            if (
+                num <= edge
+                or num > self.pages - edge
+                or abs(num - self.page) <= window
+            ):
+                if last + 1 < num:
+                    yield None
+                yield num
+                last = num
+
+
+def _page_arg() -> int:
+    try:
+        return max(1, int(request.args.get("page", "1")))
+    except (TypeError, ValueError):
+        return 1
+
 
 @bp.before_request
 @login_required
@@ -85,18 +129,39 @@ def dashboard():
 @bp.route("/users", methods=["GET"])
 def users():
     q = (request.args.get("q") or "").strip()
-    query = db.select(User).order_by(User.created_at.desc())
+    page = _page_arg()
+
+    base = db.select(User)
+    count_base = db.select(func.count()).select_from(User)
     if q:
-        query = query.filter(User.email.ilike(f"%{q}%") | User.display_name.ilike(f"%{q}%"))
-    users_list = db.session.execute(query).scalars().all()
+        cond = User.email.ilike(f"%{q}%") | User.display_name.ilike(f"%{q}%")
+        base = base.filter(cond)
+        count_base = count_base.filter(cond)
 
-    # Кол-во миров у каждого
-    counts = dict(db.session.execute(
-        db.select(World.user_id, func.count(World.id)).group_by(World.user_id)
-    ).all())
-    counts = {str(k): v for k, v in counts.items()}
+    total = db.session.scalar(count_base) or 0
+    items = db.session.execute(
+        base.order_by(User.created_at.desc())
+            .limit(PAGE_SIZE).offset((page - 1) * PAGE_SIZE)
+    ).scalars().all()
+    pagination = Pagination(items, page, PAGE_SIZE, total)
 
-    return render_template("admin/users.html", users=users_list, world_counts=counts, q=q)
+    # Кол-во миров у каждого — берём только для отображаемой страницы, чтобы
+    # не тянуть полный список по всей базе.
+    user_ids = [u.id for u in items]
+    if user_ids:
+        counts = dict(db.session.execute(
+            db.select(World.user_id, func.count(World.id))
+            .filter(World.user_id.in_(user_ids))
+            .group_by(World.user_id)
+        ).all())
+        counts = {str(k): v for k, v in counts.items()}
+    else:
+        counts = {}
+
+    return render_template(
+        "admin/users.html",
+        users=items, pagination=pagination, world_counts=counts, q=q,
+    )
 
 
 def _get_user_or_404(user_id: str) -> User:
@@ -164,17 +229,32 @@ def demote_user(user_id: str):
 @bp.route("/worlds", methods=["GET"])
 def worlds():
     q = (request.args.get("q") or "").strip()
-    query = (
+    page = _page_arg()
+
+    base = (
         db.select(World, User, func.count(Article.id).label("n_articles"))
         .join(User, User.id == World.user_id)
         .join(Article, Article.world_id == World.id, isouter=True)
         .group_by(World.id, User.id)
         .order_by(World.created_at.desc())
     )
+    count_base = (
+        db.select(func.count())
+        .select_from(World)
+        .join(User, User.id == World.user_id)
+    )
     if q:
-        query = query.filter(World.title.ilike(f"%{q}%") | User.email.ilike(f"%{q}%"))
-    rows = db.session.execute(query).all()
-    return render_template("admin/worlds.html", rows=rows, q=q)
+        cond = World.title.ilike(f"%{q}%") | User.email.ilike(f"%{q}%")
+        base = base.filter(cond)
+        count_base = count_base.filter(cond)
+
+    total = db.session.scalar(count_base) or 0
+    rows = db.session.execute(
+        base.limit(PAGE_SIZE).offset((page - 1) * PAGE_SIZE)
+    ).all()
+    pagination = Pagination(rows, page, PAGE_SIZE, total)
+
+    return render_template("admin/worlds.html", rows=rows, pagination=pagination, q=q)
 
 
 @bp.route("/worlds/<world_id>/delete", methods=["POST"])
@@ -200,8 +280,13 @@ def delete_world(world_id: str):
 
 @bp.route("/logs", methods=["GET"])
 def logs():
-    page_size = 50
-    logs_list = db.session.execute(
-        db.select(AdminLog).order_by(AdminLog.created_at.desc()).limit(page_size)
+    page = _page_arg()
+
+    total = db.session.scalar(db.select(func.count()).select_from(AdminLog)) or 0
+    items = db.session.execute(
+        db.select(AdminLog)
+        .order_by(AdminLog.created_at.desc())
+        .limit(PAGE_SIZE).offset((page - 1) * PAGE_SIZE)
     ).scalars().all()
-    return render_template("admin/logs.html", logs=logs_list)
+    pagination = Pagination(items, page, PAGE_SIZE, total)
+    return render_template("admin/logs.html", logs=items, pagination=pagination)

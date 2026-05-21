@@ -37,7 +37,8 @@
     </div>
     <div>
       {{ form.password.label(class="block text-xs font-medium uppercase tracking-wider text-text-muted mb-1.5") }}
-      {{ form.password(class="h-10 w-full rounded border border-border-strong bg-bg-surface px-3.5 text-sm placeholder:text-text-dim focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand", placeholder="мин. 6 символов", autocomplete="new-password") }}
+      {{ form.password(class="h-10 w-full rounded border border-border-strong bg-bg-surface px-3.5 text-sm placeholder:text-text-dim focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand", placeholder="мин. 8 символов, хотя бы одна цифра", autocomplete="new-password") }}
+      {% for err in form.password.errors %}<p class="text-xs text-red-400 mt-1">{{ err }}</p>{% endfor %}
     </div>
     <div>
       {{ form.confirm.label(class="block text-xs font-medium uppercase tracking-wider text-text-muted mb-1.5") }}

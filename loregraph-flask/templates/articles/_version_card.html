@@ -1,0 +1,39 @@
+{# Карточка одной версии. Используется в articles/versions.html.
+   Ожидается: v (ArticleVersion с .preview), world, article. #}
+<article class="rounded-lg border border-border bg-bg-surface/40 hover:bg-bg-surface/60 transition-colors p-4">
+  <div class="flex items-start justify-between gap-2 mb-2">
+    <div class="min-w-0 flex-1">
+      {% if v.name %}
+        <div class="text-sm font-medium text-text truncate" title="{{ v.name }}">{{ v.name }}</div>
+      {% endif %}
+      <div class="text-xs text-text-dim">{{ v.created_at.strftime('%d.%m.%Y %H:%M') }}</div>
+    </div>
+  </div>
+  <div class="text-sm font-serif text-text mb-1 truncate" title="{{ v.title }}">{{ v.title }}</div>
+  {% if v.preview %}
+    <p class="text-xs text-text-muted leading-relaxed line-clamp-2 mb-3">{{ v.preview }}</p>
+  {% else %}
+    <p class="text-xs text-text-dim italic mb-3">Пустой контент.</p>
+  {% endif %}
+  <div class="flex items-center gap-1">
+    <a href="{{ url_for('articles.view_version', world_id=world.id, article_id=article.id, version_id=v.id) }}"
+       class="text-xs px-2 py-1 rounded text-text-muted hover:bg-bg-surface2 hover:text-text transition-colors">
+      Просмотреть
+    </a>
+    <form method="post" action="{{ url_for('articles.restore_version', world_id=world.id, article_id=article.id, version_id=v.id) }}"
+          onsubmit="return confirm('Откатиться к этой версии? Текущее состояние сохранится в авто-слот.');">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <button type="submit" class="text-xs px-2 py-1 rounded text-brand hover:bg-brand/10 transition-colors">
+        Откатиться
+      </button>
+    </form>
+    <form method="post" action="{{ url_for('articles.delete_version', world_id=world.id, article_id=article.id, version_id=v.id) }}"
+          onsubmit="return confirm('Удалить эту версию?');"
+          class="ml-auto">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <button type="submit" class="text-xs px-2 py-1 rounded text-text-dim hover:bg-bg-surface2 hover:text-red-400 transition-colors" aria-label="Удалить версию">
+        ✕
+      </button>
+    </form>
+  </div>
+</article>

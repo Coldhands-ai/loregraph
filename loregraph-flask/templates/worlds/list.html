@@ -27,26 +27,34 @@
     <div class="relative grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
       {% for w in worlds %}
         <div class="group relative rounded-lg border border-border bg-bg-surface/60 hover:border-brand/50 hover:bg-bg-surface/80 hover:-translate-y-0.5 transition-all duration-200 hover:shadow-[0_12px_32px_-12px_rgba(59,130,246,0.3)] overflow-hidden">
-          <div class="absolute top-0 left-0 right-0 h-1 bg-brand-gradient opacity-0 group-hover:opacity-100 transition-opacity"></div>
+          <div class="absolute top-0 left-0 right-0 h-1 bg-brand-gradient opacity-0 group-hover:opacity-100 transition-opacity z-10"></div>
 
-          <a href="{{ url_for('articles.index', world_id=w.id) }}" class="block p-5">
-            <h3 class="font-serif text-xl font-medium leading-tight line-clamp-1">{{ w.title }}</h3>
-            {% if w.description %}
-              <p class="mt-2 text-sm text-text-muted leading-relaxed line-clamp-2">{{ w.description }}</p>
+          <a href="{{ url_for('worlds.detail', world_id=w.id) }}" class="block">
+            {% if w.cover_url %}
+              <div class="aspect-[3/1] bg-bg-surface2 overflow-hidden">
+                <img src="{{ w.cover_url }}" alt=""
+                     class="h-full w-full object-cover group-hover:scale-105 transition-transform duration-300">
+              </div>
             {% endif %}
-            <div class="mt-4 flex items-center gap-4 text-xs text-text-dim">
-              <span>📄 {{ article_counts.get(w.id, 0) }}</span>
-              <span>🔗 {{ relation_counts.get(w.id, 0) }}</span>
-              <span class="ml-auto">обновлён {{ w.updated_at.strftime('%d.%m.%Y') }}</span>
+            <div class="p-5">
+              <h3 class="font-serif text-xl font-medium leading-tight line-clamp-1">{{ w.title }}</h3>
+              {% if w.description %}
+                <p class="mt-2 text-sm text-text-muted leading-relaxed line-clamp-2">{{ w.description }}</p>
+              {% endif %}
+              <div class="mt-4 flex items-center gap-4 text-xs text-text-dim">
+                <span>📄 {{ article_counts.get(w.id, 0) }}</span>
+                <span>🔗 {{ relation_counts.get(w.id, 0) }}</span>
+                <span class="ml-auto">обновлён {{ w.updated_at.strftime('%d.%m.%Y') }}</span>
+              </div>
             </div>
           </a>
 
           <form method="post" action="{{ url_for('worlds.delete', world_id=w.id) }}"
                 onsubmit="return confirm('Удалить мир «{{ w.title|e }}»? Все статьи и связи исчезнут.');"
-                class="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity">
+                class="absolute top-3 right-3 z-10 opacity-0 group-hover:opacity-100 transition-opacity">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
             <button type="submit" aria-label="Удалить мир"
-                    class="rounded-sm p-1.5 text-text-dim hover:bg-bg-surface2 hover:text-red-400 transition-colors">
+                    class="rounded-sm p-1.5 bg-bg-surface/80 backdrop-blur-sm text-text-dim hover:bg-bg-surface2 hover:text-red-400 transition-colors">
               ✕
             </button>
           </form>
@@ -74,11 +82,11 @@
        class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm"
        @click.self="createOpen = false"
        @keydown.escape.window="createOpen = false">
-    <div class="relative w-full max-w-lg rounded-lg border border-border-strong bg-bg-surface p-6 shadow-2xl">
+    <div class="relative w-full max-w-2xl rounded-lg border border-border-strong bg-bg-surface p-6 shadow-2xl">
       <button @click="createOpen = false" class="absolute top-4 right-4 text-text-dim hover:text-text" aria-label="Закрыть">✕</button>
       <h2 class="font-serif text-2xl font-medium mb-1">Новый мир</h2>
       <p class="text-sm text-text-muted mb-4">
-        Получит 5 предустановленных категорий с подсказками: персонаж, локация, событие, предмет, фракция.
+        Получит 5 предустановленных категорий, привязанных к выбранному сеттингу.
       </p>
       <form method="post" action="{{ url_for('worlds.create') }}" class="space-y-4">
         {{ form.hidden_tag() }}
@@ -88,8 +96,9 @@
         </div>
         <div>
           {{ form.description.label(class="block text-xs font-medium uppercase tracking-wider text-text-muted mb-1.5") }}
-          {{ form.description(class="min-h-[88px] w-full rounded border border-border-strong bg-bg-surface2 px-3.5 py-2 text-sm placeholder:text-text-dim focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand resize-y leading-6", placeholder="О чём этот мир, чего ждать читателю", maxlength=500) }}
+          {{ form.description(class="min-h-[72px] w-full rounded border border-border-strong bg-bg-surface2 px-3.5 py-2 text-sm placeholder:text-text-dim focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand resize-y leading-6", placeholder="О чём этот мир, чего ждать читателю", maxlength=500) }}
         </div>
+        {% include 'worlds/_setting_picker.html' %}
         <div class="flex justify-end gap-2 pt-2">
           <button type="button" @click="createOpen = false"
                   class="h-10 px-4 rounded text-sm text-text-muted hover:bg-bg-surface2 hover:text-text transition-colors">

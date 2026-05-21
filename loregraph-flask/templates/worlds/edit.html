@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}Настройки · {{ world.title }} — LoreGraph{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto space-y-6">
+  <header>
+    <p class="text-xs uppercase tracking-[0.3em] text-text-dim mb-2">Настройки мира</p>
+    <h1 class="font-serif text-3xl">{{ world.title }}</h1>
+    <p class="mt-1 text-sm text-text-muted">
+      Меняешь сеттинг — палитра и шрифт меняются мгновенно. Категории, созданные при создании мира, остаются.
+    </p>
+  </header>
+
+  <form method="post" action="{{ url_for('worlds.edit', world_id=world.id) }}"
+        class="space-y-5 rounded-lg border border-border bg-bg-surface/40 p-6">
+    {{ form.hidden_tag() }}
+    <div>
+      {{ form.title.label(class="block text-xs font-medium uppercase tracking-wider text-text-muted mb-1.5") }}
+      {{ form.title(class="h-10 w-full rounded border border-border-strong bg-bg-surface px-3.5 text-sm focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand", maxlength=100) }}
+    </div>
+    <div>
+      {{ form.description.label(class="block text-xs font-medium uppercase tracking-wider text-text-muted mb-1.5") }}
+      {{ form.description(class="min-h-[80px] w-full rounded border border-border-strong bg-bg-surface px-3.5 py-2 text-sm focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand resize-y leading-6", maxlength=500) }}
+    </div>
+    {% include 'worlds/_setting_picker.html' %}
+    <div class="flex justify-end gap-2 pt-2 border-t border-border">
+      <a href="{{ url_for('worlds.detail', world_id=world.id) }}"
+         class="h-10 px-4 inline-flex items-center rounded text-sm text-text-muted hover:bg-bg-surface2 hover:text-text transition-colors">
+        Отмена
+      </a>
+      <button type="submit"
+              class="h-10 px-5 rounded bg-brand-gradient text-white text-sm font-semibold hover:-translate-y-px transition-transform">
+        Сохранить
+      </button>
+    </div>
+  </form>
+</div>
+{% endblock %}

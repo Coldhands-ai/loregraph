@@ -75,17 +75,17 @@
     const d = node.data();
     const cover = d.image_url
       ? `<div class="w-full h-20 rounded-md mb-2 -mt-1 -mx-1 overflow-hidden bg-bg-surface2/70 flex items-center justify-center">
-           <img src="${d.image_url}" alt="" class="h-full w-full object-cover">
+           <img src="${d.image_url}" alt="" class="graph-card-cover h-full w-full object-cover">
          </div>`
       : "";
     return `
       ${cover}
-      <div class="flex items-center gap-2 mb-1">
+      <div class="graph-card-meta flex items-center gap-2 mb-1">
         <span class="h-1.5 w-1.5 rounded-full shrink-0" style="background:${d.color}"></span>
         <span class="text-[10px] uppercase tracking-wider font-medium" style="color:${d.color}">${escapeHtml(d.category)}</span>
       </div>
-      <div class="font-serif text-base leading-tight text-text">${escapeHtml(d.label)}</div>
-      ${d.summary ? `<div class="mt-1.5 text-xs text-text-muted line-clamp-3 leading-relaxed">${escapeHtml(d.summary)}</div>` : ""}
+      <div class="graph-card-title font-serif text-base leading-tight text-text">${escapeHtml(d.label)}</div>
+      ${d.summary ? `<div class="graph-card-summary mt-1.5 text-xs text-text-muted line-clamp-3 leading-relaxed">${escapeHtml(d.summary)}</div>` : ""}
     `;
   }
 
@@ -132,29 +132,29 @@
   function renderPreview(node) {
     if (!node) {
       previewEl.className =
-        "rounded-lg border border-dashed border-border-strong p-6 text-sm text-text-muted text-center sticky top-20";
+        "graph-preview-empty rounded-lg border border-dashed border-border-strong p-6 text-sm text-text-muted text-center sticky top-20";
       previewEl.innerHTML = "Кликни на узел, чтобы увидеть его карточку.";
       return;
     }
     const d = node.data();
     previewEl.className =
-      "rounded-lg border border-border bg-bg-surface/70 overflow-hidden sticky top-20 animate-fade-in";
+      "graph-preview-card rounded-lg border border-border bg-bg-surface/95 overflow-hidden sticky top-20 animate-fade-in";
     const cover = d.image_url
       ? `<div class="w-full aspect-[16/9] bg-bg-surface2/70 flex items-center justify-center">
-           <img src="${d.image_url}" alt="" class="h-full w-full object-cover">
+           <img src="${d.image_url}" alt="" class="graph-card-cover h-full w-full object-cover">
          </div>`
-      : `<div class="w-full aspect-[16/9] flex items-center justify-center" style="background:linear-gradient(135deg, ${d.color}33, ${d.color}11)">
-           <span class="font-serif text-6xl font-bold opacity-90" style="color:${d.color}">${escapeHtml(d.initial)}</span>
+      : `<div class="graph-card-placeholder w-full aspect-[16/9] flex items-center justify-center" style="background:linear-gradient(135deg, ${d.color}55, ${d.color}22)">
+           <span class="font-serif text-6xl font-bold" style="color:${d.color}">${escapeHtml(d.initial)}</span>
          </div>`;
     previewEl.innerHTML = `
       ${cover}
       <div class="p-5 space-y-3">
-        <div class="flex items-center gap-2">
+        <div class="graph-card-meta flex items-center gap-2">
           <span class="h-2 w-2 rounded-full shrink-0" style="background:${d.color}"></span>
           <span class="text-xs uppercase tracking-wider font-medium" style="color:${d.color}">${escapeHtml(d.category)}</span>
         </div>
-        <h3 class="font-serif text-2xl font-medium leading-tight">${escapeHtml(d.label)}</h3>
-        ${d.summary ? `<p class="text-sm text-text-muted leading-relaxed">${escapeHtml(d.summary)}</p>` : ""}
+        <h3 class="graph-card-title font-serif text-2xl font-medium leading-tight">${escapeHtml(d.label)}</h3>
+        ${d.summary ? `<p class="graph-card-summary text-sm text-text-muted leading-relaxed">${escapeHtml(d.summary)}</p>` : ""}
         ${renderFields(d.fields)}
         <a href="${articleBase}${d.id}" class="inline-flex items-center justify-center w-full h-10 rounded bg-brand-gradient text-white text-sm font-semibold hover:-translate-y-px transition-transform">
           Открыть статью →

@@ -47,6 +47,7 @@ def data(world_id: str):
     cat_name = {c.id: c.name for c in world.categories}
     cat_weight = {c.id: c.weight for c in world.categories}
     cat_fields = {c.id: c.template_fields or [] for c in world.categories}
+    article_cat = {a.id: a.category_id for a in articles}
 
     nodes = []
     for a in articles:
@@ -91,14 +92,8 @@ def data(world_id: str):
                 "target": r.target_article_id,
                 "label": r.label,
                 # Цвета концов — для градиента ребра на канвасе
-                "source_color": cat_color.get(
-                    next((a.category_id for a in articles if a.id == r.source_article_id), None),
-                    "#64748B",
-                ),
-                "target_color": cat_color.get(
-                    next((a.category_id for a in articles if a.id == r.target_article_id), None),
-                    "#64748B",
-                ),
+                "source_color": cat_color.get(article_cat.get(r.source_article_id), "#64748B"),
+                "target_color": cat_color.get(article_cat.get(r.target_article_id), "#64748B"),
             }
         })
     return jsonify(nodes=nodes, edges=edges)

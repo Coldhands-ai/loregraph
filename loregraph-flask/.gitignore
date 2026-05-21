@@ -29,3 +29,7 @@ Thumbs.db
 
 # Cache / logs
 *.log
+
+# Tailwind standalone binary — каждый разработчик качает свой под свою ОС
+tailwindcss
+tailwindcss.exe

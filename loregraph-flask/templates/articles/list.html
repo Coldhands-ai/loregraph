@@ -55,14 +55,14 @@
       {% for a in articles %}
         {% set cat = a.category %}
         {% set color = cat.color if cat else '#64748B' %}
-        <a href="{{ url_for('articles.edit', world_id=world.id, article_id=a.id) }}"
+        <a href="{{ url_for('articles.view', world_id=world.id, article_id=a.id) }}"
            class="group rounded-lg border border-border bg-bg-surface/60 hover:border-brand/50 hover:bg-bg-surface/80 hover:-translate-y-0.5 transition-all overflow-hidden block flex flex-col">
           <!-- Cover / placeholder -->
-          <div class="relative aspect-[16/9] overflow-hidden"
+          <div class="relative aspect-[16/9] overflow-hidden bg-bg-surface"
                {% if a.image_url %}
-                 style="background: url('{{ a.image_url }}') center/cover;"
+                 style="background-image: url('{{ a.image_url }}'); background-size: cover; background-position: center;"
                {% else %}
-                 style="background: linear-gradient(135deg, {{ color }}33, {{ color }}11);"
+                 style="background-image: linear-gradient(135deg, {{ color }}66, {{ color }}22);"
                {% endif %}>
             {% if not a.image_url %}
               <div class="absolute inset-0 flex items-center justify-center">
@@ -84,6 +84,17 @@
               <p class="mt-2 text-sm text-text-muted line-clamp-2 leading-relaxed flex-1">{{ a.summary }}</p>
             {% else %}
               <p class="mt-2 text-sm text-text-dim italic flex-1">Без превью.</p>
+            {% endif %}
+
+            {% if a.tags %}
+              <div class="mt-2 flex flex-wrap gap-1">
+                {% for t in a.tags[:4] %}
+                  <span class="text-[10px] px-1.5 py-0.5 rounded bg-brand/10 text-brand">{{ t.name }}</span>
+                {% endfor %}
+                {% if a.tags|length > 4 %}
+                  <span class="text-[10px] text-text-dim self-center">+{{ a.tags|length - 4 }}</span>
+                {% endif %}
+              </div>
             {% endif %}
 
             <div class="mt-3 pt-3 border-t border-border flex items-center justify-between gap-2 text-xs">
